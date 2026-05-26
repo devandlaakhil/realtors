@@ -75,6 +75,8 @@ export class AdPostingServicesComponent implements OnInit {
   destroy$ = new Subject<any>();
   toastr = inject(ToastrService);
   router = inject(Router);
+  selectedVideo!: File;
+  videoPreview: string | null = null;
 
   ngOnInit(): void {
     this.initForm();
@@ -97,6 +99,7 @@ export class AdPostingServicesComponent implements OnInit {
       price: ['', Validators.required],
       priceType: ['total'],
       negotiable: [false],
+      videoUrl: [''],
 
       details: this.fb.group({
         bedrooms: ['', Validators.required],
@@ -173,42 +176,91 @@ export class AdPostingServicesComponent implements OnInit {
     }
   }
 
+  onVideoSelect(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.selectedVideo = file;
+    this.videoPreview = URL.createObjectURL(file);
+  }
+
+  removeVideo() {
+    this.selectedVideo = null as any;
+    this.videoPreview = null;
+  }
+
   submit() {
-    const formData = new FormData();
-    const formValue = this.propertyForm.value;
-    // NORMAL FIELDS
-    formData.append('title', formValue.title);
-    formData.append('description', formValue.description);
-    formData.append('propertyType', formValue.propertyType);
-    formData.append('status', formValue.status);
-    formData.append('price', formValue.price);
-    formData.append('priceType', formValue.priceType);
-    formData.append('negotiable', formValue.negotiable);
-    // NESTED OBJECTS
-    formData.append('location', JSON.stringify(formValue.location));
-    formData.append('details', JSON.stringify(formValue.details));
-    formData.append('contact', JSON.stringify(formValue.contact));
-    // IMAGES
-    Object.keys(this.images).forEach((type) => {
-      if (this.images[type]) {
-        formData.append('images', this.images[type]);
-        formData.append('imageTypes', type);
+  const formData = new FormData();
+  const formValue = this.propertyForm.value;
+
+  // NORMAL FIELDS
+  formData.append('title', formValue.title);
+  formData.append('description', formValue.description);
+  formData.append('propertyType', formValue.propertyType);
+  formData.append('status', formValue.status);
+  formData.append('price', formValue.price);
+  formData.append('priceType', formValue.priceType);
+  formData.append('negotiable', formValue.negotiable);
+
+  // VIDEO URL
+  formData.append(
+    'videoUrl',
+    formValue.videoUrl || ''
+  );
+
+  // NESTED OBJECTS
+  formData.append(
+    'location',
+    JSON.stringify(formValue.location)
+  );
+
+  formData.append(
+    'details',
+    JSON.stringify(formValue.details)
+  );
+
+  formData.append(
+    'contact',
+    JSON.stringify(formValue.contact)
+  );
+
+  // IMAGES
+  Object.keys(this.images).forEach((type) => {
+    if (this.images[type]) {
+      formData.append('images', this.images[type]);
+      formData.append('imageTypes', type);
+    }
+  });
+
+  // VIDEO FILE
+  if (this.selectedVideo) {
+    formData.append(
+      'propertyVideo',
+      this.selectedVideo
+    );
+  }
+
+  this.realestateApiSrv
+    .savePosting(formData)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        this.propertyForm.reset();
+
+        this.toastr.success(
+          'Property posted successfully',
+          'Success'
+        );
+
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.log(err);
+
+        this.toastr.error(
+          'Something went wrong',
+          'Fail'
+        );
       }
     });
-    // API
-    this.realestateApiSrv
-      .savePosting(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.propertyForm.reset();
-          this.toastr.success('Property posted successfully', 'Success');
-          this.router.navigate(['/']);
-        },
-        error: (err) => {
-          console.log(err);
-          this.toastr.error('Something went wrong', 'Fail');
-        },
-      });
   }
 }

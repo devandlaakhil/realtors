@@ -178,6 +178,58 @@
       </div>
     </div>
 
+    <!-- PROPERTY VIDEO -->
+<div class="card">
+  <h2>Property Video</h2>
+
+  <div class="video-section">
+
+    <!-- Upload Video -->
+    <div class="video-upload">
+
+      <label class="upload-label">
+        <input
+          hidden
+          type="file"
+          accept="video/*"
+          (change)="onVideoSelect($event)" />
+
+        <div class="placeholder">
+          <span>🎥</span>
+          <p>Upload Property Video</p>
+        </div>
+      </label>
+
+      @if(videoPreview){
+        <video
+          [src]="videoPreview"
+          controls
+          class="preview-video">
+        </video>
+
+        <button
+          type="button"
+          class="remove-btn"
+          (click)="removeVideo()">
+          ✕
+        </button>
+      }
+
+    </div>
+
+    <!-- Social Media URL -->
+    <mat-form-field appearance="fill" class="full">
+      <mat-label>Video URL</mat-label>
+
+      <input
+        matInput
+        placeholder="YouTube / Instagram / Facebook video link"
+        formControlName="videoUrl" />
+    </mat-form-field>
+
+  </div>
+</div>
+
     <!-- SUBMIT -->
     <button mat-raised-button class="submit-btn" (click)="submit()">Post Property</button>
   </form>
