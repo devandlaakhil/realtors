@@ -16,11 +16,12 @@ body{
 
 
 .main-content-wrapper {
-    /* Clear the sticky header (match your header height) */
+    /* Clear the sticky header (match your header height) 
     padding-top: 70px; 
     
-    /* Optional: Ensure content takes up the full screen height */
+    Optional: Ensure content takes up the full screen height 
     min-height: 100vh;
+    */
     box-sizing: border-box;
 }
 
