@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RealEstateApiService } from '../../../api-services/realestate-api-services';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-product-view-component',
@@ -21,6 +22,8 @@ export class ProductViewComponent {
   destroy$ = new Subject<any>();
   toastr = inject(ToastrService);
   cdr = inject(ChangeDetectorRef);
+  safeVideoUrl!: SafeResourceUrl;
+  sanitizer = inject(DomSanitizer);
 
    ngOnInit(): void {
     this.router.paramMap.subscribe((params) => {
@@ -46,7 +49,52 @@ export class ProductViewComponent {
           },
         });
     });
+    this.loadVideo();
   }
+
+  loadVideo() {
+  if (this.property?.videoLink) {
+    const embedUrl = this.convertToEmbedUrl(
+      this.property.videoLink
+    );
+
+    this.safeVideoUrl =
+      this.sanitizer.bypassSecurityTrustResourceUrl(
+        embedUrl
+      );
+  }
+}
+
+convertToEmbedUrl(url: string): string {
+
+  // YouTube
+  if (url.includes('youtube.com/watch?v=')) {
+    const videoId =
+      url.split('v=')[1]?.split('&')[0];
+
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  // Short YouTube
+  if (url.includes('youtu.be/')) {
+    const videoId =
+      url.split('youtu.be/')[1];
+
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+
+  // Instagram Reel
+  if (url.includes('instagram.com/reel')) {
+    return `${url}embed`;
+  }
+
+  // Facebook video
+  if (url.includes('facebook.com')) {
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}`;
+  }
+
+  return url;
+}
 
    changeImage(img: string) {
     this.selectedImage = this.getImage(img);

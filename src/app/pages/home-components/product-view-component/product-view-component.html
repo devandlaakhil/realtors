@@ -10,10 +10,7 @@
 
       <!-- BIG IMAGE -->
       <div class="big-image-card">
-        <img
-          [src]="selectedImage"
-          alt="property"
-          class="big-image" />
+        <img [src]="selectedImage" alt="property" class="big-image" />
 
         <div class="image-count">
           {{ property.images.length }} Photos
@@ -25,16 +22,12 @@
 
         @for (img of property.images; track img) {
 
-          <div
-            class="thumb-card"
-            (click)="changeImage(img.url)"
-            [class.active-thumb]="selectedImage === getImage(img.url)">
+        <div class="thumb-card" (click)="changeImage(img.url)"
+          [class.active-thumb]="selectedImage === getImage(img.url)">
 
-            <img
-              [src]="getImage(img.url)"
-              alt="thumb" />
+          <img [src]="getImage(img.url)" alt="thumb" />
 
-          </div>
+        </div>
 
         }
 
@@ -141,6 +134,46 @@
     </div>
 
   </div>
+
+  <!-- PROPERTY VIDEO -->
+  @if (
+  (property.videos?.length > 0) ||
+  property.videoLink
+  ) {
+
+  <div class="content-card media-card">
+
+    <h2>Property Video</h2>
+
+    <!-- Uploaded Video -->
+    @if (property.videos?.length > 0) {
+
+    <video class="property-video" controls playsinline>
+
+      <source [src]="property.videos[0].url" type="video/mp4" />
+
+      Your browser does not support video.
+
+    </video>
+    }
+
+    <!-- Social Media Video -->
+    @if (
+    property.videoLink &&
+    property.videos?.length === 0
+    ) {
+
+    <div class="video-frame">
+
+      <iframe [src]="safeVideoUrl" frameborder="0" allowfullscreen>
+      </iframe>
+
+    </div>
+    }
+
+  </div>
+
+  }
 
   <!-- DESCRIPTION -->
   <div class="content-card">
