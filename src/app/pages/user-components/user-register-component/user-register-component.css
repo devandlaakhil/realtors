@@ -1,0 +1,55 @@
+/* Fix the header overlap and center the card */
+.registration-page {
+    padding-top: 5px; /* Adjust this to clear your navbar */
+    display: flex;
+    justify-content: center;
+    background-color: #f4f7fe;
+    min-height: 100vh;
+}
+
+.register-card {
+    width: 400px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    max-height: 100%;
+    height: 90vh;
+}
+
+.card-header-premium {
+    background: linear-gradient(135deg, #361a74, #4b0082);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* The Secret Sauce: Flex gap ensures fields never overlap */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Uniform spacing */
+    padding: 20px;
+}
+
+/* Ensure Material fields take full width */
+mat-form-field {
+    width: 100%;
+}
+
+.submit-btn {
+    background-color: #361a74 !important;
+    color: white !important;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Fix for Material Error alignment */
+::v-deep .mat-mdc-form-field-subscript-wrapper {
+    font-size: 11px;
+}
