@@ -1,1 +1,90 @@
-<p>user-login-component works!</p>
+<div class="container-fluid mt-3">
+  <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mx-auto px-2">
+    <div class="card p-0" style="box-shadow: 1px 1px 10px #361a74">
+      
+      <div
+        class="card-header"
+        style="
+          background-color: #361a74;
+          color: white;
+          font-size: 24px;
+          font-weight: 500;
+        "
+      >
+        Login
+      </div>
+
+      <div class="card-body">
+        <form [formGroup]="loginForm">
+
+          <p>
+            <mat-form-field appearance="outline" style="width: 100%">
+              <mat-label>Email: </mat-label>
+
+              <input matInput formControlName="email" />
+
+              <mat-error>
+                @if (loginForm.controls.email.touched &&
+                loginForm.controls.email.invalid) {
+
+                  @if (loginForm.controls.email.errors?.required) {
+                    <span>Email is required</span>
+                  }
+
+                }
+              </mat-error>
+            </mat-form-field>
+          </p>
+
+          <p>
+            <mat-form-field appearance="outline" style="width: 100%">
+              <mat-label>Password: </mat-label>
+
+              <input
+                matInput
+                type="password"
+                formControlName="password"
+              />
+
+              <mat-error>
+                @if (loginForm.controls.password.touched &&
+                loginForm.controls.password.invalid) {
+
+                  @if (loginForm.controls.password.errors?.required) {
+                    <span>Password is required</span>
+                  }
+
+                }
+              </mat-error>
+            </mat-form-field>
+          </p>
+
+        </form>
+      </div>
+
+      <div class="row align-items-center px-2 pb-2">
+
+        <div class="col-12 col-md-4 text-center text-md-start mb-2">
+          <a
+            style="margin-left: 10px"
+            routerLink="/register"
+          >
+            Register Here
+          </a>
+        </div>
+
+        <div class="col-12 col-md-4 text-center mb-2">
+          <button
+            mat-flat-button
+            (click)="loginUser()"
+          >
+            Login
+          </button>
+        </div>
+
+        <div class="col-md-4 d-none d-md-block"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
