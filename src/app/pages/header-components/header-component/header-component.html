@@ -120,6 +120,7 @@
 </mat-toolbar>
 
 <!-- MOBILE MENU -->
+<!-- MOBILE MENU -->
 <div
   class="mobile-dropdown"
   *ngIf="isMobileMenuOpen">
@@ -128,6 +129,7 @@
     {{ Location }}
   </button>
 
+  <!-- LOGGED IN USER -->
   @if (isLoggedIn) {
 
     <button
@@ -137,31 +139,57 @@
       Dashboard
     </button>
 
+    <button
+      mat-button
+      routerLink="/ad-post"
+      (click)="toggleMobileMenu()">
+      Post Property
+    </button>
+
+    <button
+      mat-button
+      (click)="navToProfile(); toggleMobileMenu()">
+      Profile
+    </button>
+
+    <button
+      mat-button
+      routerLink="/service"
+      (click)="toggleMobileMenu()">
+      Services
+    </button>
+
+    <button
+      mat-button
+      routerLink="/aboutus"
+      (click)="toggleMobileMenu()">
+      About
+    </button>
+
+    <button
+      mat-button
+      (click)="logout(); toggleMobileMenu()">
+      Logout
+    </button>
+
   }
 
-  <button
-    mat-button
-    routerLink="/aboutus"
-    (click)="toggleMobileMenu()">
-    About
-  </button>
+  <!-- LOGGED OUT USER -->
+  @else {
 
-  <button
-    mat-button
-    routerLink="/service"
-    (click)="toggleMobileMenu()">
-    Services
-  </button>
+    <button
+      mat-button
+      routerLink="/aboutus"
+      (click)="toggleMobileMenu()">
+      About
+    </button>
 
-  <button
-    mat-button
-    (click)="toggleMobileMenu()">
-    Contact
-  </button>
-
-  @if (!isLoggedIn) {
-
-    <mat-divider></mat-divider>
+    <button
+      mat-button
+      routerLink="/service"
+      (click)="toggleMobileMenu()">
+      Services
+    </button>
 
     <button
       mat-button
@@ -175,13 +203,6 @@
       routerLink="/register"
       (click)="toggleMobileMenu()">
       Register
-    </button>
-
-    <button
-      mat-button
-      routerLink="/login"
-      (click)="toggleMobileMenu()">
-      Post Property
     </button>
 
   }

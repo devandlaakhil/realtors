@@ -1,0 +1,201 @@
+@if (property) {
+
+<div class="details-page">
+
+  <!-- TOP SECTION -->
+  <div class="top-layout">
+
+    <!-- LEFT IMAGE GALLERY -->
+    <div class="gallery-wrapper">
+
+      <!-- BIG IMAGE -->
+      <div class="big-image-card">
+        <img
+          [src]="selectedImage"
+          alt="property"
+          class="big-image" />
+
+        <div class="image-count">
+          {{ property.images.length }} Photos
+        </div>
+      </div>
+
+      <!-- THUMBNAILS -->
+      <div class="thumbnail-container">
+
+        @for (img of property.images; track img) {
+
+          <div
+            class="thumb-card"
+            (click)="changeImage(img.url)"
+            [class.active-thumb]="selectedImage === getImage(img.url)">
+
+            <img
+              [src]="getImage(img.url)"
+              alt="thumb" />
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT INFO -->
+    <div class="info-wrapper">
+
+      <!-- STATUS -->
+      <div class="status-row">
+        <span class="status-badge">
+          {{ property.status }}
+        </span>
+
+        <button class="wishlist-btn">
+          ❤
+        </button>
+      </div>
+
+      <!-- TITLE -->
+      <h1 class="property-title">
+        {{ property.title }}
+      </h1>
+
+      <!-- LOCATION -->
+      <p class="property-location">
+        📍
+        {{ property.location.area }},
+        {{ property.location.city }}
+      </p>
+
+      <!-- PRICE -->
+      <div class="price-section">
+        <h2>
+          ₹ {{ property.price | number }}
+        </h2>
+
+        <span>
+          {{ property.priceType }}
+        </span>
+      </div>
+
+      <!-- PROPERTY SPECS -->
+      <div class="spec-grid">
+
+        <div class="spec-box">
+          <h3>{{ property.details.bedrooms }}</h3>
+          <p>Bedrooms</p>
+        </div>
+
+        <div class="spec-box">
+          <h3>{{ property.details.bathrooms }}</h3>
+          <p>Bathrooms</p>
+        </div>
+
+        <div class="spec-box">
+          <h3>{{ property.details.area }}</h3>
+          <p>Sqft</p>
+        </div>
+
+        <div class="spec-box">
+          <h3>{{ property.details.floor }}</h3>
+          <p>Floor</p>
+        </div>
+
+      </div>
+
+      <!-- BUTTONS -->
+      <div class="action-row">
+        <button class="contact-btn">
+          📞 Contact Owner
+        </button>
+
+        <button class="whatsapp-btn">
+          💬 WhatsApp
+        </button>
+      </div>
+
+      <!-- OWNER -->
+      <div class="owner-card">
+
+        <div class="avatar">
+          {{ property.contact.name[0] }}
+        </div>
+
+        <div class="owner-details">
+          <h3>
+            {{ property.contact.name }}
+          </h3>
+
+          <p>
+            📞 {{ property.contact.phone }}
+          </p>
+
+          <p>
+            ✉ {{ property.contact.email }}
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="content-card">
+
+    <h2>Description</h2>
+
+    <p>
+      {{ property.description }}
+    </p>
+
+  </div>
+
+  <!-- PROPERTY DETAILS -->
+  <div class="content-card">
+
+    <h2>Property Details</h2>
+
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <span>Property Type</span>
+        <h4>{{ property.propertyType }}</h4>
+      </div>
+
+      <div class="detail-item">
+        <span>Furnishing</span>
+        <h4>{{ property.details.furnishing }}</h4>
+      </div>
+
+      <div class="detail-item">
+        <span>Total Floors</span>
+        <h4>{{ property.details.totalFloors }}</h4>
+      </div>
+
+      <div class="detail-item">
+        <span>Negotiable</span>
+        <h4>
+          {{ property.negotiable ? 'Yes' : 'No' }}
+        </h4>
+      </div>
+
+      <div class="detail-item">
+        <span>Pincode</span>
+        <h4>{{ property.location.pincode }}</h4>
+      </div>
+
+      <div class="detail-item">
+        <span>Address</span>
+        <h4>{{ property.location.address }}</h4>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+}

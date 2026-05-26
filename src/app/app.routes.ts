@@ -23,5 +23,10 @@ export const routes: Routes = [
         path:'dashboard',
         canActivate : [authGuard],
         loadComponent : () => import('../app/pages/home-components/dashboard-component/dashboard-component').then(m => m.DashboardComponent)
+    },
+    {
+        path:'property/:id',
+        canActivate : [authGuard],
+        loadComponent : () => import('../app/pages/home-components/product-view-component/product-view-component').then(m => m.ProductViewComponent)
     }
 ];

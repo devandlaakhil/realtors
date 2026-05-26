@@ -1,0 +1,515 @@
+/* =========================
+   GLOBAL FIX
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* =========================
+   PAGE
+========================= */
+
+.details-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 22px;
+  background: #f4f7fb;
+  overflow-x: hidden;
+}
+
+/* =========================
+   TOP LAYOUT
+========================= */
+
+.top-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+/* =========================
+   GALLERY
+========================= */
+
+.gallery-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* BIG IMAGE */
+
+.big-image-card {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: white;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.big-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 18px;
+}
+
+/* IMAGE COUNT */
+
+.image-count {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  background: rgba(0, 0, 0, 0.65);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  backdrop-filter: blur(8px);
+}
+
+/* =========================
+   THUMBNAILS
+========================= */
+
+.thumbnail-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  width: 100%;
+}
+
+.thumbnail-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.thumbnail-container::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 999px;
+}
+
+.thumb-card {
+  min-width: 110px;
+  height: 85px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: 0.25s;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+}
+
+.thumb-card:hover {
+  transform: translateY(-2px);
+}
+
+.thumb-card img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.active-thumb {
+  border-color: #2563eb;
+}
+
+/* =========================
+   RIGHT INFO
+========================= */
+
+.info-wrapper {
+  background: white;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* STATUS */
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  background: #16a34a;
+  color: white;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.wishlist-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: #fff1f2;
+  color: #ef4444;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* TITLE */
+
+.property-title {
+  font-size: 34px;
+  margin-top: 18px;
+  margin-bottom: 10px;
+  color: #111827;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* LOCATION */
+
+.property-location {
+  color: #64748b;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+/* PRICE */
+
+.price-section {
+  margin-top: 24px;
+  margin-bottom: 26px;
+}
+
+.price-section h2 {
+  margin: 0;
+  color: #2563eb;
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.price-section span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* =========================
+   SPEC GRID
+========================= */
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+
+.spec-box {
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+  min-width: 0;
+}
+
+.spec-box h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.spec-box p {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.action-row {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+  width: 100%;
+}
+
+.contact-btn,
+.whatsapp-btn {
+  flex: 1;
+  height: 54px;
+  border: none;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.whatsapp-btn {
+  background: #ecfdf3;
+  color: #16a34a;
+}
+
+/* =========================
+   OWNER
+========================= */
+
+.owner-card {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 18px;
+  width: 100%;
+}
+
+.avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.owner-details {
+  min-width: 0;
+}
+
+.owner-details h3 {
+  margin: 0;
+}
+
+.owner-details p {
+  margin: 5px 0;
+  color: #64748b;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+/* =========================
+   CONTENT CARD
+========================= */
+
+.content-card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.content-card h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+.content-card p {
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+/* =========================
+   DETAILS GRID
+========================= */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.detail-item {
+  background: #f8fafc;
+  padding: 18px;
+  border-radius: 18px;
+}
+
+.detail-item span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.detail-item h4 {
+  margin-top: 8px;
+  margin-bottom: 0;
+  word-break: break-word;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1024px) {
+
+  .top-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .big-image-card {
+    height: 420px;
+  }
+
+  .details-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+  .details-page {
+    padding: 12px;
+  }
+
+  .top-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .big-image-card {
+    height: 260px;
+    padding: 8px;
+    border-radius: 18px;
+  }
+
+  .big-image {
+    border-radius: 14px;
+  }
+
+  .image-count {
+    bottom: 14px;
+    right: 14px;
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .thumb-card {
+    min-width: 82px;
+    height: 64px;
+  }
+
+  .info-wrapper {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .property-title {
+    font-size: 24px;
+  }
+
+  .price-section h2 {
+    font-size: 30px;
+  }
+
+  .spec-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .spec-box {
+    padding: 14px;
+  }
+
+  .spec-box h3 {
+    font-size: 22px;
+  }
+
+  .action-row {
+    flex-direction: column;
+  }
+
+  .contact-btn,
+  .whatsapp-btn {
+    width: 100%;
+    height: 50px;
+  }
+
+  .owner-card {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+
+  .avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media (max-width: 480px) {
+
+  .details-page {
+    padding: 10px;
+  }
+
+  .big-image-card {
+    height: 220px;
+  }
+
+  .property-title {
+    font-size: 20px;
+  }
+
+  .price-section h2 {
+    font-size: 26px;
+  }
+
+  .thumb-card {
+    min-width: 74px;
+    height: 58px;
+  }
+
+  .owner-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
