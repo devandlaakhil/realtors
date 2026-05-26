@@ -8,6 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UserApiServices } from '../../../api-services/user-api-services';
 import { AuthService } from '../../../auth-services/auth-services';
+import { DashboardServices } from '../../../shared-services/dashboard-services';
 
 @Component({
   selector: 'app-user-login-component',
@@ -28,7 +29,7 @@ export class UserLoginComponent implements OnInit {
   tostrService = inject(ToastrService);
   router = inject(Router);
   authService = inject(AuthService);
-  //dashboardService = inject(DashboardServices);
+  dashboardService = inject(DashboardServices);
 
    ngOnInit(): void {
     this.loginForm = this.formBuiler.group({
@@ -52,6 +53,7 @@ export class UserLoginComponent implements OnInit {
           });
           this.authService.logIn(res.data.token);
           this.tostrService.success('Login Successful', 'Success');
+          this.dashboardService.logIn();
           //this.router.navigate(['/dashboard']);
         }
       },
