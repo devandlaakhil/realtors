@@ -12,5 +12,9 @@ export const routes: Routes = [
     {
         path : 'register',
         loadComponent : () => import('../app/pages/user-components/user-register-component/user-register-component').then(m => m.UserRegisterComponent)
+    },
+    {
+        path:'ad-post',
+        loadComponent : () => import('../app/pages/services-components/ad-posting-services-component/ad-posting-services-component').then(m => m.AdPostingServicesComponent)
     }
 ];
