@@ -1,99 +1,148 @@
 <div class="property-page">
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <input type="text" placeholder="Search properties..." />
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
 
-    <select>
-      <option>Property Type</option>
-      <option>Apartment</option>
-      <option>Villa</option>
-      <option>House</option>
-      <option>Plot</option>
-    </select>
+  <!-- Search -->
+  <mat-form-field appearance="outline" class="filter-field search-field">
+    <mat-label>Search properties</mat-label>
+    <input
+      matInput
+      type="text"
+      placeholder="Search properties..."
+    />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
 
-    <select>
-      <option>Budget</option>
-      <option>₹10L - ₹50L</option>
-      <option>₹50L - ₹1Cr</option>
-      <option>₹1Cr+</option>
-    </select>
+  <!-- Property Type -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Property Type</mat-label>
 
-    <button class="filter-btn">Search</button>
-  </div>
+    <mat-select>
+      <mat-option value="">
+        All Properties
+      </mat-option>
 
-  <!-- PROPERTY GRID -->
-  <div class="property-grid">
-    <div class="property-card" *ngFor="let property of properties">
-      <!-- IMAGE -->
-      <div class="image-container">
-        <img
-          *ngIf="getMainImage(property.images)"
-          [src]="getMainImage(property.images)"
-          alt="property"
-        />
+      <mat-option value="apartment">
+        Apartment
+      </mat-option>
 
-        <!-- NO IMAGE -->
-        <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
+      <mat-option value="villa">
+        Villa
+      </mat-option>
 
-        <span class="badge">
-          {{ property.status }}
-        </span>
+      <mat-option value="house">
+        House
+      </mat-option>
 
-        <button class="wishlist">❤</button>
-      </div>
+      <mat-option value="plot">
+        Plot
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-      <!-- CONTENT -->
-      <div class="card-content">
-        <div class="top-section">
-          <h3>
-            {{ property.title }}
-          </h3>
+  <!-- Budget -->
+  <mat-form-field appearance="outline" class="filter-field">
+    <mat-label>Budget</mat-label>
 
-          <h2 class="price">₹ {{ property.price | number }}</h2>
-        </div>
+    <mat-select>
+      <mat-option value="">
+        Any Budget
+      </mat-option>
 
-        <!-- LOCATION -->
-        <p class="location">
-          📍
-          {{ property.location.area }},
-          {{ property.location.city }}
-        </p>
+      <mat-option value="10-50">
+        ₹10L - ₹50L
+      </mat-option>
 
-        <!-- DETAILS -->
-        <div class="details">
-          <div>🛏 {{ property.details.bedrooms }}</div>
+      <mat-option value="50-100">
+        ₹50L - ₹1Cr
+      </mat-option>
 
-          <div>🛁 {{ property.details.bathrooms }}</div>
+      <mat-option value="100+">
+        ₹1Cr+
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
-          <div>📐 {{ property.details.area }} sqft</div>
-        </div>
+  <!-- Button -->
+  <button
+    mat-raised-button
+    color="primary"
+    class="filter-btn">
+    <mat-icon>search</mat-icon>
+    Search
+  </button>
 
-        <!-- EXTRA -->
-        <div class="extra-details">
-          <span>
-            {{ property.propertyType }}
-          </span>
+</div>
 
-          <!-- <span>
+    <!-- PROPERTY GRID -->
+    <div class="property-grid">
+        <div class="property-card" *ngFor="let property of properties">
+            <!-- IMAGE -->
+            <div class="image-container">
+                <img *ngIf="getMainImage(property.images)" [src]="getMainImage(property.images)" alt="property" />
+
+                <!-- NO IMAGE -->
+                <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
+
+                <span class="badge">
+                    {{ property.status }}
+                </span>
+
+                <button class="wishlist">❤</button>
+            </div>
+
+            <!-- CONTENT -->
+            <div class="card-content">
+                <div class="top-section">
+                    <h3>
+                        {{ property.title }}
+                    </h3>
+
+                    <h2 class="price">₹ {{ property.price | number }}</h2>
+                </div>
+
+                <!-- LOCATION -->
+                <p class="location">
+                    📍
+                    {{ property.location.area }},
+                    {{ property.location.city }}
+                </p>
+
+                <!-- DETAILS -->
+                <div class="details">
+                    <div>🛏 {{ property.details.bedrooms }}</div>
+
+                    <div>🛁 {{ property.details.bathrooms }}</div>
+
+                    <div>📐 {{ property.details.area }} sqft</div>
+                </div>
+
+                <!-- EXTRA -->
+                <div class="extra-details">
+                    <span>
+                        {{ property.propertyType }}
+                    </span>
+
+                    <!-- <span>
             {{ property.details.furnishing }}
           </span> -->
+                </div>
+
+                <!-- FOOTER -->
+                <div class="footer">
+                    <div class="owner">
+                        <h4>
+                            {{ property.contact.name }}
+                        </h4>
+
+                        <p>
+                            {{ property.contact.phone }}
+                        </p>
+                    </div>
+
+                    <button class="view-btn" [routerLink]="['/property', property.id]">View</button>
+                </div>
+            </div>
         </div>
-
-        <!-- FOOTER -->
-        <div class="footer">
-          <div class="owner">
-            <h4>
-              {{ property.contact.name }}
-            </h4>
-
-            <p>
-              {{ property.contact.phone }}
-            </p>
-          </div>
-
-          <button class="view-btn"  [routerLink]="['/property', property.id]">View</button>
-        </div>
-      </div>
     </div>
-  </div>
 </div>
