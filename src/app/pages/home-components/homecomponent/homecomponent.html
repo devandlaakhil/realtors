@@ -1,1 +1,99 @@
-<p>homecomponent works!</p>
+<div class="property-page">
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <input type="text" placeholder="Search properties..." />
+
+    <select>
+      <option>Property Type</option>
+      <option>Apartment</option>
+      <option>Villa</option>
+      <option>House</option>
+      <option>Plot</option>
+    </select>
+
+    <select>
+      <option>Budget</option>
+      <option>₹10L - ₹50L</option>
+      <option>₹50L - ₹1Cr</option>
+      <option>₹1Cr+</option>
+    </select>
+
+    <button class="filter-btn">Search</button>
+  </div>
+
+  <!-- PROPERTY GRID -->
+  <div class="property-grid">
+    <div class="property-card" *ngFor="let property of properties">
+      <!-- IMAGE -->
+      <div class="image-container">
+        <img
+          *ngIf="getMainImage(property.images)"
+          [src]="getMainImage(property.images)"
+          alt="property"
+        />
+
+        <!-- NO IMAGE -->
+        <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
+
+        <span class="badge">
+          {{ property.status }}
+        </span>
+
+        <button class="wishlist">❤</button>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="card-content">
+        <div class="top-section">
+          <h3>
+            {{ property.title }}
+          </h3>
+
+          <h2 class="price">₹ {{ property.price | number }}</h2>
+        </div>
+
+        <!-- LOCATION -->
+        <p class="location">
+          📍
+          {{ property.location.area }},
+          {{ property.location.city }}
+        </p>
+
+        <!-- DETAILS -->
+        <div class="details">
+          <div>🛏 {{ property.details.bedrooms }}</div>
+
+          <div>🛁 {{ property.details.bathrooms }}</div>
+
+          <div>📐 {{ property.details.area }} sqft</div>
+        </div>
+
+        <!-- EXTRA -->
+        <div class="extra-details">
+          <span>
+            {{ property.propertyType }}
+          </span>
+
+          <!-- <span>
+            {{ property.details.furnishing }}
+          </span> -->
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+          <div class="owner">
+            <h4>
+              {{ property.contact.name }}
+            </h4>
+
+            <p>
+              {{ property.contact.phone }}
+            </p>
+          </div>
+
+          <button class="view-btn"  [routerLink]="['/property', property.id]">View</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

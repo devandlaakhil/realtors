@@ -1,0 +1,25 @@
+import { inject, Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RealEstateApiService {
+
+  private _serverPort = environment.serverPort
+  private _apiUrl = 'real-estate'
+
+  httpClient = inject(HttpClient);
+
+  getAllList():Observable<any>{
+    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getpropeties`)
+  }
+
+  getProduct(id:string):Observable<any>{
+    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getSinglepropety`,{
+      params : {id : id}
+    })
+  }
+}
