@@ -203,7 +203,7 @@ export class AdPostingServicesComponent implements OnInit {
         next: (res) => {
           this.propertyForm.reset();
           this.toastr.success('Property posted successfully', 'Success');
-          this.router.navigate(['/service/landing']);
+          this.router.navigate(['/']);
         },
         error: (err) => {
           console.log(err);

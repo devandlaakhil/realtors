@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './auth-services/auth.guard';
 
 export const routes: Routes = [
     {
@@ -15,6 +16,12 @@ export const routes: Routes = [
     },
     {
         path:'ad-post',
+        canActivate: [authGuard],
         loadComponent : () => import('../app/pages/services-components/ad-posting-services-component/ad-posting-services-component').then(m => m.AdPostingServicesComponent)
+    },
+    {
+        path:'dashboard',
+        canActivate : [authGuard],
+        loadComponent : () => import('../app/pages/home-components/dashboard-component/dashboard-component').then(m => m.DashboardComponent)
     }
 ];

@@ -54,7 +54,7 @@ export class UserLoginComponent implements OnInit {
           this.authService.logIn(res.data.token);
           this.tostrService.success('Login Successful', 'Success');
           this.dashboardService.logIn();
-          //this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard']);
         }
       },
       error: (err) => {
