@@ -1,1 +1,26 @@
-/* You can add global styles to this file, and also import other style files */
+@import '../node_modules/@fontsource/poppins/index.css';
+@import 'ngx-toastr/toastr';
+
+body{
+    font-family: 'Poppins',sans-sarif;
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+
+.main-content-wrapper {
+    /* Clear the sticky header (match your header height) */
+    padding-top: 70px; 
+    
+    /* Optional: Ensure content takes up the full screen height */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
