@@ -1,148 +1,134 @@
 <div class="property-page">
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <!-- Search -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search properties</mat-label>
 
-  <!-- Search -->
-  <mat-form-field appearance="outline" class="filter-field search-field">
-    <mat-label>Search properties</mat-label>
-    <input
-      matInput
-      type="text"
-      placeholder="Search properties..."
-    />
-    <mat-icon matPrefix>search</mat-icon>
-  </mat-form-field>
+      <input
+        matInput
+        type="text"
+        placeholder="Search properties..."
+        [formControl]="searchControl"
+      />
 
-  <!-- Property Type -->
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Property Type</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
 
-    <mat-select (selectionChange)="onTypeChange($event.value)">
-      <mat-option value="">
-        All Properties
-      </mat-option>
+    <!-- Property Type -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Property Type</mat-label>
 
-      <mat-option value="apartment">
-        Apartment
-      </mat-option>
+      <mat-select (selectionChange)="onTypeChange($event.value)">
+        <mat-option value=""> All Properties </mat-option>
 
-      <mat-option value="villa">
-        Villa
-      </mat-option>
+        <mat-option value="apartment"> Apartment </mat-option>
 
-      <mat-option value="house">
-        House
-      </mat-option>
+        <mat-option value="villa"> Villa </mat-option>
 
-      <mat-option value="plot">
-        Plot
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+        <mat-option value="house"> House </mat-option>
 
-  <!-- Budget -->
-  <mat-form-field appearance="outline" class="filter-field">
-    <mat-label>Budget</mat-label>
+        <mat-option value="plot"> Plot </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <mat-select (selectionChange)="onBudgetChange($event.value)">
-      <mat-option value="">
-        Any Budget
-      </mat-option>
+    <!-- Budget -->
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Budget</mat-label>
 
-      <mat-option value="10-50">
-        ₹10L - ₹50L
-      </mat-option>
+      <mat-select (selectionChange)="onBudgetChange($event.value)">
+        <mat-option value=""> Any Budget </mat-option>
 
-      <mat-option value="50-100">
-        ₹50L - ₹1Cr
-      </mat-option>
+        <mat-option value="10-50"> ₹10L - ₹50L </mat-option>
 
-      <mat-option value="100+">
-        ₹1Cr+
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+        <mat-option value="50-100"> ₹50L - ₹1Cr </mat-option>
 
-  <!-- Button -->
-  <button
-    mat-raised-button
-    color="primary"
-    class="filter-btn">
-    <mat-icon>search</mat-icon>
-    Search
-  </button>
+        <mat-option value="100+"> ₹1Cr+ </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-</div>
+    <!-- Button -->
+    <button mat-raised-button color="primary" class="filter-btn">
+      <mat-icon>search</mat-icon>
+      Search
+    </button>
+  </div>
 
-    <!-- PROPERTY GRID -->
-    <div class="property-grid">
-        <div class="property-card" *ngFor="let property of filteredProperties">
-            <!-- IMAGE -->
-            <div class="image-container">
-                <img *ngIf="getMainImage(property.images)" [src]="getMainImage(property.images)" alt="property" />
+  <!-- PROPERTY GRID -->
+  <div class="property-grid">
+    @for (property of filteredProperties; track property.id) {
+      <div class="property-card">
+        <!-- IMAGE -->
+        <div class="image-container">
+          <img
+            *ngIf="getMainImage(property.images)"
+            [src]="getMainImage(property.images)"
+            alt="property"
+          />
 
-                <!-- NO IMAGE -->
-                <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
+          <!-- NO IMAGE -->
+          <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
 
-                <span class="badge">
-                    {{ property.status }}
-                </span>
+          <span class="badge">
+            {{ property.status }}
+          </span>
 
-                <button class="wishlist">❤</button>
-            </div>
+          <button class="wishlist">❤</button>
+        </div>
 
-            <!-- CONTENT -->
-            <div class="card-content">
-                <div class="top-section">
-                    <h3>
-                        {{ property.title }}
-                    </h3>
+        <!-- CONTENT -->
+        <div class="card-content">
+          <div class="top-section">
+            <h3>
+              {{ property.title }}
+            </h3>
 
-                    <h2 class="price">₹ {{ property.price | number }}</h2>
-                </div>
+            <h2 class="price">₹ {{ property.price | number }}</h2>
+          </div>
 
-                <!-- LOCATION -->
-                <p class="location">
-                    📍
-                    {{ property.location.area }},
-                    {{ property.location.city }}
-                </p>
+          <!-- LOCATION -->
+          <p class="location">
+            📍
+            {{ property.location.area }},
+            {{ property.location.city }}
+          </p>
 
-                <!-- DETAILS -->
-                <div class="details">
-                    <div>🛏 {{ property.details.bedrooms }}</div>
+          <!-- DETAILS -->
+          <div class="details">
+            <div>🛏 {{ property.details.bedrooms }}</div>
 
-                    <div>🛁 {{ property.details.bathrooms }}</div>
+            <div>🛁 {{ property.details.bathrooms }}</div>
 
-                    <div>📐 {{ property.details.area }} sqft</div>
-                </div>
+            <div>📐 {{ property.details.area }} sqft</div>
+          </div>
 
-                <!-- EXTRA -->
-                <div class="extra-details">
-                    <span>
-                        {{ property.propertyType }}
-                    </span>
+          <!-- EXTRA -->
+          <div class="extra-details">
+            <span>
+              {{ property.propertyType }}
+            </span>
 
-                    <!-- <span>
+            <!-- <span>
             {{ property.details.furnishing }}
           </span> -->
-                </div>
+          </div>
 
-                <!-- FOOTER -->
-                <div class="footer">
-                    <div class="owner">
-                        <h4>
-                            {{ property.contact.name }}
-                        </h4>
+          <!-- FOOTER -->
+          <div class="footer">
+            <div class="owner">
+              <h4>
+                {{ property.contact.name }}
+              </h4>
 
-                        <p>
-                            {{ property.contact.phone }}
-                        </p>
-                    </div>
-
-                    <button class="view-btn" [routerLink]="['/property', property.id]">View</button>
-                </div>
+              <p>
+                {{ property.contact.phone }}
+              </p>
             </div>
+
+            <button class="view-btn" [routerLink]="['/property', property.id]">View</button>
+          </div>
         </div>
-    </div>
+      </div>
+    }
+  </div>
 </div>

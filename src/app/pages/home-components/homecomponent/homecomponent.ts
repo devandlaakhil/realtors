@@ -9,11 +9,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-homecomponent',
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     RouterModule,
     MatFormFieldModule,
     MatInputModule,
@@ -33,6 +35,7 @@ export class Homecomponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
   selectedType: string = '';
   selectedBudget: string = '';
+  searchControl = new FormControl('');
 
   ngOnInit(): void {
     this.getAllProperites();
@@ -46,12 +49,28 @@ export class Homecomponent implements OnInit {
         next: (res) => {
           this.properties = res.data;
           this.filteredProperties = [...this.properties];
+          this.setupSearch();
           this.cdr.detectChanges();
         },
         error: () => {
           this.toastr.error('Something went wrong', 'Fail');
         },
       });
+  }
+
+  setupSearch() {
+    this.searchControl.valueChanges.subscribe((value) => {
+      const searchText = (value || '').toLowerCase().trim();
+
+      this.filteredProperties = this.properties.filter(
+        (property) =>
+          property.title?.toLowerCase().includes(searchText) ||
+          property.location?.city?.toLowerCase().includes(searchText) ||
+          property.location?.area?.toLowerCase().includes(searchText) ||
+          property.propertyType?.toLowerCase().includes(searchText) ||
+          property.status?.toLowerCase().includes(searchText),
+      );
+    });
   }
 
   getMainImage(images: any[]): string {
