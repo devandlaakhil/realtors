@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
-import { RealEstateApiServices } from '../../../api-services/real-estate-api-services';
+import { RealEstateApiService } from '../../../api-services/realestate-api-services';
 
 enum Property_Type {
   VILLA = 'Villa',
@@ -71,7 +71,7 @@ export class AdPostingServicesComponent implements OnInit {
   propertyTypes = Object.values(Property_Type);
   cities = Object.values(Location);
   propertyStatus = Object.values(status);
-  realestateApiSrv = inject(RealEstateApiServices);
+  realestateApiSrv = inject(RealEstateApiService);
   destroy$ = new Subject<any>();
   toastr = inject(ToastrService);
   router = inject(Router);

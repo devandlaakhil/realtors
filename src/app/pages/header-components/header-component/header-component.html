@@ -1,5 +1,4 @@
 <mat-toolbar class="app-header">
-
   <!-- LEFT -->
   <div class="left-section">
     <div class="logo" (click)="backToHome()">
@@ -10,38 +9,20 @@
 
   <!-- DESKTOP NAV -->
   <div class="nav-links">
-
-    <button mat-button>
+    <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
       {{ Location }}
     </button>
+    <button mat-button (click)="backToHome()" routerLinkActive="active-link">Home</button>
 
     @if (isLoggedIn) {
-      <button
-        mat-button
-        routerLink="/dashboard"
-        routerLinkActive="active-link">
-        Dashboard
-      </button>
+      <button mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</button>
     }
 
-    <button
-      mat-button
-      routerLink="/aboutus"
-      routerLinkActive="active-link">
-      About
-    </button>
+    <button mat-button routerLink="/aboutus" routerLinkActive="active-link">About</button>
 
-    <button
-      mat-button
-      routerLink="/service"
-      routerLinkActive="active-link">
-      Services
-    </button>
+    <button mat-button routerLink="/service" routerLinkActive="active-link">Services</button>
 
-    <button mat-button>
-      Contact
-    </button>
-
+    <button mat-button routerLink="/contact-us" routerLinkActive="active-link">Contact</button>
   </div>
 
   <span class="spacer"></span>
@@ -49,33 +30,19 @@
   <!-- RIGHT SIDE -->
   <div class="right-section desktop-actions">
     @if (isLoggedIn) {
-      <button
-        mat-button
-        class="post-property"
-        routerLink="/ad-post">
-        Post Property
-      </button>
-      <button
-        mat-button
-        class="user-btn"
-        [matMenuTriggerFor]="profileMenu">
-
-       <div class="avatar">
-  {{ username()[0] || 'U' }}
-</div>
+      <button mat-button class="post-property" routerLink="/ad-post">Post Property</button>
+      <button mat-button class="user-btn" [matMenuTriggerFor]="profileMenu">
+        <div class="avatar">
+          {{ username()[0] || 'U' }}
+        </div>
 
         <span class="username">
           {{ username() }}
         </span>
 
-        <mat-icon class="arrow">
-          expand_more
-        </mat-icon>
-
+        <mat-icon class="arrow"> expand_more </mat-icon>
       </button>
-
     } @else {
-
       <!-- <button
         mat-button
         class="post-property"
@@ -84,181 +51,110 @@
       </button> -->
 
       <div class="auth-buttons">
+        <button mat-stroked-button class="login-btn" routerLink="/login">Login</button>
 
-        <button
-          mat-stroked-button
-          class="login-btn"
-          routerLink="/login">
-          Login
-        </button>
-
-        <button
-          mat-raised-button
-          class="register-btn"
-          routerLink="/register">
-          Register
-        </button>
-
+        <button mat-raised-button class="register-btn" routerLink="/register">Register</button>
       </div>
-
     }
-
   </div>
 
   <!-- MOBILE MENU ICON -->
-  <button
-    mat-icon-button
-    class="mobile-menu"
-    (click)="toggleMobileMenu()">
-
+  <button mat-icon-button class="mobile-menu" (click)="toggleMobileMenu()">
     <mat-icon>
       {{ isMobileMenuOpen ? 'close' : 'menu' }}
     </mat-icon>
-
   </button>
-
 </mat-toolbar>
 
 <!-- MOBILE MENU -->
 <!-- MOBILE MENU -->
-<div
-  class="mobile-dropdown"
-  *ngIf="isMobileMenuOpen">
-
-  <button mat-button>
+<div class="mobile-dropdown" *ngIf="isMobileMenuOpen">
+  <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
     {{ Location }}
   </button>
 
+  <button mat-button (click)="backToHome()" routerLinkActive="active-link">Home</button>
+  <button mat-button routerLink="/contact-us" routerLinkActive="active-link">Contact</button>
+
   <!-- LOGGED IN USER -->
   @if (isLoggedIn) {
+    <button mat-button routerLink="/dashboard" (click)="toggleMobileMenu()">Dashboard</button>
 
-    <button
-      mat-button
-      routerLink="/dashboard"
-      (click)="toggleMobileMenu()">
-      Dashboard
-    </button>
+    <button mat-button routerLink="/ad-post" (click)="toggleMobileMenu()">Post Property</button>
 
-    <button
-      mat-button
-      routerLink="/ad-post"
-      (click)="toggleMobileMenu()">
-      Post Property
-    </button>
+    <button mat-button (click)="navToProfile(); toggleMobileMenu()">Profile</button>
 
-    <button
-      mat-button
-      (click)="navToProfile(); toggleMobileMenu()">
-      Profile
-    </button>
-
-    <button
-      mat-button
-      routerLink="/service"
-      (click)="toggleMobileMenu()">
-      Services
-    </button>
-
-    <button
-      mat-button
-      routerLink="/aboutus"
-      (click)="toggleMobileMenu()">
-      About
-    </button>
-
-    <button
-      mat-button
-      (click)="logout(); toggleMobileMenu()">
-      Logout
-    </button>
-
+    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">Services</button>
+    <button mat-button (click)="logout(); toggleMobileMenu()">Logout</button>
   }
 
   <!-- LOGGED OUT USER -->
   @else {
+    <button mat-button routerLink="/aboutus" (click)="toggleMobileMenu()">About</button>
 
-    <button
-      mat-button
-      routerLink="/aboutus"
-      (click)="toggleMobileMenu()">
-      About
-    </button>
+    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">Services</button>
 
-    <button
-      mat-button
-      routerLink="/service"
-      (click)="toggleMobileMenu()">
-      Services
-    </button>
+    <button mat-button routerLink="/login" (click)="toggleMobileMenu()">Login</button>
 
-    <button
-      mat-button
-      routerLink="/login"
-      (click)="toggleMobileMenu()">
-      Login
-    </button>
-
-    <button
-      mat-button
-      routerLink="/register"
-      (click)="toggleMobileMenu()">
-      Register
-    </button>
-
+    <button mat-button routerLink="/register" (click)="toggleMobileMenu()">Register</button>
   }
-
 </div>
 
 <!-- PROFILE MENU -->
-<mat-menu
-  #profileMenu="matMenu"
-  class="profile-menu">
-
+<mat-menu #profileMenu="matMenu" class="profile-menu">
   <div class="menu-header">
-
     <div class="avatar big">
-  {{ username()[0] || 'U' }}
-</div>
+      {{ username()[0] || 'U' }}
+    </div>
 
     <div>
       <div class="menu-name">
         {{ username() || 'Guest' }}
       </div>
 
-      <div class="menu-sub">
-        User
-      </div>
+      <div class="menu-sub">User</div>
     </div>
-
   </div>
 
   <mat-divider></mat-divider>
 
-  <button
-    mat-menu-item
-    (click)="navToProfile()">
-
+  <button mat-menu-item (click)="navToProfile()">
     <mat-icon>person</mat-icon>
     <span>Profile</span>
-
   </button>
 
   <button mat-menu-item>
-
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
-
   </button>
 
   <mat-divider></mat-divider>
 
-  <button
-    mat-menu-item
-    (click)="logout()">
-
+  <button mat-menu-item (click)="logout()">
     <mat-icon>logout</mat-icon>
     <span>Logout</span>
-
   </button>
-
 </mat-menu>
+
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Full Address</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {{ fullAddress }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,4 +22,8 @@ export class RealEstateApiService {
       params : {id : id}
     })
   }
+
+  savePosting(data:any):Observable<any>{
+    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/save-post`,data);
+  }
 }

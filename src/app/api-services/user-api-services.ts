@@ -18,5 +18,10 @@ export class UserApiServices {
    register(user:any):Observable<any>{
     return this.http.post<any>(`${environment.serverPort}/${this._apiUrl}/register`, user)
   }
+
+  sendCoordsToBackend(coords: { latitude: number, longitude: number }):Observable<any> {
+    return this.http.post<any>(`${environment.serverPort}/${this._apiUrl}/get-address`, coords)
+  }
+
 }
  

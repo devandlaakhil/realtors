@@ -27,5 +27,9 @@ export const routes: Routes = [
     {
         path:'property/:id',
         loadComponent : () => import('../app/pages/home-components/product-view-component/product-view-component').then(m => m.ProductViewComponent)
+    },
+    {
+        path: 'contact-us',
+        loadComponent: () => import('../app/pages/services-components/contact-us-component/contact-us-component').then(m => m.ContactUsComponent)
     }
 ];

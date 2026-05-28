@@ -8,21 +8,25 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth-services/auth-services';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
+import { UserApiServices } from '../../../api-services/user-api-services';
 
 @Component({
   selector: 'app-header-component',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     MatToolbarModule,
     MatButtonModule,
     RouterModule,
     MatMenuModule,
     MatIcon,
-    MatDivider,],
+    MatDivider,
+    
+  ],
   templateUrl: './header-component.html',
   styleUrl: './header-component.css',
+  preserveWhitespaces: true
 })
 export class HeaderComponent {
-
   username = signal<string>('');
   router = inject(Router);
   authService = inject(AuthService);
@@ -32,29 +36,50 @@ export class HeaderComponent {
   isMobile = false;
   @Output() menuClick = new EventEmitter<void>();
   isMobileMenuOpen = false;
-  Location: string = 'Hyderabad';
-  cdr = inject(ChangeDetectorRef)
+  Location: string = '';
+  fullAddress:string = '';
+  cdr = inject(ChangeDetectorRef);
+  userApiSrc = inject(UserApiServices);
 
   ngOnInit(): void {
-
-  this.dashBoardService.loginStatus$
-    .subscribe(status => {
-
+    this.dashBoardService.loginStatus$.subscribe((status) => {
       this.isLoggedIn = status;
-
-      console.log(this.isLoggedIn);
-
       if (status) {
         this.getuser();
       }
     });
-}
+    this.getUserLocation();
+  }
 
   getuser() {
     const user = this.authService.getUser();
-
     this.userId.set(user?.id || '');
     this.username.set(user?.name || '');
+  }
+
+  getUserLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          // Send these coordinates to your Node.js backend
+          this.userApiSrc.sendCoordsToBackend(coords).subscribe((response:any) => {
+            this.Location = response.raw.neighbourhood;
+            this.fullAddress= response.address;
+            this.cdr.detectChanges();
+          });
+        },
+        (error) => {
+          console.error('Error getting location', error);
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
   }
 
   logout() {
@@ -81,6 +106,6 @@ export class HeaderComponent {
   }
 
   backToHome() {
-    this.router.navigate(['/'])
+    this.router.navigate(['/']);
   }
 }
