@@ -1,0 +1,36 @@
+<section class="about-wrapper">
+  <!-- Soft Sun-burst Gradient Blobs for background texture -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Main Hero Block -->
+  <div class="hero-container">
+    <span class="badge">Who We Are</span>
+    <h1 class="gradient-text">Discover Your Perfect <br>Space & Property</h1>
+    <p class="lead-text">
+      Welcome to <strong>{{ companyName }}</strong>, a bright and modern real estate platform. We break down the barriers of traditional property hunting, allowing anyone to seamlessly list, explore, and buy lands, plots, and apartments directly.
+    </p>
+  </div>
+
+  <!-- Bright Colorful Features Grid -->
+  <div class="cards-grid">
+    <div class="card" *ngFor="let item of features; let i = index" [attr.data-index]="i">
+      <div class="icon-box">
+        <span class="emoji-icon">{{ item.icon }}</span>
+      </div>
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.desc }}</p>
+      <div class="card-border-glow"></div>
+    </div>
+  </div>
+
+  <!-- Engaging Call To Action Footer Banner -->
+  <div class="trust-banner">
+    <h2>Ready to post or find your next layout?</h2>
+    <p>Join thousands of property owners listing their plots and apartments today.</p>
+    <div class="action-buttons">
+      <button class="btn btn-primary" (click)="backToHome()">Browse All Listings</button>
+      <button class="btn btn-secondary" routerLink="/ad-post">Post Your Site Now</button>
+    </div>
+  </div>
+</section>

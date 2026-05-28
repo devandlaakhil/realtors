@@ -18,7 +18,7 @@
       <button mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</button>
     }
 
-    <button mat-button routerLink="/aboutus" routerLinkActive="active-link">About</button>
+    <button mat-button routerLink="/about" routerLinkActive="active-link">About</button>
 
     <button mat-button routerLink="/service" routerLinkActive="active-link">Services</button>
 
@@ -90,7 +90,7 @@
 
   <!-- LOGGED OUT USER -->
   @else {
-    <button mat-button routerLink="/aboutus" (click)="toggleMobileMenu()">About</button>
+    <button mat-button routerLink="/about" (click)="toggleMobileMenu()">About</button>
 
     <button mat-button routerLink="/service" (click)="toggleMobileMenu()">Services</button>
 
