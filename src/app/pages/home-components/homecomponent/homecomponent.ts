@@ -12,26 +12,29 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-homecomponent',
-  imports: [CommonModule,
-     RouterModule,
-      MatFormFieldModule,
-  MatInputModule,
-  MatSelectModule,
-  MatButtonModule,
-  MatIconModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+  ],
   templateUrl: './homecomponent.html',
   styleUrl: './homecomponent.css',
 })
 export class Homecomponent implements OnInit {
-
-  properties: any = [];
+  properties: any[] = [];
+  filteredProperties: any[] = [];
   realEstateApiSrv = inject(RealEstateApiService);
   destroy$ = new Subject<any>();
   toastr = inject(ToastrService);
   cdr = inject(ChangeDetectorRef);
+  selectedType: string = '';
+  selectedBudget: string = '';
 
-
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.getAllProperites();
   }
 
@@ -42,6 +45,7 @@ export class Homecomponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.properties = res.data;
+          this.filteredProperties = [...this.properties];
           this.cdr.detectChanges();
         },
         error: () => {
@@ -57,5 +61,45 @@ export class Homecomponent implements OnInit {
     const mainImage = images.find((img) => img.type === 'main');
     const image = mainImage?.url || images[0]?.url;
     return image;
+  }
+
+  onTypeChange(type: string) {
+    this.selectedType = type;
+    this.filterProperties();
+  }
+
+  onBudgetChange(budget: string) {
+    this.selectedBudget = budget;
+    this.filterProperties();
+  }
+
+  filterProperties() {
+    this.filteredProperties = this.properties.filter((property: any) => {
+      // Property Type Filter
+      const matchesType =
+        !this.selectedType ||
+        property.propertyType?.toLowerCase() === this.selectedType.toLowerCase();
+
+      // Budget Filter
+      const priceInLakhs = property.price / 100000; // convert to Lakhs
+
+      let matchesBudget = true;
+
+      switch (this.selectedBudget) {
+        case '10-50':
+          matchesBudget = priceInLakhs >= 10 && priceInLakhs <= 50;
+          break;
+
+        case '50-100':
+          matchesBudget = priceInLakhs > 50 && priceInLakhs <= 100;
+          break;
+
+        case '100+':
+          matchesBudget = priceInLakhs > 100;
+          break;
+      }
+
+      return matchesType && matchesBudget;
+    });
   }
 }

@@ -17,7 +17,7 @@
   <mat-form-field appearance="outline" class="filter-field">
     <mat-label>Property Type</mat-label>
 
-    <mat-select>
+    <mat-select (selectionChange)="onTypeChange($event.value)">
       <mat-option value="">
         All Properties
       </mat-option>
@@ -44,7 +44,7 @@
   <mat-form-field appearance="outline" class="filter-field">
     <mat-label>Budget</mat-label>
 
-    <mat-select>
+    <mat-select (selectionChange)="onBudgetChange($event.value)">
       <mat-option value="">
         Any Budget
       </mat-option>
@@ -76,7 +76,7 @@
 
     <!-- PROPERTY GRID -->
     <div class="property-grid">
-        <div class="property-card" *ngFor="let property of properties">
+        <div class="property-card" *ngFor="let property of filteredProperties">
             <!-- IMAGE -->
             <div class="image-container">
                 <img *ngIf="getMainImage(property.images)" [src]="getMainImage(property.images)" alt="property" />

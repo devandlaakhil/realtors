@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    serverPort: 'http://localhost:8080'
+    serverPort: 'https://cashbook-server.onrender.com'
 };
