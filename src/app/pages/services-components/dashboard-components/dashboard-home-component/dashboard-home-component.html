@@ -1,0 +1,71 @@
+<!-- Main Viewport Section -->
+  <main class="main-content">
+    
+    <!-- Unified Top Navigation Bar 
+    <header class="top-navbar">
+      <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
+      <div class="welcome-text">
+        <h1>Namaste, {{ username() }}</h1>
+        <p>Here is your real estate performance overview.</p>
+      </div>
+      <div class="profile-pill">
+        <span class="verification-tag">✓ RERA Registered Agent</span>
+      </div>
+    </header>
+    -->
+
+    <!-- Content Scoped Container -->
+    <div class="dashboard-body">
+      
+      <!-- Key Analytics Metrics Row (Grid) -->
+      <section class="metrics-grid">
+        <div class="metric-card" *ngFor="let item of metrics" [ngClass]="item.colorClass">
+          <div class="metric-header">
+            <span class="metric-title">{{ item.title }}</span>
+            <span class="metric-icon">{{ item.icon }}</span>
+          </div>
+          <div class="metric-value">{{ item.value }}</div>
+          <div class="metric-subtext">{{ item.subtext }}</div>
+        </div>
+      </section>
+
+      <!-- Split Layout: Main Information & Secondary System Sidebar -->
+      <div class="split-layout">
+        
+        <!-- Primary Table: Buyer Leads -->
+        <section class="content-panel main-panel">
+          <div class="panel-header">
+            <h2>Recent Local Leads</h2>
+            <button class="text-link-btn">View All Enquiries</button>
+          </div>
+          
+          <div class="leads-list">
+            <div class="lead-row" *ngFor="let lead of recentLeads">
+              <div class="lead-info">
+                <h3>{{ lead.name }} <span class="rera-badge" [class.pending]="lead.reraStatus === 'Pending'">{{ lead.reraStatus }}</span></h3>
+                <p class="lead-requirement">{{ lead.type }}</p>
+                <p class="lead-meta">📍 {{ lead.location }} • {{ lead.time }}</p>
+              </div>
+              <div class="lead-actions">
+                <a [href]="'https://wa.me' + lead.phone" target="_blank" class="action-btn whatsapp-btn">
+                  💬 WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Secondary Information Panel: Ad Performance & Compliance Info -->
+        <section class="content-panel side-panel">
+          <div class="panel-header">
+            <h2>Compliance Alerts</h2>
+          </div>
+          <div class="compliance-box warning">
+            <h4>⚠️ RERA ID Mandatory</h4>
+            <p>Ensure all your listed residential apartments in Maharashtra display valid MahaRERA numbers to retain direct buyer contact fields.</p>
+          </div>
+          <div class="compliance-box premium">
+            <h4>🚀 Boost Visibility</h4>
+            <p>Get up to 5x higher reach on your plotted development lands near metro corridors using UPI instant recharges.</p>
+          </div>
+        </section>
