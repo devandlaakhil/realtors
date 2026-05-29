@@ -1,0 +1,55 @@
+<div class="property-grid">
+  <div class="property-card" *ngFor="let property of properties">
+    <!-- Image Section -->
+    <div class="image-wrapper">
+      <img
+        [src]="property.images?.[0]?.url || 'assets/no-image.jpg'"
+        alt="property"
+        class="property-image"
+      />
+      <span class="status-badge sale">
+        {{ property.status }}
+      </span>
+      <span
+        class="active-badge"
+        [ngClass]="{
+          active: property.isActive,
+          inactive: !property.isActive,
+        }"
+      >
+        {{ property.isActive ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+    <!-- Content -->
+    <div class="property-content">
+      <div class="title-section">
+        <h3>{{ property.title }}</h3>
+        <p>{{ property.propertyType }}</p>
+      </div>
+      <!-- Price -->
+      <div class="price">₹ {{ property.price | number }}</div>
+      <!-- Location -->
+      <div class="location">
+        📍 {{ property.location?.city }},
+        {{ property.location?.address }}
+      </div>
+      <!-- Description -->
+      <p class="description">
+        {{ property.description }}
+      </p>
+      <!-- Details -->
+      <div class="details">
+        <div class="detail-item">🛏 {{ property.details?.bedrooms }} Beds</div>
+        <div class="detail-item">🚿 {{ property.details?.bathrooms }} Baths</div>
+        <div class="detail-item">📐 {{ property.details?.area }} sqft</div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn edit-btn">Edit</button>
+        <button class="btn sold-btn">Sold Out</button>
+        <button class="btn delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
