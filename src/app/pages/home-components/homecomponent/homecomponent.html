@@ -19,7 +19,7 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Property Type</mat-label>
 
-      <mat-select (selectionChange)="onTypeChange($event.value)">
+      <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
         <mat-option value=""> All Properties </mat-option>
 
         <mat-option value="apartment"> Apartment </mat-option>
@@ -36,7 +36,7 @@
     <mat-form-field appearance="outline" class="filter-field">
       <mat-label>Budget</mat-label>
 
-      <mat-select (selectionChange)="onBudgetChange($event.value)">
+      <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
         <mat-option value=""> Any Budget </mat-option>
 
         <mat-option value="10-50"> ₹10L - ₹50L </mat-option>

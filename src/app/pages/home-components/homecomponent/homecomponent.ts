@@ -36,6 +36,7 @@ export class Homecomponent implements OnInit {
   selectedType: string = '';
   selectedBudget: string = '';
   searchControl = new FormControl('');
+  searchEntered:boolean = false;
 
   ngOnInit(): void {
     this.getAllProperites();
@@ -61,7 +62,7 @@ export class Homecomponent implements OnInit {
   setupSearch() {
     this.searchControl.valueChanges.subscribe((value) => {
       const searchText = (value || '').toLowerCase().trim();
-
+      searchText != "" ? this.searchEntered = true : this.searchEntered = false;      
       this.filteredProperties = this.properties.filter(
         (property) =>
           property.title?.toLowerCase().includes(searchText) ||
@@ -84,11 +85,13 @@ export class Homecomponent implements OnInit {
 
   onTypeChange(type: string) {
     this.selectedType = type;
+    this.selectedType != "" ||  this.selectedBudget != "" ? this.searchControl.disable(): this.searchControl.enable();
     this.filterProperties();
   }
 
   onBudgetChange(budget: string) {
     this.selectedBudget = budget;
+    this.selectedBudget != "" || this.selectedType != "" ? this.searchControl.disable(): this.searchControl.enable();
     this.filterProperties();
   }
 
