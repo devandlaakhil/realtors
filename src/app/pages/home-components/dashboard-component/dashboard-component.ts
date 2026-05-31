@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth-services/auth-services';
 import { Router, RouterModule } from '@angular/router';
 
-
 @Component({
   selector: 'app-dashboard-component',
   imports: [CommonModule, RouterModule],
@@ -15,9 +14,7 @@ export class DashboardComponent implements OnInit {
   username = signal<string>('');
   authService = inject(AuthService);
   route = inject(Router);
-  
-
-
+  activeMenu = 'home';
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
@@ -30,15 +27,21 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateTo(value: string) {
+    this.activeMenu = value;
+
     switch (value) {
-      case 'home' : 
+      case 'home':
         this.route.navigateByUrl('/dashboard/home');
         break;
+
       case 'posts':
         this.route.navigateByUrl('/dashboard/my-posts');
         break;
 
-      default:
+      case 'enquiries':
+        break;
+
+      case 'settings':
         break;
     }
   }

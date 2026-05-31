@@ -18,7 +18,6 @@ export class MyPostingsComponent implements OnInit{
   tostrService = inject(ToastrService);
   cdr = inject(ChangeDetectorRef);
   router = inject(Router);
-
   ngOnInit(): void {
     this.getMyPostings();
   }
@@ -46,7 +45,8 @@ export class MyPostingsComponent implements OnInit{
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next : () => {
-        this.tostrService.success('Success','Success')
+        this.tostrService.success('Success','Success');
+        this.getMyPostings();
       },
       error : () => {
         this.tostrService.error('Something went wrong','Fail');

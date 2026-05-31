@@ -1,5 +1,4 @@
 <div class="dashboard-layout">
-
   <!-- Sidebar -->
   <aside class="sidebar" [class.mobile-open]="isMobileMenuOpen">
     <div class="sidebar-brand">
@@ -8,19 +7,27 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="nav-item active" (click)="navigateTo('home')">
+      <a class="nav-item" [class.active]="activeMenu === 'home'" (click)="navigateTo('home')">
         📊 Dashboard
       </a>
 
-      <a class="nav-item" (click)="navigateTo('posts')">
+      <a class="nav-item" [class.active]="activeMenu === 'posts'" (click)="navigateTo('posts')">
         🏗️ My Properties
       </a>
 
-      <a class="nav-item" (click)="navigateTo('enquiries')">
+      <a
+        class="nav-item"
+        [class.active]="activeMenu === 'enquiries'"
+        (click)="navigateTo('enquiries')"
+      >
         📥 Enquiries
       </a>
 
-      <a class="nav-item" (click)="navigateTo('settings')">
+      <a
+        class="nav-item"
+        [class.active]="activeMenu === 'settings'"
+        (click)="navigateTo('settings')"
+      >
         ⚙️ Settings
       </a>
     </nav>
@@ -28,7 +35,6 @@
 
   <!-- Main -->
   <main class="main-content">
-
     <!-- Top Navbar -->
     <header class="top-navbar">
       <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
@@ -39,9 +45,7 @@
       </div>
 
       <div class="profile-pill">
-        <span class="verification-tag">
-          ✓ RERA Registered Agent
-        </span>
+        <span class="verification-tag"> ✓ RERA Registered Agent </span>
       </div>
     </header>
 
@@ -49,6 +53,5 @@
     <div class="dashboard-body">
       <router-outlet></router-outlet>
     </div>
-
   </main>
 </div>

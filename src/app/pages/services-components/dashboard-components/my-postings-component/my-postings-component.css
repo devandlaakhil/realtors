@@ -232,3 +232,12 @@
     font-size: 12px;
   }
 }
+
+.sold-out-card {
+  opacity: 0.65;
+}
+
+.edit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -20,7 +20,8 @@
 /* --- SIDEBAR SYSTEM (Desktop Only by Default) --- */
 .sidebar {
   width: var(--sidebar-width);
-  background: #0f172a; /* Sophisticated dark theme contrast sidebar */
+  background: #0f172a;
+  /* Sophisticated dark theme contrast sidebar */
   color: #fff;
   padding: 24px;
   display: flex;
@@ -29,18 +30,27 @@
   height: 100vh;
   z-index: 100;
   transition: transform 0.3s ease-in-out;
+  margin-top: 60px;
 }
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
 .sidebar-brand {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
 }
+
 .sidebar-brand h2 {
   font-size: 1.4rem;
   margin: 0;
   font-weight: 800;
 }
+
 .sidebar-brand h2 span {
   color: var(--primary-blue);
   font-size: 0.8rem;
@@ -49,14 +59,19 @@
   border-radius: 4px;
   margin-left: 4px;
 }
-.close-menu-btn, .hamburger-btn {
-  display: none; /* Hidden on desktop viewports */
+
+.close-menu-btn,
+.hamburger-btn {
+  display: none;
+  /* Hidden on desktop viewports */
 }
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
 .nav-item {
   color: #94a3b8;
   text-decoration: none;
@@ -68,10 +83,13 @@
   justify-content: space-between;
   align-items: center;
 }
-.nav-item:hover, .nav-item.active {
+
+.nav-item:hover,
+.nav-item.active {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
+
 .badge-count {
   background: #ef4444;
   color: #fff;
@@ -83,9 +101,11 @@
 /* --- MAIN WINDOW FRAME WORK --- */
 .main-content {
   flex: 1;
-  margin-left: var(--sidebar-width); /* Offsets sidebar space on desktop */
-  min-width: 0; 
+  margin-left: var(--sidebar-width);
+  /* Offsets sidebar space on desktop */
+  min-width: 0;
 }
+
 .top-navbar {
   background: var(--panel-bg);
   padding: 0px 40px;
@@ -93,17 +113,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 70px;
+  margin-top: 60px;
 }
+
 .welcome-text h1 {
   font-size: 1.5rem;
   margin: 0 0 4px 0;
 }
+
 .welcome-text p {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.9rem;
 }
+
 .verification-tag {
   background: #f0fdf4;
   color: #16a34a;
@@ -125,13 +148,15 @@
   gap: 24px;
   margin-bottom: 32px;
 }
+
 .metric-card {
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 24px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
+
 .metric-header {
   display: flex;
   justify-content: space-between;
@@ -140,20 +165,30 @@
   font-weight: 500;
   margin-bottom: 12px;
 }
+
 .metric-value {
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 4px;
 }
+
 .metric-subtext {
   font-size: 0.8rem;
   color: var(--text-muted);
 }
 
 /* Color Accent Variations for Dashboard Cards */
-.blue-accent { border-left: 5px solid #3b82f6; }
-.emerald-accent { border-left: 5px solid #10b981; }
-.amber-accent { border-left: 5px solid #f59e0b; }
+.blue-accent {
+  border-left: 5px solid #3b82f6;
+}
+
+.emerald-accent {
+  border-left: 5px solid #10b981;
+}
+
+.amber-accent {
+  border-left: 5px solid #f59e0b;
+}
 
 /* --- TWO COLUMN CONTENT SPLIT --- */
 .split-layout {
@@ -161,22 +196,26 @@
   grid-template-columns: 2fr 1fr;
   gap: 24px;
 }
+
 .content-panel {
   background: var(--panel-bg);
   border: 1px solid var(--border-color);
   border-radius: 24px;
   padding: 28px;
 }
+
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
+
 .panel-header h2 {
   font-size: 1.15rem;
   margin: 0;
 }
+
 .text-link-btn {
   background: none;
   border: none;
@@ -192,6 +231,7 @@
   flex-direction: column;
   gap: 16px;
 }
+
 .lead-row {
   display: flex;
   justify-content: space-between;
@@ -201,9 +241,11 @@
   border-radius: 16px;
   transition: background 0.2s ease;
 }
+
 .lead-row:hover {
   background: var(--bg-primary);
 }
+
 .lead-info h3 {
   font-size: 1rem;
   margin: 0 0 6px 0;
@@ -211,6 +253,7 @@
   align-items: center;
   gap: 8px;
 }
+
 .rera-badge {
   font-size: 0.7rem;
   background: #d1fae5;
@@ -218,20 +261,24 @@
   padding: 2px 8px;
   border-radius: 4px;
 }
+
 .rera-badge.pending {
   background: #fee2e2;
   color: #991b1b;
 }
+
 .lead-requirement {
   margin: 0 0 4px 0;
   font-size: 0.9rem;
   font-weight: 500;
 }
+
 .lead-meta {
   margin: 0;
   font-size: 0.8rem;
   color: var(--text-muted);
 }
+
 .whatsapp-btn {
   background: #25d366;
   color: white;
@@ -250,10 +297,27 @@
   font-size: 0.85rem;
   line-height: 1.5;
 }
-.compliance-box h4 { margin: 0 0 6px 0; font-size: 0.9rem;}
-.compliance-box p { margin: 0; }
-.compliance-box.warning { background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; }
-.compliance-box.premium { background: #eff6ff; border: 1px solid #dbeafe; color: #1e40af; }
+
+.compliance-box h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.9rem;
+}
+
+.compliance-box p {
+  margin: 0;
+}
+
+.compliance-box.warning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+
+.compliance-box.premium {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  color: #1e40af;
+}
 
 
 /* =========================================
@@ -263,25 +327,34 @@
 /* --- TABLETS & SMALL LAPTOPS (Under 1024px) --- */
 @media (max-width: 1024px) {
   .split-layout {
-    grid-template-columns: 1fr; /* Stacks layout components vertically */
+    grid-template-columns: 1fr;
+    /* Stacks layout components vertically */
   }
 }
 
 /* --- MOBILE DEVICES (Under 768px) --- */
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0; /* Clear sidebar spacing gap override */
+    margin-left: 0;
+    /* Clear sidebar spacing gap override */
   }
-  
+
+  .nav-item.active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+
   /* Slide-out Mobile Sidebar Override Configurations */
   .sidebar {
     transform: translateX(-100%);
-    box-shadow: 20px 0 40px rgba(0,0,0,0.3);
+    box-shadow: 20px 0 40px rgba(0, 0, 0, 0.3);
+    margin-top: 50px;
   }
+
   .sidebar.mobile-open {
     transform: translateX(0);
   }
-  
+
   .close-menu-btn {
     display: block;
     background: none;
@@ -290,11 +363,12 @@
     font-size: 1.5rem;
     cursor: pointer;
   }
-  
+
   /* Interface Header Navigation Controls updates */
   .top-navbar {
     padding: 16px 20px;
   }
+
   .hamburger-btn {
     display: block;
     background: none;
@@ -304,25 +378,30 @@
     cursor: pointer;
     margin-right: 16px;
   }
+
   .welcome-text h1 {
     font-size: 1.2rem;
   }
+
   .profile-pill {
-    display: none; /* Hide non-critical header pieces on small screens */
+    display: none;
+    /* Hide non-critical header pieces on small screens */
   }
-  
+
   .dashboard-body {
     padding: 20px;
   }
-  
+
   .lead-row {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
+
   .lead-actions {
     width: 100%;
   }
+
   .whatsapp-btn {
     display: block;
     text-align: center;
