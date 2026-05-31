@@ -33,6 +33,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'ad-post/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../app/pages/services-components/ad-posting-services-component/ad-posting-services-component').then(
+        (m) => m.AdPostingServicesComponent,
+      ),
+  },
+  {
     path: 'dashboard',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -73,9 +81,12 @@ export const routes: Routes = [
           ),
       },
       {
-        path : 'home',
-        loadComponent : () => import('../app/pages/services-components/dashboard-components/dashboard-home-component/dashboard-home-component').then(m => m.DashboardHomeComponent)
-      }
+        path: 'home',
+        loadComponent: () =>
+          import('../app/pages/services-components/dashboard-components/dashboard-home-component/dashboard-home-component').then(
+            (m) => m.DashboardHomeComponent,
+          ),
+      },
     ],
   },
 ];

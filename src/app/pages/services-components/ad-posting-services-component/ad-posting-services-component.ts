@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { RealEstateApiService } from '../../../api-services/realestate-api-services';
@@ -17,7 +17,7 @@ enum Property_Type {
   HOUSE = 'House',
   APARTMENT = 'Apartment',
   PLOT = 'Plot',
-  SHOPE = 'Shop'
+  SHOPE = 'Shop',
 }
 
 enum Location {
@@ -37,14 +37,16 @@ enum status {
 
 @Component({
   selector: 'app-ad-posting-services-component',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
     ReactiveFormsModule,
-    MatCheckboxModule,],
+    MatCheckboxModule,
+  ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
 })
@@ -77,9 +79,21 @@ export class AdPostingServicesComponent implements OnInit {
   router = inject(Router);
   selectedVideo!: File;
   videoPreview: string | null = null;
+  route = inject(ActivatedRoute);
+  isEditMode = false;
+  propertyId = '';
 
   ngOnInit(): void {
     this.initForm();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+
+      if (id) {
+        this.isEditMode = true;
+        this.propertyId = id;
+        this.loadProperty(id);
+      }
+    });
   }
 
   initForm() {
@@ -117,6 +131,26 @@ export class AdPostingServicesComponent implements OnInit {
       }),
 
       images: [[]],
+    });
+  }
+
+  loadProperty(id: string) {
+    this.realestateApiSrv.getProduct(id).subscribe({
+      next: (res:any) => {
+        const property = res.data;
+
+        this.propertyForm.patchValue(property);
+
+        // Populate image previews
+        property.images?.forEach((img: any) => {
+          this.imagePreview[img.type] = img.url;
+        });
+
+        // Populate video preview
+        if (property.videos?.length) {
+          this.videoPreview = property.videos[0].url;
+        }
+      },
     });
   }
 
@@ -189,78 +223,57 @@ export class AdPostingServicesComponent implements OnInit {
   }
 
   submit() {
-  const formData = new FormData();
-  const formValue = this.propertyForm.value;
+    const formData = new FormData();
+    const formValue = this.propertyForm.value;
 
-  // NORMAL FIELDS
-  formData.append('title', formValue.title);
-  formData.append('description', formValue.description);
-  formData.append('propertyType', formValue.propertyType);
-  formData.append('status', formValue.status);
-  formData.append('price', formValue.price);
-  formData.append('priceType', formValue.priceType);
-  formData.append('negotiable', formValue.negotiable);
+    // NORMAL FIELDS
+    formData.append('title', formValue.title);
+    formData.append('description', formValue.description);
+    formData.append('propertyType', formValue.propertyType);
+    formData.append('status', formValue.status);
+    formData.append('price', formValue.price);
+    formData.append('priceType', formValue.priceType);
+    formData.append('negotiable', formValue.negotiable);
 
-  // VIDEO URL
-  formData.append(
-    'videoUrl',
-    formValue.videoUrl || ''
-  );
+    // VIDEO URL
+    formData.append('videoUrl', formValue.videoUrl || '');
 
-  // NESTED OBJECTS
-  formData.append(
-    'location',
-    JSON.stringify(formValue.location)
-  );
+    // NESTED OBJECTS
+    formData.append('location', JSON.stringify(formValue.location));
 
-  formData.append(
-    'details',
-    JSON.stringify(formValue.details)
-  );
+    formData.append('details', JSON.stringify(formValue.details));
 
-  formData.append(
-    'contact',
-    JSON.stringify(formValue.contact)
-  );
+    formData.append('contact', JSON.stringify(formValue.contact));
 
-  // IMAGES
-  Object.keys(this.images).forEach((type) => {
-    if (this.images[type]) {
-      formData.append('images', this.images[type]);
-      formData.append('imageTypes', type);
-    }
-  });
-
-  // VIDEO FILE
-  if (this.selectedVideo) {
-    formData.append(
-      'propertyVideo',
-      this.selectedVideo
-    );
-  }
-
-  this.realestateApiSrv
-    .savePosting(formData)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        this.propertyForm.reset();
-
-        this.toastr.success(
-          'Property posted successfully',
-          'Success'
-        );
-
-        this.router.navigate(['/']);
-      },
-      error: (err) => {
-        console.log(err);
-
-        this.toastr.error(
-          'Something went wrong',
-          'Fail'
-        );
+    // IMAGES
+    Object.keys(this.images).forEach((type) => {
+      if (this.images[type]) {
+        formData.append('images', this.images[type]);
+        formData.append('imageTypes', type);
       }
     });
+
+    // VIDEO FILE
+    if (this.selectedVideo) {
+      formData.append('propertyVideo', this.selectedVideo);
+    }
+
+    this.realestateApiSrv
+      .savePosting(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.propertyForm.reset();
+
+          this.toastr.success('Property posted successfully', 'Success');
+
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.log(err);
+
+          this.toastr.error('Something went wrong', 'Fail');
+        },
+      });
   }
 }

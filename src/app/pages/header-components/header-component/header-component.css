@@ -10,6 +10,10 @@
   border-bottom: 1px solid #1e293b;
 }
 
+.popup{
+  margin-top: 70px;
+}
+
 /* LEFT */
 .left-section {
   display: flex;
