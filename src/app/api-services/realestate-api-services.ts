@@ -7,31 +7,30 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class RealEstateApiService {
-
-  private _serverPort = environment.serverPort
-  private _apiUrl = 'real-estate'
+  private _serverPort = environment.serverPort;
+  private _apiUrl = 'real-estate';
 
   httpClient = inject(HttpClient);
 
-  getAllList():Observable<any>{
-    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getpropeties`)
+  getAllList(): Observable<any> {
+    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getpropeties`);
   }
 
-  getProduct(id:string):Observable<any>{
-    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getSinglepropety`,{
-      params : {id : id}
-    })
+  getProduct(id: string): Observable<any> {
+    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getSinglepropety`, {
+      params: { id: id },
+    });
   }
 
-  savePosting(data:any):Observable<any>{
-    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/save-post`,data);
+  savePosting(data: any): Observable<any> {
+    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/save-post`, data);
   }
 
-  updatePosting(id:string,data:any):Observable<any>{
-    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/update-post`,id,data);
-  } 
+  updatePosting(id: string, data: FormData): Observable<any> {
+    return this.httpClient.put<any>(`${this._serverPort}/${this._apiUrl}/update-post/${id}`, data);
+  }
 
-  getMyProperties():Observable<any>{
+  getMyProperties(): Observable<any> {
     return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/get-my-properties`);
   }
 }

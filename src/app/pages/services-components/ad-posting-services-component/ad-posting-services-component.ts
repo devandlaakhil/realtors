@@ -180,22 +180,17 @@ export class AdPostingServicesComponent implements OnInit {
   onImageSelect(event: any, type: string) {
     const file = event.target.files[0];
     if (!file) return;
-
     if (file.size > 2 * 1024 * 1024) {
       alert('Image must be less than 2MB');
       return;
     }
-
     // count images
     const totalImages = Object.values(this.images).filter((img) => img !== null).length;
-
     if (!this.images[type] && totalImages >= 5) {
       alert('Maximum 5 images allowed');
       return;
     }
-
     this.images[type] = file;
-
     // ⚡ INSTANT PREVIEW (NO LAG)
     this.imagePreview[type] = URL.createObjectURL(file);
   }
@@ -205,30 +200,24 @@ export class AdPostingServicesComponent implements OnInit {
     if (this.imagePreview[type] && this.imagePreview[type].startsWith('blob:')) {
       URL.revokeObjectURL(this.imagePreview[type]);
     }
-
     this.images[type] = null;
     this.imagePreview[type] = '';
-
     this.existingImages = this.existingImages.filter((img: any) => img.type !== type);
   }
 
   /* IMAGE UPLOAD */
   onFileChange(event: any) {
     const files = event.target.files;
-
     if (files.length > 0) {
       const imageArray: File[] = [];
-
       for (let file of files) {
         imageArray.push(file);
-
         const reader = new FileReader();
         reader.onload = (e: any) => {
           this.imagePreview.push(e.target.result);
         };
         reader.readAsDataURL(file);
       }
-
       this.propertyForm.patchValue({
         images: imageArray,
       });
