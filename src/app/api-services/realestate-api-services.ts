@@ -27,6 +27,10 @@ export class RealEstateApiService {
     return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/save-post`,data);
   }
 
+  updatePosting(id:string,data:any):Observable<any>{
+    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/update-post`,id,data);
+  } 
+
   getMyProperties():Observable<any>{
     return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/get-my-properties`);
   }

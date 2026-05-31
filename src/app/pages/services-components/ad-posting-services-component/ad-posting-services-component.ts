@@ -82,6 +82,8 @@ export class AdPostingServicesComponent implements OnInit {
   route = inject(ActivatedRoute);
   isEditMode = false;
   propertyId = '';
+  existingImages: any[] = [];
+  existingVideos: any[] = [];
 
   ngOnInit(): void {
     this.initForm();
@@ -136,17 +138,38 @@ export class AdPostingServicesComponent implements OnInit {
 
   loadProperty(id: string) {
     this.realestateApiSrv.getProduct(id).subscribe({
-      next: (res:any) => {
+      next: (res: any) => {
         const property = res.data;
 
-        this.propertyForm.patchValue(property);
+        this.propertyForm.patchValue({
+          title: property.title,
+          description: property.description,
+          propertyType: property.propertyType,
+          status: property.status,
 
-        // Populate image previews
+          location: property.location,
+
+          price: property.price,
+          priceType: property.priceType,
+          negotiable: property.negotiable,
+
+          details: property.details,
+
+          contact: property.contact,
+
+          videoUrl: property.videoLink || '',
+        });
+
+        // Existing images
+        this.existingImages = property.images || [];
+
         property.images?.forEach((img: any) => {
           this.imagePreview[img.type] = img.url;
         });
 
-        // Populate video preview
+        // Existing videos
+        this.existingVideos = property.videos || [];
+
         if (property.videos?.length) {
           this.videoPreview = property.videos[0].url;
         }
@@ -179,12 +202,14 @@ export class AdPostingServicesComponent implements OnInit {
 
   /* REMOVE IMAGE */
   removeImage(type: string) {
-    if (this.imagePreview[type]) {
-      URL.revokeObjectURL(this.imagePreview[type]); // cleanup
+    if (this.imagePreview[type] && this.imagePreview[type].startsWith('blob:')) {
+      URL.revokeObjectURL(this.imagePreview[type]);
     }
 
     this.images[type] = null;
     this.imagePreview[type] = '';
+
+    this.existingImages = this.existingImages.filter((img: any) => img.type !== type);
   }
 
   /* IMAGE UPLOAD */
@@ -220,6 +245,8 @@ export class AdPostingServicesComponent implements OnInit {
   removeVideo() {
     this.selectedVideo = null as any;
     this.videoPreview = null;
+
+    this.existingVideos = [];
   }
 
   submit() {
@@ -233,7 +260,7 @@ export class AdPostingServicesComponent implements OnInit {
     formData.append('status', formValue.status);
     formData.append('price', formValue.price);
     formData.append('priceType', formValue.priceType);
-    formData.append('negotiable', formValue.negotiable);
+    formData.append('negotiable', String(formValue.negotiable));
 
     // VIDEO URL
     formData.append('videoUrl', formValue.videoUrl || '');
@@ -245,19 +272,46 @@ export class AdPostingServicesComponent implements OnInit {
 
     formData.append('contact', JSON.stringify(formValue.contact));
 
-    // IMAGES
+    // EXISTING IMAGES
+    formData.append('existingImages', JSON.stringify(this.existingImages));
+
+    // EXISTING VIDEOS
+    formData.append('existingVideos', JSON.stringify(this.existingVideos));
+
+    // NEW IMAGES
     Object.keys(this.images).forEach((type) => {
       if (this.images[type]) {
         formData.append('images', this.images[type]);
+
         formData.append('imageTypes', type);
       }
     });
 
-    // VIDEO FILE
+    // NEW VIDEO
     if (this.selectedVideo) {
       formData.append('propertyVideo', this.selectedVideo);
     }
 
+    // EDIT MODE
+    if (this.isEditMode) {
+      this.realestateApiSrv
+        .updatePosting(this.propertyId, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.toastr.success('Property updated successfully', 'Success');
+
+            this.router.navigate(['/dashboard']);
+          },
+          error: () => {
+            this.toastr.error('Something went wrong', 'Fail');
+          },
+        });
+
+      return;
+    }
+
+    // CREATE MODE
     this.realestateApiSrv
       .savePosting(formData)
       .pipe(takeUntil(this.destroy$))

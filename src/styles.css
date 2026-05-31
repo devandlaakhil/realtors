@@ -22,6 +22,8 @@ body{
     Optional: Ensure content takes up the full screen height 
     min-height: 100vh;
     */
+     padding-top: 10px; 
     box-sizing: border-box;
+    margin-bottom: 70px;
 }
 

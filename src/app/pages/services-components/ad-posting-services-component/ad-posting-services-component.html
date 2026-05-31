@@ -2,7 +2,7 @@
 
 <div class="property-page">
   <form [formGroup]="propertyForm" class="premium-form">
-    <h1 class="title">Post Property</h1>
+    <h1 class="title">{{ isEditMode ? 'Update Property' : 'Post Property' }}</h1>
 
     <!-- OWNER INFO -->
     <div class="card" formGroupName="contact">
