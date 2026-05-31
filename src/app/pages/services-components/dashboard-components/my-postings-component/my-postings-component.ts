@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RealEstateApiService } from '../../../../api-services/realestate-api-services';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -15,6 +15,7 @@ export class MyPostingsComponent implements OnInit{
   realEstateApiSrc = inject(RealEstateApiService);
   destroy$ = new Subject<any>();
   tostrService = inject(ToastrService);
+  cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.getMyPostings();
@@ -26,6 +27,7 @@ export class MyPostingsComponent implements OnInit{
     .subscribe({
       next : (res:any) => {
         this.properties = res;
+        this.cdr.detectChanges();
       },
       error : () => {
         this.tostrService.error('Something went wrong','Fail');
