@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { RealEstateApiService } from '../../../../api-services/realestate-api-services';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 interface Metric {
   title: string;
@@ -24,14 +28,24 @@ interface Lead {
   templateUrl: './dashboard-home-component.html',
   styleUrl: './dashboard-home-component.css',
 })
-export class DashboardHomeComponent {
+export class DashboardHomeComponent implements OnInit {
+  listings: any = {};
+  realEstateApiSrc = inject(RealEstateApiService);
+  destroy$ = new Subject<any>();
+  tostrService = inject(ToastrService);
+  cdr = inject(ChangeDetectorRef);
+  router = inject(Router);
+  subText: string = '';
 
-    // Dashboard Analytics
+  ngOnInit(): void {
+    this.getMyListings();
+  }
+  // Dashboard Analytics
   metrics: Metric[] = [
     {
       title: 'Live Listings',
-      value: '12 Properties',
-      subtext: '8 Apartments, 4 Plots',
+      value: '0 Properties',
+      subtext: '',
       icon: '🏢',
       colorClass: 'blue-accent',
     },
@@ -78,4 +92,31 @@ export class DashboardHomeComponent {
       reraStatus: 'Pending',
     },
   ];
+
+  getMyListings() {
+    this.realEstateApiSrc
+      .getListins()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.listings = res;
+
+          const subText = res.data.propertyTypes
+            .map((item: any) => `${item.count} ${item._id}${item.count > 1 ? 's' : ''}`)
+            .join(', ');
+
+          this.metrics[0] = {
+            ...this.metrics[0],
+            value: `${res.data.totalProperties} Properties`,
+            subtext: subText,
+          };
+
+          this.cdr.detectChanges();
+        },
+
+        error: () => {
+          this.tostrService.error('Something went wrong', 'Fail');
+        },
+      });
+  }
 }

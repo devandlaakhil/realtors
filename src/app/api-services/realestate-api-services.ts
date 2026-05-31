@@ -40,4 +40,8 @@ export class RealEstateApiService {
       {},
     );
   }
+
+  getListins():Observable<any>{
+     return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/get-my-listings`);
+  }
 }

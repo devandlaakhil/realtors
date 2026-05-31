@@ -1,22 +1,7 @@
 <!-- Main Viewport Section -->
   <main class="main-content">
-    
-    <!-- Unified Top Navigation Bar 
-    <header class="top-navbar">
-      <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
-      <div class="welcome-text">
-        <h1>Namaste, {{ username() }}</h1>
-        <p>Here is your real estate performance overview.</p>
-      </div>
-      <div class="profile-pill">
-        <span class="verification-tag">✓ RERA Registered Agent</span>
-      </div>
-    </header>
-    -->
-
     <!-- Content Scoped Container -->
     <div class="dashboard-body">
-      
       <!-- Key Analytics Metrics Row (Grid) -->
       <section class="metrics-grid">
         <div class="metric-card" *ngFor="let item of metrics" [ngClass]="item.colorClass">
