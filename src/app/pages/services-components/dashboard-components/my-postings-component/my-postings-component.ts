@@ -40,4 +40,17 @@ export class MyPostingsComponent implements OnInit{
   edit(property:any){
     this.router.navigate(['/ad-post', property.id]);
   }
+
+  availability(e:string){
+    this.realEstateApiSrc.updateAvailabilityStatus(e)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next : () => {
+        this.tostrService.success('Success','Success')
+      },
+      error : () => {
+        this.tostrService.error('Something went wrong','Fail');
+      }
+    })
+  }
 }

@@ -33,4 +33,11 @@ export class RealEstateApiService {
   getMyProperties(): Observable<any> {
     return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/get-my-properties`);
   }
+
+  updateAvailabilityStatus(id: string): Observable<any> {
+    return this.httpClient.patch<any>(
+      `${this._serverPort}/${this._apiUrl}/update-status/${id}`,
+      {},
+    );
+  }
 }

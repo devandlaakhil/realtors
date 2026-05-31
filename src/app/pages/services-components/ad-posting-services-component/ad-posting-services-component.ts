@@ -21,12 +21,12 @@ enum Property_Type {
 }
 
 enum Location {
-  HYDERABAD = 'hyderabad',
-  GUNTUR = 'guntur',
-  ONGOLE = 'ongole',
-  VIJAYAWADA = 'vijayawada',
-  TIRUPATI = 'tirupati',
-  VIZAG = 'vizag',
+  HYDERABAD = 'Hyderabad',
+  GUNTUR = 'Guntur',
+  ONGOLE = 'Ongole',
+  VIJAYAWADA = 'Vijayawada',
+  TIRUPATI = 'Tirupati',
+  VIZAG = 'Vizag',
 }
 
 enum status {
