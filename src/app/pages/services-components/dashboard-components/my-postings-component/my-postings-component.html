@@ -49,7 +49,7 @@
       <div class="actions">
         <button class="btn edit-btn" (click)="edit(property)"  [disabled]="property.availability === 'sold-out'">Edit</button>
         <button class="btn sold-btn" (click)="availability(property.id)">{{property.availability}}</button>
-        <button class="btn delete-btn">Delete</button>
+        <button class="btn delete-btn" (click)="delete(property.id)">Delete</button>
       </div>
     </div>
   </div>

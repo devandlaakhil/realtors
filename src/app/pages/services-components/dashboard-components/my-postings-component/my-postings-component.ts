@@ -11,8 +11,8 @@ import { Router } from '@angular/router';
   templateUrl: './my-postings-component.html',
   styleUrl: './my-postings-component.css',
 })
-export class MyPostingsComponent implements OnInit{
-  properties:any = [];
+export class MyPostingsComponent implements OnInit {
+  properties: any = [];
   realEstateApiSrc = inject(RealEstateApiService);
   destroy$ = new Subject<any>();
   tostrService = inject(ToastrService);
@@ -22,35 +22,60 @@ export class MyPostingsComponent implements OnInit{
     this.getMyPostings();
   }
 
-  getMyPostings(){
-    this.realEstateApiSrc.getMyProperties()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next : (res:any) => {
-        this.properties = res;
-        this.cdr.detectChanges();
-      },
-      error : () => {
-        this.tostrService.error('Something went wrong','Fail');
-      }
-    })
+  getMyPostings() {
+    this.realEstateApiSrc
+      .getMyProperties()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.properties = res;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.tostrService.error('Something went wrong', 'Fail');
+        },
+      });
   }
 
-  edit(property:any){
+  edit(property: any) {
     this.router.navigate(['/ad-post', property.id]);
   }
 
-  availability(e:string){
-    this.realEstateApiSrc.updateAvailabilityStatus(e)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next : () => {
-        this.tostrService.success('Success','Success');
-        this.getMyPostings();
-      },
-      error : () => {
-        this.tostrService.error('Something went wrong','Fail');
-      }
-    })
+  availability(e: string) {
+    this.realEstateApiSrc
+      .updateAvailabilityStatus(e)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.tostrService.success('Success', 'Success');
+          this.getMyPostings();
+        },
+        error: () => {
+          this.tostrService.error('Something went wrong', 'Fail');
+        },
+      });
+  }
+
+  delete(e: string) {
+    const confirmed = confirm('Are you sure you want to delete this property?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.realEstateApiSrc
+      .deleteMyPost(e)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.properties = this.properties.filter((elem: any) => elem.id !== e);
+
+          this.tostrService.success('Post deleted successfully', 'Success');
+        },
+
+        error: () => {
+          this.tostrService.error('Something went wrong', 'Fail');
+        },
+      });
   }
 }
