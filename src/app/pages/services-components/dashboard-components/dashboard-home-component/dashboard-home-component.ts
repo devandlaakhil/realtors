@@ -50,9 +50,9 @@ export class DashboardHomeComponent implements OnInit {
       colorClass: 'blue-accent',
     },
     {
-      title: 'Total Leads Recieved',
-      value: '248 Buyers',
-      subtext: '+18 new entries today',
+      title: 'Properties Status',
+      value: 'Status',
+      subtext: '',
       icon: '📈',
       colorClass: 'emerald-accent',
     },
@@ -104,11 +104,20 @@ export class DashboardHomeComponent implements OnInit {
           const subText = res.data.propertyTypes
             .map((item: any) => `${item.count} ${item._id}${item.count > 1 ? 's' : ''}`)
             .join(', ');
+          
+           const statusText = Object.entries(res.data.status)
+              .map(([key, value]) => `${value} ${key}`)
+              .join(', ');
 
           this.metrics[0] = {
             ...this.metrics[0],
             value: `${res.data.totalProperties} Properties`,
             subtext: subText,
+          };
+
+          this.metrics[1] = {
+            ...this.metrics[1],
+            subtext: statusText,
           };
 
           this.cdr.detectChanges();
