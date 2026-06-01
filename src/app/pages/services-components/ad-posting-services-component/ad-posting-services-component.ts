@@ -11,12 +11,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { RealEstateApiService } from '../../../api-services/realestate-api-services';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 enum Property_Type {
   VILLA = 'Villa',
   HOUSE = 'House',
   APARTMENT = 'Apartment',
-  PLOT = 'Plot',
+  PLOT = 'Plot/Land',
   SHOPE = 'Shop',
 }
 
@@ -46,6 +47,7 @@ enum status {
     MatIconModule,
     ReactiveFormsModule,
     MatCheckboxModule,
+    MatTooltipModule
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
@@ -84,6 +86,7 @@ export class AdPostingServicesComponent implements OnInit {
   propertyId = '';
   existingImages: any[] = [];
   existingVideos: any[] = [];
+  isPlotOrLand:boolean = false;
 
   ngOnInit(): void {
     this.initForm();
@@ -96,6 +99,29 @@ export class AdPostingServicesComponent implements OnInit {
         this.loadProperty(id);
       }
     });
+    this.propertyForm.get('propertyType')?.valueChanges.subscribe((type) => {
+      this.handlePropertyType(type);
+    });
+  }
+
+  handlePropertyType(type: string) {
+    const details = this.propertyForm.get('details') as FormGroup;
+
+    if (type === 'Plot/Land') {
+      this.isPlotOrLand = true;
+      details.get('bedrooms')?.disable();
+      details.get('bathrooms')?.disable();
+      details.get('floor')?.disable();
+      details.get('totalFloors')?.disable();
+      details.get('furnishing')?.disable();
+    } else {
+      this.isPlotOrLand = false;
+      details.get('bedrooms')?.enable();
+      details.get('bathrooms')?.enable();
+      details.get('floor')?.enable();
+      details.get('totalFloors')?.enable();
+      details.get('furnishing')?.enable();
+    }
   }
 
   initForm() {
