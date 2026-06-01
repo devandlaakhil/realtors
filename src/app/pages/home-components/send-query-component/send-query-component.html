@@ -1,0 +1,50 @@
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="property-info">
+      <h3>{{ property?.title }}</h3>
+      <span>{{ property?.location }}</span>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages">
+    <div
+      *ngFor="let msg of messages"
+      class="message-wrapper"
+      [ngClass]="{
+        'sent-wrapper': msg.senderId === currentUserId,
+        'received-wrapper': msg.senderId !== currentUserId,
+      }"
+    >
+      <div
+        class="message-bubble"
+        [ngClass]="{
+          sent: msg.senderId === currentUserId,
+          received: msg.senderId !== currentUserId,
+        }"
+      >
+        <div class="message-text">
+          {{ msg.message }}
+        </div>
+
+        <div class="message-time">
+          {{ msg.createdAt | date: 'shortTime' }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="chat-input-container">
+    <textarea
+      [(ngModel)]="newMessage"
+      placeholder="Type a message..."
+      rows="1"
+      (keydown.enter)="sendMessage()"
+    >
+    </textarea>
+
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">➤</button>
+  </div>
+</div>

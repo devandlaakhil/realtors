@@ -44,9 +44,17 @@ export class RealEstateApiService {
   getListins(): Observable<any> {
     return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/get-my-listings`);
   }
-  deleteMyPost(id:string):Observable<any>{
-    return this.httpClient.delete<any>(`${this._serverPort}/${this._apiUrl}/delete-my-listings`,{
-      params : {id:id}
+  deleteMyPost(id: string): Observable<any> {
+    return this.httpClient.delete<any>(`${this._serverPort}/${this._apiUrl}/delete-my-listings`, {
+      params: { id: id },
     });
+  }
+
+  sendQuery(data: any): Observable<any> {
+    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/send-message`, data);
+  }
+
+  getMessages(propertyId: string): Observable<any> {
+    return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/messages/${propertyId}`);
   }
 }

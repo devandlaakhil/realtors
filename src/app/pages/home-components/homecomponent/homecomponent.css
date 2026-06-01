@@ -313,27 +313,41 @@
 .view-btn {
   height: 38px;
   padding: 0 16px;
-
   border: none;
   border-radius: 10px;
-
   background:
     linear-gradient(
       135deg,
-      #2563eb,
-      #4f46e5
+      #3970de,
+      #453dda
     );
-
   color: white;
   cursor: pointer;
-
   font-size: 13px;
   font-weight: 600;
-
   transition: 0.3s;
 }
 
-.view-btn:hover {
+.view-btn1 {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      135deg,
+      #4646c1,
+      #5d589c
+    );
+  color: rgb(251, 247, 247);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+
+.view-btn:hover,.view-btn1:hover {
   transform: translateY(-2px);
 
   box-shadow:
