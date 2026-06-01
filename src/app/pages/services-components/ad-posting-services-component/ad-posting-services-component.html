@@ -24,7 +24,7 @@
         <mat-form-field appearance="fill" class="full">
           <mat-label>Email</mat-label>
           <input matInput type="email" formControlName="email" />
-           <mat-error>{{ getError('contact.email') }}</mat-error>
+          <mat-error>{{ getError('contact.email') }}</mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -50,8 +50,8 @@
             <mat-option *ngFor="let type of propertyTypes" [value]="type">
               {{ type }}
             </mat-option>
-            <mat-error>{{ getError('propertyType') }}</mat-error>
           </mat-select>
+          <mat-error>{{ getError('propertyType') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
@@ -121,6 +121,7 @@
           <mat-error>{{ getError('location.pincode') }}</mat-error>
         </mat-form-field>
 
+        <mat-checkbox (change)="onGpsToggle($event)"> Use GPS </mat-checkbox>
         <mat-form-field appearance="fill" class="full">
           <mat-label>Address</mat-label>
 

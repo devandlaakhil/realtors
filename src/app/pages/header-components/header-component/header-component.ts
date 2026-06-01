@@ -9,6 +9,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth-services/auth-services';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
 import { UserApiServices } from '../../../api-services/user-api-services';
+import { CommonServices } from '../../../shared-services/common-services';
 
 @Component({
   selector: 'app-header-component',
@@ -20,11 +21,10 @@ import { UserApiServices } from '../../../api-services/user-api-services';
     MatMenuModule,
     MatIcon,
     MatDivider,
-    
   ],
   templateUrl: './header-component.html',
   styleUrl: './header-component.css',
-  preserveWhitespaces: true
+  preserveWhitespaces: true,
 })
 export class HeaderComponent {
   username = signal<string>('');
@@ -37,9 +37,10 @@ export class HeaderComponent {
   @Output() menuClick = new EventEmitter<void>();
   isMobileMenuOpen = false;
   Location: string = '';
-  fullAddress:string = '';
+  fullAddress: string = '';
   cdr = inject(ChangeDetectorRef);
   userApiSrc = inject(UserApiServices);
+  commonSrv = inject(CommonServices);
 
   ngOnInit(): void {
     this.dashBoardService.loginStatus$.subscribe((status) => {
@@ -63,22 +64,23 @@ export class HeaderComponent {
         (position) => {
           const coords = {
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
+            longitude: position.coords.longitude,
           };
           // Send these coordinates to your Node.js backend
-          this.userApiSrc.sendCoordsToBackend(coords).subscribe((response:any) => {
+          this.userApiSrc.sendCoordsToBackend(coords).subscribe((response: any) => {
             this.Location = response.raw.neighbourhood;
-            this.fullAddress= response.address;
+            this.fullAddress = response.address;
+             this.commonSrv.updateAddress(this.fullAddress);
             this.cdr.detectChanges();
           });
         },
         (error) => {
           console.error('Error getting location', error);
         },
-        { enableHighAccuracy: true, timeout: 5000 }
+        { enableHighAccuracy: true, timeout: 5000 },
       );
     } else {
-      alert("Geolocation is not supported by this browser.");
+      alert('Geolocation is not supported by this browser.');
     }
   }
 

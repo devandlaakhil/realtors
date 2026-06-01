@@ -12,6 +12,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { RealEstateApiService } from '../../../api-services/realestate-api-services';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { CommonServices } from '../../../shared-services/common-services';
+import { take } from 'rxjs/operators';
 
 enum Property_Type {
   VILLA = 'Villa',
@@ -87,6 +90,7 @@ export class AdPostingServicesComponent implements OnInit {
   existingImages: any[] = [];
   existingVideos: any[] = [];
   isPlotOrLand: boolean = false;
+  commonSrv = inject(CommonServices);
 
   ngOnInit(): void {
     this.initForm();
@@ -368,5 +372,16 @@ export class AdPostingServicesComponent implements OnInit {
     }
 
     return '';
+  }
+
+  onGpsToggle(event: MatCheckboxChange) {
+    const details = this.propertyForm.get('location') as FormGroup;
+    if (event.checked) {
+      this.commonSrv.address$.pipe(take(1)).subscribe((data) => {
+        details.get('address')?.patchValue(data);
+      });
+    }else{
+      details.get('address')?.reset();
+    }
   }
 }
