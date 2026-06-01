@@ -47,7 +47,7 @@ enum status {
     MatIconModule,
     ReactiveFormsModule,
     MatCheckboxModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
@@ -86,7 +86,7 @@ export class AdPostingServicesComponent implements OnInit {
   propertyId = '';
   existingImages: any[] = [];
   existingVideos: any[] = [];
-  isPlotOrLand:boolean = false;
+  isPlotOrLand: boolean = false;
 
   ngOnInit(): void {
     this.initForm();
@@ -265,9 +265,15 @@ export class AdPostingServicesComponent implements OnInit {
   }
 
   submit() {
+    if (this.propertyForm.invalid) {
+      this.propertyForm.markAllAsTouched();
+
+      this.toastr.error('Please fill all required fields', 'Validation');
+
+      return;
+    }
     const formData = new FormData();
     const formValue = this.propertyForm.value;
-
     // NORMAL FIELDS
     formData.append('title', formValue.title);
     formData.append('description', formValue.description);
@@ -344,5 +350,23 @@ export class AdPostingServicesComponent implements OnInit {
           this.toastr.error('Something went wrong', 'Fail');
         },
       });
+  }
+
+  getError(controlName: string): string {
+    const control = this.propertyForm.get(controlName);
+
+    if (!control || !control.touched) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return 'This field is required';
+    }
+
+    if (control.hasError('email')) {
+      return 'Enter a valid email address';
+    }
+
+    return '';
   }
 }
