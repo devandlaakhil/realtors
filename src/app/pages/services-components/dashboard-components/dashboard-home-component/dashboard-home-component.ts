@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { RealEstateApiService } from '../../../../api-services/realestate-api-services';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 interface Metric {
   title: string;
@@ -19,12 +19,14 @@ interface Lead {
   location: string;
   time: string;
   phone: string;
-  reraStatus: 'Verified' | 'Pending';
+  reraStatus?: 'Verified' | 'Pending';
+  conversationId? : string,
+  propertyId? : string
 }
 
 @Component({
   selector: 'app-dashboard-home-component',
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './dashboard-home-component.html',
   styleUrl: './dashboard-home-component.css',
 })
@@ -36,9 +38,11 @@ export class DashboardHomeComponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
   router = inject(Router);
   subText: string = '';
+  myMessage: any = [];
 
   ngOnInit(): void {
     this.getMyListings();
+    this.getMyMessages();
   }
   // Dashboard Analytics
   metrics: Metric[] = [
@@ -68,28 +72,12 @@ export class DashboardHomeComponent implements OnInit {
   // Indian Market Inbound Enquiries
   recentLeads: Lead[] = [
     {
-      name: 'Arun Sharma',
-      type: 'Looking for 3 BHK Apartment',
-      location: 'Whitefield, Bengaluru',
-      time: '5 mins ago',
-      phone: '+919876543210',
-      reraStatus: 'Verified',
-    },
-    {
-      name: 'Priya Patel',
-      type: 'Interested in NA Layout Plot',
-      location: 'Gachibowli, Hyderabad',
-      time: '42 mins ago',
-      phone: '+918765432109',
-      reraStatus: 'Verified',
-    },
-    {
-      name: 'Vikram Singh',
-      type: 'Inquiring 2 BHK Builder Floor',
-      location: 'Sector 62, Noida',
-      time: '2 hours ago',
-      phone: '+917654321098',
-      reraStatus: 'Pending',
+      name: '',
+      type: '',
+      location: '',
+      time: '',
+      phone: '',
+      conversationId : ''
     },
   ];
 
@@ -104,10 +92,10 @@ export class DashboardHomeComponent implements OnInit {
           const subText = res.data.propertyTypes
             .map((item: any) => `${item.count} ${item._id}${item.count > 1 ? 's' : ''}`)
             .join(', ');
-          
-           const statusText = Object.entries(res.data.status)
-              .map(([key, value]) => `${value} ${key}`)
-              .join(', ');
+
+          const statusText = Object.entries(res.data.status)
+            .map(([key, value]) => `${value} ${key}`)
+            .join(', ');
 
           this.metrics[0] = {
             ...this.metrics[0],
@@ -127,5 +115,56 @@ export class DashboardHomeComponent implements OnInit {
           this.tostrService.error('Something went wrong', 'Fail');
         },
       });
+  }
+
+  getMyMessages() {
+    this.realEstateApiSrc
+      .getMyMessage()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.getMyMessages = res.data;
+          this.recentLeads = res.data.map((item: any) => ({
+            name: item.buyer?.name || '',
+            type: item.property?.propertyType || '',
+            location: `${item.property?.location?.area || ''}, ${item.property?.location?.city || ''}`,
+            time: this.getTimeAgo(item.lastMessageAt),
+            phone: item.buyer?.phone || '',
+            conversationId : item.conversationId,
+            propertyId : item.propertyId
+          }));
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.tostrService.error('Something went wrong', 'Fail');
+        },
+      });
+  }
+
+  getTimeAgo(dateString: string): string {
+    const now = new Date().getTime();
+    const messageTime = new Date(dateString).getTime();
+    const diffMs = now - messageTime;
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (minutes < 1) {
+      return 'Just now';
+    }
+    if (minutes < 60) {
+      return `${minutes} min ago`;
+    }
+    if (hours < 24) {
+      return `${hours} hr ago`;
+    }
+    if (days < 30) {
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
+    const months = Math.floor(days / 30);
+    if (months < 12) {
+      return `${months} month${months > 1 ? 's' : ''} ago`;
+    }
+    const years = Math.floor(months / 12);
+    return `${years} year${years > 1 ? 's' : ''} ago`;
   }
 }

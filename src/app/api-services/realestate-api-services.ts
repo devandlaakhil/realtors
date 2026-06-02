@@ -57,4 +57,17 @@ export class RealEstateApiService {
   getMessages(propertyId: string): Observable<any> {
     return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/messages/${propertyId}`);
   }
+
+  getMyMessage():Observable<any>{
+    return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/get-my-messages`);
+  }
+
+  getConversations(conversationId:string){
+    return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/conversation/${conversationId}`);
+  }
+
+  replayQuery(data: any): Observable<any> {
+    return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/reply-message`, data);
+  }
+
 }

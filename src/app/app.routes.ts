@@ -63,6 +63,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'conversation/:conversationId/:propertyId',
+    loadComponent: () =>
+      import('../app/pages/home-components/send-query-component/send-query-component').then(
+        (m) => m.SendQueryComponent,
+      ),
+  },
+  {
     path: 'contact-us',
     loadComponent: () =>
       import('../app/pages/services-components/contact-us-component/contact-us-component').then(

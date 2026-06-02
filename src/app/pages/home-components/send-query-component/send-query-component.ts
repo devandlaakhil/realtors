@@ -25,41 +25,60 @@ export class SendQueryComponent implements OnInit {
   messages: any = [];
   newMessage = '';
   cdr = inject(ChangeDetectorRef);
+  converstationId: string = '';
 
   ngOnInit(): void {
-    // this.router.paramMap.subscribe((params) => {
-    //   this.productid = params.get('id') || '';
-    //   this.realEstateApiSrv
-    //     .getProduct(this.productid)
-    //     .pipe(takeUntil(this.destroy$))
-    //     .subscribe({
-    //       next: (res) => {
-    //         this.property = res.data;
-    //       },
-    //       error: () => {
-    //         this.toastr.error('Something went wrong', 'Fail');
-    //       },
-    //     });
-    // });
-    this.propertyId = this.router.snapshot.paramMap.get('id') || '';
     this.currentUserId = this.authSrv.getUser().id;
-    this.loadMessages();
+    this.converstationId = this.router.snapshot.paramMap.get('conversationId') || '';
+    this.propertyId = this.router.snapshot.paramMap.get('propertyId') || '';
+    if (this.converstationId != '' && this.propertyId != '') {
+      this.loadConversations();
+    } else {
+      this.propertyId = this.router.snapshot.paramMap.get('id') || '';
+      this.loadMessages();
+    }
   }
 
   sendMessage(): void {
     if (!this.newMessage?.trim()) {
       return;
     }
+    if (this.propertyId != '' && this.converstationId == '') {
+      const payload = {
+        propertyId: this.propertyId, // current property id
+        message: this.newMessage.trim(),
+      };
+      this.realEstateApiSrv.sendQuery(payload).subscribe({
+        next: (res: any) => {
+          this.newMessage = '';
+          this.loadMessages();
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+    } else {
+      const payload = {
+        conversationId: this.converstationId,
+        message: this.newMessage,
+      };
+      this.realEstateApiSrv.replayQuery(payload).subscribe({
+        next: (res: any) => {
+          this.newMessage = '';
+          this.loadMessages();
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+    }
+  }
 
-    const payload = {
-      propertyId: this.propertyId, // current property id
-      message: this.newMessage.trim(),
-    };
-
-    this.realEstateApiSrv.sendQuery(payload).subscribe({
+  loadMessages(): void {
+    this.realEstateApiSrv.getMessages(this.propertyId).subscribe({
       next: (res: any) => {
-        this.newMessage = '';
-        this.loadMessages();
+        this.messages = res.data || [];
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error(err);
@@ -67,8 +86,8 @@ export class SendQueryComponent implements OnInit {
     });
   }
 
-  loadMessages(): void {
-    this.realEstateApiSrv.getMessages(this.propertyId).subscribe({
+  loadConversations() {
+    this.realEstateApiSrv.getConversations(this.converstationId).subscribe({
       next: (res: any) => {
         this.messages = res.data || [];
         this.cdr.detectChanges();
