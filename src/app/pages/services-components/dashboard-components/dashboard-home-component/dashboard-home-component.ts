@@ -125,11 +125,11 @@ export class DashboardHomeComponent implements OnInit {
         next: (res) => {
           this.getMyMessages = res.data;
           this.recentLeads = res.data.map((item: any) => ({
-            name: item.buyer?.name || '',
+            name: item.userDetails?.name || '',
             type: item.property?.propertyType || '',
             location: `${item.property?.location?.area || ''}, ${item.property?.location?.city || ''}`,
             time: this.getTimeAgo(item.lastMessageAt),
-            phone: item.buyer?.phone || '',
+            phone: item.userDetails?.mobile || '',
             conversationId : item.id,
             propertyId : item.propertyId
           }));
