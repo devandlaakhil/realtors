@@ -7,8 +7,8 @@ import { Router, RouterModule } from '@angular/router';
 
 interface Metric {
   title: string;
-  value: string;
-  subtext: string;
+  value: string | number;
+  subtext: string | number;
   icon: string;
   colorClass: string;
 }
@@ -61,9 +61,9 @@ export class DashboardHomeComponent implements OnInit {
       colorClass: 'emerald-accent',
     },
     {
-      title: 'Ad Wallet Balance',
-      value: '₹4,250',
-      subtext: 'UPI Wallet Active',
+      title: 'Total Queries',
+      value: '',
+      subtext: '',
       icon: '👛',
       colorClass: 'amber-accent',
     },
@@ -123,7 +123,7 @@ export class DashboardHomeComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.getMyMessages = res.data;
+          // this.getMyMessages = res.data;
           this.recentLeads = res.data.map((item: any) => ({
             name: item.userDetails?.name || '',
             type: item.property?.propertyType || '',
@@ -133,6 +133,11 @@ export class DashboardHomeComponent implements OnInit {
             conversationId : item.id,
             propertyId : item.propertyId
           }));
+          this.metrics[2] = {
+            ...this.metrics[2],
+            value: `${this.recentLeads.length} Queries`,
+            subtext : 'In last 15 Days'
+          };
           this.cdr.detectChanges();
         },
         error: () => {

@@ -69,7 +69,7 @@ export class MyPostingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.properties = this.properties.filter((elem: any) => elem.id !== e);
-
+          this.cdr.detectChanges();
           this.tostrService.success('Post deleted successfully', 'Success');
         },
 
