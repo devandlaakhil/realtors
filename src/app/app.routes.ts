@@ -57,6 +57,7 @@ export const routes: Routes = [
   },
   {
     path: 'query/:id',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('../app/pages/home-components/send-query-component/send-query-component').then(
         (m) => m.SendQueryComponent,
@@ -64,6 +65,7 @@ export const routes: Routes = [
   },
   {
     path: 'conversation/:conversationId/:propertyId',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('../app/pages/home-components/send-query-component/send-query-component').then(
         (m) => m.SendQueryComponent,

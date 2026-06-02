@@ -130,7 +130,7 @@ export class DashboardHomeComponent implements OnInit {
             location: `${item.property?.location?.area || ''}, ${item.property?.location?.city || ''}`,
             time: this.getTimeAgo(item.lastMessageAt),
             phone: item.buyer?.phone || '',
-            conversationId : item.conversationId,
+            conversationId : item.id,
             propertyId : item.propertyId
           }));
           this.cdr.detectChanges();
