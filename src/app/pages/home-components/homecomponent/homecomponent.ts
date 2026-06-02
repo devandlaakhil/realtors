@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from '../../../auth-services/auth-services';
 
 @Component({
   selector: 'app-homecomponent',
@@ -37,8 +38,11 @@ export class Homecomponent implements OnInit {
   selectedBudget: string = '';
   searchControl = new FormControl('');
   searchEntered:boolean = false;
+  authService = inject(AuthService);
+  userId:string = '';
 
   ngOnInit(): void {
+    this.userId = this.authService.getUser()?.id;
     this.getAllProperites();
   }
 

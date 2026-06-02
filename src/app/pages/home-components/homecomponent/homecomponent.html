@@ -124,7 +124,9 @@
                 {{ property.contact.phone }}
               </p>
             </div>
-            <button class="view-btn1" [routerLink]="['/query', property.id]" >Send Query</button>
+            @if (userId !=property.clientid) {
+              <button class="view-btn1" [routerLink]="['/query', property.id]">Send Query</button>
+            }
             <button class="view-btn" [routerLink]="['/property', property.id]">View</button>
           </div>
         </div>
