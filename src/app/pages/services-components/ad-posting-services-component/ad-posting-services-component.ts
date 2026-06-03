@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { CommonServices } from '../../../shared-services/common-services';
 import { take } from 'rxjs/operators';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 enum Property_Type {
   VILLA = 'Villa',
@@ -51,6 +52,7 @@ enum status {
     ReactiveFormsModule,
     MatCheckboxModule,
     MatTooltipModule,
+    TranslatePipe
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',

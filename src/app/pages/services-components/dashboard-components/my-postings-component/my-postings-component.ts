@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-my-postings-component',
-  imports: [CommonModule],
+  imports: [CommonModule,TranslatePipe],
   templateUrl: './my-postings-component.html',
   styleUrl: './my-postings-component.css',
 })

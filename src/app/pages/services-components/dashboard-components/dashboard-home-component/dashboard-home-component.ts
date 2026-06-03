@@ -4,6 +4,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { RealEstateApiService } from '../../../../api-services/realestate-api-services';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterModule } from '@angular/router';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 
 interface Metric {
   title: string;
@@ -26,7 +27,7 @@ interface Lead {
 
 @Component({
   selector: 'app-dashboard-home-component',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TranslatePipe],
   templateUrl: './dashboard-home-component.html',
   styleUrl: './dashboard-home-component.css',
 })

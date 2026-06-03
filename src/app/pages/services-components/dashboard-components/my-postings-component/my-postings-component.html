@@ -15,7 +15,7 @@
         <img src="images/soldout.jpg" alt="Sold Out" />
       </div>
       <span class="status-badge sale">
-        {{ property.status }}
+        {{ property.status | T}}
       </span>
       <span
         class="active-badge"
@@ -58,12 +58,12 @@
           (click)="edit(property)"
           [disabled]="property.availability === 'sold-out'"
         >
-          Edit
+          {{'Edit'|T}}
         </button>
         <button class="btn sold-btn" (click)="availability(property.id)">
-          {{ property.availability }}
+          {{ property.availability | T}}
         </button>
-        <button class="btn delete-btn" (click)="delete(property.id)">Delete</button>
+        <button class="btn delete-btn" (click)="delete(property.id)">{{'Delete'|T}}</button>
       </div>
     </div>
   </div>

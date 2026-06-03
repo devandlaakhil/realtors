@@ -2,10 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../auth-services/auth-services';
 import { Router, RouterModule } from '@angular/router';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-dashboard-component',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,TranslatePipe],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })

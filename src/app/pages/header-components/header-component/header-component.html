@@ -12,13 +12,13 @@
     <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
       {{ Location }}
     </button>
-    <button mat-button (click)="backToHome()" routerLinkActive="active-link">Home</button>
+    <button mat-button (click)="backToHome()" routerLinkActive="active-link">{{'Home' | T}}</button>
     @if (isLoggedIn) {
-      <button mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</button>
+      <button mat-button routerLink="/dashboard" routerLinkActive="active-link">{{'Dashboard' | T}}</button>
     }
-    <button mat-button routerLink="/about" routerLinkActive="active-link">About</button>
-    <button mat-button routerLink="/service" routerLinkActive="active-link">Services</button>
-    <button mat-button routerLink="/contact-us" routerLinkActive="active-link">Contact</button>
+    <button mat-button routerLink="/about" routerLinkActive="active-link">{{'About' | T}}</button>
+    <button mat-button routerLink="/service" routerLinkActive="active-link">{{'Services' | T}}</button>
+    <button mat-button routerLink="/contact-us" routerLinkActive="active-link">{{'Contact' | T}}</button>
   </div>
 
   <span class="spacer"></span>
@@ -26,7 +26,7 @@
   <!-- RIGHT SIDE -->
   <div class="right-section desktop-actions">
     @if (isLoggedIn) {
-      <button mat-button class="post-property" routerLink="/ad-post">Post Property</button>
+      <button mat-button class="post-property" routerLink="/ad-post">{{'Post Property' | T}}</button>
       <button mat-button class="user-btn" [matMenuTriggerFor]="profileMenu">
         <div class="avatar">
           {{ username()[0] || 'U' }}
@@ -57,21 +57,21 @@
   <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
     {{ Location }}
   </button>
-  <button mat-button (click)="backToHome()" routerLinkActive="active-link">Home</button>
-  <button mat-button routerLink="/contact-us" routerLinkActive="active-link">Contact</button>
+  <button mat-button (click)="backToHome()" routerLinkActive="active-link">{{'Home' | T}}</button>
+  <button mat-button routerLink="/contact-us" routerLinkActive="active-link">{{'Contact'|T}}</button>
 
   <!-- LOGGED IN USER -->
   @if (isLoggedIn) {
-    <button mat-button routerLink="/dashboard" (click)="toggleMobileMenu()">Dashboard</button>
-    <button mat-button routerLink="/ad-post" (click)="toggleMobileMenu()">Post Property</button>
-    <button mat-button (click)="navToProfile(); toggleMobileMenu()">Profile</button>
-    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">Services</button>
-    <button mat-button (click)="logout(); toggleMobileMenu()">Logout</button>
+    <button mat-button routerLink="/dashboard" (click)="toggleMobileMenu()">{{'Dashboard' | T}}</button>
+    <button mat-button routerLink="/ad-post" (click)="toggleMobileMenu()">{{'Post Property' | T}}</button>
+    <button mat-button (click)="navToProfile(); toggleMobileMenu()">{{'Profile'| T}}</button>
+    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">{{'Services' | T}}</button>
+    <button mat-button (click)="logout(); toggleMobileMenu()">{{'Logout'| T}}</button>
   }
   <!-- LOGGED OUT USER -->
   @else {
-    <button mat-button routerLink="/about" (click)="toggleMobileMenu()">About</button>
-    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">Services</button>
+    <button mat-button routerLink="/about" (click)="toggleMobileMenu()">{{'About'| T}}</button>
+    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">{{'Services'| T}}</button>
     <button mat-button routerLink="/login" (click)="toggleMobileMenu()">Login</button>
     <button mat-button routerLink="/register" (click)="toggleMobileMenu()">Register</button>
   }
@@ -115,7 +115,7 @@
 
   <button mat-menu-item (click)="logout()">
     <mat-icon>logout</mat-icon>
-    <span>Logout</span>
+    <span>{{'Logout' | T}}</span>
   </button>
 </mat-menu>
 

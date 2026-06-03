@@ -6,7 +6,7 @@
       <section class="metrics-grid">
         <div class="metric-card" *ngFor="let item of metrics" [ngClass]="item.colorClass">
           <div class="metric-header">
-            <span class="metric-title">{{ item.title }}</span>
+            <span class="metric-title">{{ item.title | T }}</span>
             <span class="metric-icon">{{ item.icon }}</span>
           </div>
           <div class="metric-value">{{ item.value }}</div>
@@ -20,20 +20,20 @@
         <!-- Primary Table: Buyer Leads -->
         <section class="content-panel main-panel">
           <div class="panel-header">
-            <h2>Recent Local Leads</h2>
-            <button class="text-link-btn">View All Enquiries</button>
+            <h2>{{'Recent Local Leads' | T}}</h2>
+            <button class="text-link-btn">{{'View All Enquiries'|T}}</button>
           </div>
           
           <div class="leads-list">
             <div class="lead-row" *ngFor="let lead of recentLeads">
               <div class="lead-info">
-                <h3>Name  : {{ lead.name }} <span class="rera-badge" [class.pending]="lead.reraStatus === 'Pending'">{{ lead.reraStatus }}</span></h3>
-                <p class="lead-requirement">Property Enquired For : {{ lead.type }}</p>
-                <p class="lead-meta">📍 in-Location :  {{ lead.location }} • {{ lead.time }}</p>
+                <h3>{{'Enquired By'|T}}  : {{ lead.name }} <span class="rera-badge" [class.pending]="lead.reraStatus === 'Pending'">{{ lead.reraStatus }}</span></h3>
+                <p class="lead-requirement">{{'Property Enquired For'|T}} : {{ lead.type }}</p>
+                <p class="lead-meta">📍 {{'in-Location'|T}} :  {{ lead.location }} • {{ lead.time }}</p>
               </div>
               <div class="lead-actions">
                 <a [routerLink]="['/conversation', lead.conversationId, lead.propertyId]" class="action-btn whatsapp-btn">
-                  💬 View Query
+                  💬 {{'View Query'|T}}
                 </a>
               </div>
             </div>

@@ -2,27 +2,27 @@
 
 <div class="property-page">
   <form [formGroup]="propertyForm" class="premium-form">
-    <h1 class="title">{{ isEditMode ? 'Update Property' : 'Post Property' }}</h1>
+    <h1 class="title">{{ isEditMode ? ('Update Property'|T) : ('Post Property' | T) }}</h1>
 
     <!-- OWNER INFO -->
     <div class="card" formGroupName="contact">
-      <h2>Owner Information</h2>
+      <h2>{{ 'Owner Information' | T }}</h2>
 
       <div class="grid">
         <mat-form-field appearance="fill">
-          <mat-label>Name</mat-label>
+          <mat-label>{{ 'Name' | T }}</mat-label>
           <input matInput formControlName="name" />
           <mat-error>{{ getError('contact.name') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Phone</mat-label>
+          <mat-label>{{ 'Phone' | T }}</mat-label>
           <input matInput type="number" formControlName="phone" />
           <mat-error>{{ getError('contact.phone') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill" class="full">
-          <mat-label>Email</mat-label>
+          <mat-label>{{ 'Email' | T }}</mat-label>
           <input matInput type="email" formControlName="email" />
           <mat-error>{{ getError('contact.email') }}</mat-error>
         </mat-form-field>
@@ -31,17 +31,17 @@
 
     <!-- BASIC INFO -->
     <div class="card">
-      <h2>Basic Information</h2>
+      <h2>{{ 'Basic Information' | T }}</h2>
 
       <div class="grid">
         <mat-form-field appearance="fill">
-          <mat-label>Title</mat-label>
+          <mat-label>{{ 'Title' | T }}</mat-label>
           <input matInput formControlName="title" />
           <mat-error>{{ getError('title') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Property Type</mat-label>
+          <mat-label>{{ 'Property Type' | T }}</mat-label>
 
           <mat-select
             formControlName="propertyType"
@@ -55,7 +55,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Status</mat-label>
+          <mat-label>{{ 'Status' | T }}</mat-label>
 
           <mat-select formControlName="status">
             <mat-option value="Sale">Sale</mat-option>
@@ -65,13 +65,13 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Price</mat-label>
+          <mat-label>{{ 'Price' | T }}</mat-label>
           <input matInput type="number" formControlName="price" />
           <mat-error>{{ getError('price') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Price Type</mat-label>
+          <mat-label>{{ 'Price Type' | T }}</mat-label>
 
           <mat-select formControlName="priceType">
             <mat-option value="total">Total</mat-option>
@@ -81,23 +81,25 @@
         </mat-form-field>
 
         <div class="checkbox-wrapper">
-          <mat-checkbox formControlName="negotiable"> Negotiable </mat-checkbox>
+          <mat-checkbox formControlName="negotiable"> {{ 'Negotiable' | T }} </mat-checkbox>
           <mat-error>{{ getError('negotiable') }}</mat-error>
         </div>
         <div class="checkbox-wrapper">
-          <mat-checkbox formControlName="isOffer" (change)="onOffer($event)"> Offer </mat-checkbox>
+          <mat-checkbox formControlName="isOffer" (change)="onOffer($event)">
+            {{ 'Offer' | T }}
+          </mat-checkbox>
         </div>
 
-        @if(showOfferField){
+        @if (showOfferField) {
           <mat-form-field appearance="fill">
-            <mat-label>Offer Details</mat-label>
-            <textarea matInput type="text" formControlName="offerdetails" ></textarea>
+            <mat-label>{{ 'Offer Details' | T }}</mat-label>
+            <textarea matInput type="text" formControlName="offerdetails"></textarea>
           </mat-form-field>
         }
       </div>
 
       <mat-form-field appearance="fill" class="full">
-        <mat-label>Description</mat-label>
+        <mat-label>{{ 'Description' | T }}</mat-label>
         <textarea matInput rows="4" formControlName="description"> </textarea>
         <mat-error>{{ getError('negotiable') }}</mat-error>
       </mat-form-field>
@@ -105,11 +107,11 @@
 
     <!-- LOCATION -->
     <div class="card" formGroupName="location">
-      <h2>Location</h2>
+      <h2>{{ 'Location' | T }}</h2>
 
       <div class="grid">
         <mat-form-field appearance="fill">
-          <mat-label>City</mat-label>
+          <mat-label>{{ 'City' | T }}</mat-label>
 
           <mat-select formControlName="city">
             <mat-option *ngFor="let city of cities" [value]="city">
@@ -120,20 +122,20 @@
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Area</mat-label>
+          <mat-label>{{ 'Area' | T }}</mat-label>
           <input matInput formControlName="area" />
           <mat-error>{{ getError('location.area') }}</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="fill">
-          <mat-label>Pincode</mat-label>
+          <mat-label>{{ 'Pincode' | T }}</mat-label>
           <input matInput formControlName="pincode" />
           <mat-error>{{ getError('location.pincode') }}</mat-error>
         </mat-form-field>
 
         <mat-checkbox (change)="onGpsToggle($event)"> Use GPS </mat-checkbox>
         <mat-form-field appearance="fill" class="full">
-          <mat-label>Address</mat-label>
+          <mat-label>{{ 'Address' | T }}</mat-label>
 
           <textarea matInput rows="3" formControlName="address"> </textarea>
           <mat-error>{{ getError('location.address') }}</mat-error>
@@ -143,16 +145,18 @@
 
     <!-- DETAILS -->
     <div class="card" formGroupName="details">
-      <h2>Property Details</h2>
+      <h2>{{ 'Property Details' | T }}</h2>
 
       <div class="grid">
         <div
-          [matTooltip]="isPlotOrLand ? 'Bedrooms are not applicable for Plot/Land properties' : ''"
+           [matTooltip]="
+            isPlotOrLand ? ('BEDROOMS_NOT_APPLICABLE' | T) : ''
+          "
           matTooltipClass="white-tooltip"
           matTooltipPosition="above"
         >
           <mat-form-field appearance="fill">
-            <mat-label>Bedrooms</mat-label>
+            <mat-label>{{ 'Bedrooms' | T }}</mat-label>
             <input matInput type="number" formControlName="bedrooms" />
             @if (propertyForm.get('details.bedrooms')?.disabled) {
               <mat-icon matSuffix>lock</mat-icon>
@@ -162,12 +166,14 @@
         </div>
 
         <div
-          [matTooltip]="isPlotOrLand ? 'Bathrooms are not applicable for Plot/Land properties' : ''"
+          [matTooltip]="
+            isPlotOrLand ? ('BATHROOMS_NOT_APPLICABLE' | T) : ''
+          "
           matTooltipClass="white-tooltip"
           matTooltipPosition="above"
         >
           <mat-form-field appearance="fill">
-            <mat-label>Bathrooms</mat-label>
+            <mat-label>{{ 'Bathrooms' | T }}</mat-label>
             <input matInput type="number" formControlName="bathrooms" />
             @if (propertyForm.get('details.bathrooms')?.disabled) {
               <mat-icon matSuffix>lock</mat-icon>
@@ -177,20 +183,20 @@
         </div>
 
         <mat-form-field appearance="fill">
-          <mat-label>Area (sqft)</mat-label>
+          <mat-label>{{ 'Measuring-Aria' | T }} (sqft)</mat-label>
           <input matInput type="number" formControlName="area" />
           <mat-error>{{ getError('details.area') }}</mat-error>
         </mat-form-field>
 
         <div
           [matTooltip]="
-            isPlotOrLand ? 'Furnishing are not applicable for Plot/Land properties' : ''
+            isPlotOrLand ? ('FURNISHING_NOT_APPLICABLE' | T) : ''
           "
           matTooltipClass="white-tooltip"
           matTooltipPosition="above"
         >
           <mat-form-field appearance="fill">
-            <mat-label>Furnishing</mat-label>
+            <mat-label>{{'Furnishing'|T}}</mat-label>
             <input matInput formControlName="furnishing" />
             @if (propertyForm.get('details.furnishing')?.disabled) {
               <mat-icon matSuffix>lock</mat-icon>
@@ -200,12 +206,14 @@
         </div>
 
         <div
-          [matTooltip]="isPlotOrLand ? 'Floor are not applicable for Plot/Land properties' : ''"
+          [matTooltip]="
+            isPlotOrLand ? ('FLOOR_NOT_APPLICABLE' | T) : ''
+          "
           matTooltipClass="white-tooltip"
           matTooltipPosition="above"
         >
           <mat-form-field appearance="fill">
-            <mat-label>Floor</mat-label>
+            <mat-label>{{'Floor'|T}}</mat-label>
             <input matInput type="number" formControlName="floor" />
             @if (propertyForm.get('details.floor')?.disabled) {
               <mat-icon matSuffix>lock</mat-icon>
@@ -215,14 +223,14 @@
         </div>
 
         <div
-          [matTooltip]="
-            isPlotOrLand ? 'TotalFloors are not applicable for Plot/Land properties' : ''
+           [matTooltip]="
+            isPlotOrLand ? ('TOTAL_FLOORS_NOT_APPLICABLE' | T) : ''
           "
           matTooltipClass="white-tooltip"
           matTooltipPosition="above"
         >
           <mat-form-field appearance="fill">
-            <mat-label>Total Floors</mat-label>
+            <mat-label>{{'Total Floors'|T}}</mat-label>
             <input matInput type="number" formControlName="totalFloors" />
             @if (propertyForm.get('details.totalFloors')?.disabled) {
               <mat-icon matSuffix>lock</mat-icon>
@@ -235,7 +243,7 @@
 
     <!-- IMAGE SECTION -->
     <div class="card">
-      <h2>Property Images</h2>
+      <h2>{{'Property Images'|T}}</h2>
 
       <div class="image-grid">
         <div class="image-box" *ngFor="let type of imageTypes">
@@ -262,7 +270,7 @@
 
     <!-- PROPERTY VIDEO -->
     <div class="card">
-      <h2>Property Video</h2>
+      <h2>{{'Property Video'|T}}</h2>
 
       <div class="video-section">
         <!-- Upload Video -->
@@ -298,7 +306,7 @@
 
     <!-- SUBMIT -->
     <button mat-raised-button class="submit-btn" (click)="submit()">
-      {{ isEditMode ? 'Update Property' : 'Post Property' }}
+      {{ isEditMode ? ('Update Property'|T) : ('Post Property'|T) }}
     </button>
   </form>
 </div>

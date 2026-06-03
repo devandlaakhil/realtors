@@ -8,11 +8,11 @@
 
     <nav class="sidebar-nav">
       <a class="nav-item" [class.active]="activeMenu === 'home'" (click)="navigateTo('home')">
-        📊 Dashboard
+        📊 {{'Dashboard' |T}}
       </a>
 
       <a class="nav-item" [class.active]="activeMenu === 'posts'" (click)="navigateTo('posts')">
-        🏗️ My Properties
+        🏗️ {{'My Properties' | T}}
       </a>
 
       <a
@@ -40,8 +40,8 @@
       <button class="hamburger-btn" (click)="toggleMobileMenu()">☰</button>
 
       <div class="welcome-text">
-        <h1>Namaste, {{ username() }}</h1>
-        <p>Here is your real estate performance overview.</p>
+        <h1>{{'Namaste' | T}}, {{ username() }}</h1>
+        <p>{{'Here is your real estate performance overview.' | T}}</p>
       </div>
 
       <div class="profile-pill">
