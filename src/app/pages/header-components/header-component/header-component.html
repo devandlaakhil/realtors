@@ -38,8 +38,8 @@
       </button>
     } @else {
       <div class="auth-buttons">
-        <button mat-stroked-button class="login-btn" routerLink="/login">Login</button>
-        <button mat-raised-button class="register-btn" routerLink="/register">Register</button>
+        <button mat-stroked-button class="login-btn" routerLink="/login">{{'Login'|T}}</button>
+        <button mat-raised-button class="register-btn" routerLink="/register">{{'Register'|T}}</button>
       </div>
     }
   </div>
@@ -77,8 +77,8 @@
   @else {
     <button mat-button routerLink="/about" (click)="toggleMobileMenu()">{{'About'| T}}</button>
     <button mat-button routerLink="/service" (click)="toggleMobileMenu()">{{'Services'| T}}</button>
-    <button mat-button routerLink="/login" (click)="toggleMobileMenu()">Login</button>
-    <button mat-button routerLink="/register" (click)="toggleMobileMenu()">Register</button>
+    <button mat-button routerLink="/login" (click)="toggleMobileMenu()">{{'Login'|T}}</button>
+    <button mat-button routerLink="/register" (click)="toggleMobileMenu()">{{'Register'|T}}</button>
   }
 </div>
 
