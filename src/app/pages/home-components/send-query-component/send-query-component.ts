@@ -65,7 +65,7 @@ export class SendQueryComponent implements OnInit {
       this.realEstateApiSrv.replayQuery(payload).subscribe({
         next: (res: any) => {
           this.newMessage = '';
-          this.loadMessages();
+          this.loadConversations();
         },
         error: (err) => {
           console.error(err);

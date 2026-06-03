@@ -10,6 +10,9 @@ import { AuthService } from '../../../auth-services/auth-services';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
 import { UserApiServices } from '../../../api-services/user-api-services';
 import { CommonServices } from '../../../shared-services/common-services';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageServices } from '../../../shared-services/language-services';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-header-component',
@@ -21,6 +24,7 @@ import { CommonServices } from '../../../shared-services/common-services';
     MatMenuModule,
     MatIcon,
     MatDivider,
+    TranslatePipe
   ],
   templateUrl: './header-component.html',
   styleUrl: './header-component.css',
@@ -41,6 +45,8 @@ export class HeaderComponent {
   cdr = inject(ChangeDetectorRef);
   userApiSrc = inject(UserApiServices);
   commonSrv = inject(CommonServices);
+  languageSrv = inject(LanguageServices);
+  selectedLang = 'en';
 
   ngOnInit(): void {
     this.dashBoardService.loginStatus$.subscribe((status) => {
@@ -50,6 +56,11 @@ export class HeaderComponent {
       }
     });
     this.getUserLocation();
+  }
+
+  toggleLanguage() {
+    this.selectedLang = this.selectedLang === 'en' ? 'te' : 'en';
+    this.languageSrv.loadLanguage(this.selectedLang)
   }
 
   getuser() {
@@ -70,7 +81,7 @@ export class HeaderComponent {
           this.userApiSrc.sendCoordsToBackend(coords).subscribe((response: any) => {
             this.Location = response.raw.neighbourhood;
             this.fullAddress = response.address;
-             this.commonSrv.updateAddress(this.fullAddress);
+            this.commonSrv.updateAddress(this.fullAddress);
             this.cdr.detectChanges();
           });
         },

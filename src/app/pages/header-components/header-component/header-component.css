@@ -202,3 +202,57 @@
     padding: 0 10px;
   }
 }
+
+.lang-toggle {
+  position: relative;
+  width: 90px;
+  height: 34px;
+  border-radius: 20px;
+  background: #e2e8f0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+  border: 1px solid #d1d5db;
+}
+
+.slider {
+  position: absolute;
+  width: 45px;
+  height: 30px;
+  left: 2px;
+  border-radius: 18px;
+  background: #2563eb;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.lang-toggle.telugu .slider {
+  left: 43px;
+}
+
+.label {
+  flex: 1;
+  text-align: center;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.left {
+  color: white;
+}
+
+.right {
+  color: #475569;
+}
+
+.lang-toggle.telugu .left {
+  color: #475569;
+}
+
+.lang-toggle.telugu .right {
+  color: white;
+}
