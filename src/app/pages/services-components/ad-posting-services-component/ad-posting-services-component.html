@@ -84,6 +84,16 @@
           <mat-checkbox formControlName="negotiable"> Negotiable </mat-checkbox>
           <mat-error>{{ getError('negotiable') }}</mat-error>
         </div>
+        <div class="checkbox-wrapper">
+          <mat-checkbox formControlName="isOffer" (change)="onOffer($event)"> Offer </mat-checkbox>
+        </div>
+
+        @if(showOfferField){
+          <mat-form-field appearance="fill">
+            <mat-label>Offer Details</mat-label>
+            <textarea matInput type="text" formControlName="offerdetails" ></textarea>
+          </mat-form-field>
+        }
       </div>
 
       <mat-form-field appearance="fill" class="full">

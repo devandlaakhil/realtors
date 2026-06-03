@@ -78,6 +78,18 @@
 
         <!-- CONTENT -->
         <div class="card-content">
+          @if (property.isOffer) {
+            <div class="offer-banner">
+              <marquee scrollamount="2" direction="left">
+                <span class="blink-star">★</span>
+                {{ property.offerdetails }}
+                <span class="blink-star">★</span>
+              </marquee>
+            </div>
+            <!-- <marquee behavior="" direction="left">
+              <small>{{ property.offerdetails }}</small>
+            </marquee> -->
+          }
           <div class="top-section">
             <h3>
               {{ property.title }}

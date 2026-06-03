@@ -91,6 +91,7 @@ export class AdPostingServicesComponent implements OnInit {
   existingVideos: any[] = [];
   isPlotOrLand: boolean = false;
   commonSrv = inject(CommonServices);
+  showOfferField:boolean= false;
 
   ngOnInit(): void {
     this.initForm();
@@ -145,6 +146,8 @@ export class AdPostingServicesComponent implements OnInit {
       price: ['', Validators.required],
       priceType: ['total'],
       negotiable: [false],
+      isOffer:[false],
+      offerdetails: [''],
       videoUrl: [''],
 
       details: this.fb.group({
@@ -170,7 +173,7 @@ export class AdPostingServicesComponent implements OnInit {
     this.realestateApiSrv.getProduct(id).subscribe({
       next: (res: any) => {
         const property = res.data;
-
+        this.showOfferField = res.data.isOffer == true ? true : false; 
         this.propertyForm.patchValue({
           title: property.title,
           description: property.description,
@@ -182,7 +185,8 @@ export class AdPostingServicesComponent implements OnInit {
           price: property.price,
           priceType: property.priceType,
           negotiable: property.negotiable,
-
+          isOffer : property.isOffer,
+          offerdetails : property.offerdetails,
           details: property.details,
 
           contact: property.contact,
@@ -286,6 +290,8 @@ export class AdPostingServicesComponent implements OnInit {
     formData.append('price', formValue.price);
     formData.append('priceType', formValue.priceType);
     formData.append('negotiable', String(formValue.negotiable));
+    formData.append('isOffer', String(formValue.isOffer));
+    formData.append('offerdetails', formValue.offerdetails);
 
     // VIDEO URL
     formData.append('videoUrl', formValue.videoUrl || '');
@@ -382,6 +388,17 @@ export class AdPostingServicesComponent implements OnInit {
       });
     }else{
       details.get('address')?.reset();
+    }
+  }
+
+  onOffer(event: MatCheckboxChange){
+    if(event.checked){
+      this.showOfferField = true;
+    }else{
+      if(!this.isEditMode){
+        this.propertyForm.get('offerdetails')?.reset();
+      }
+      this.showOfferField = false;
     }
   }
 }

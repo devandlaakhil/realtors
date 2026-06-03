@@ -464,3 +464,43 @@
     width: 100%;
   }
 }
+
+/* .offer-banner {
+    margin-top: 0px;
+    padding: 0px 0px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #fff8e1, #fff3cd);
+    border: 1px solid #ff504f;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+} */
+
+.offer-banner marquee {
+  color: #d97706;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.blink-star {
+  color: #ff0000;
+  font-size: 14px;
+  margin: 0 0px;
+  animation: blinkStar 1s infinite;
+  text-shadow: 0 0 8px rgba(255, 193, 7, 0.8);
+}
+
+@keyframes blinkStar {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
