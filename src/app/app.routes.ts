@@ -33,6 +33,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path:'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('../app/pages/user-components/user-profile-component/user-profile-component').then(m => m.UserProfileComponent)
+  },
+  {
     path: 'ad-post/:id',
     canActivate: [authGuard],
     loadComponent: () =>

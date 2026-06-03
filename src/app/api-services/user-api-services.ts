@@ -23,5 +23,17 @@ export class UserApiServices {
     return this.http.post<any>(`${environment.serverPort}/${this._apiUrl}/get-address`, coords)
   }
 
+  getUser():Observable<any>{
+    return this.http.get<any>(`${environment.serverPort}/${this._apiUrl}/profile`)
+  }
+
+  updateUserDetails(data:any):Observable<any>{
+    return this.http.put<any>(`${environment.serverPort}/${this._apiUrl}/update-profile`,data) 
+  }
+
+  updateUserPassword(data:any):Observable<any>{
+    return this.http.put<any>(`${environment.serverPort}/${this._apiUrl}/update-password`,data) 
+  }
+
 }
  
