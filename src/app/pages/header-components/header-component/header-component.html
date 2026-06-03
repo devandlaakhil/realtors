@@ -54,6 +54,11 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-dropdown" *ngIf="isMobileMenuOpen">
+  <div class="lang-toggle" [class.telugu]="selectedLang === 'te'" (click)="toggleLanguage()">
+    <div class="slider"></div>
+    <span class="label left">ENG</span>
+    <span class="label right">తెలుగు</span>
+  </div>
   <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
     {{ Location }}
   </button>

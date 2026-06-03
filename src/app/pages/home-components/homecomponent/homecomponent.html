@@ -3,7 +3,7 @@
   <div class="filter-bar">
     <!-- Search -->
     <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search properties</mat-label>
+      <mat-label>{{'Search properties'|T}}</mat-label>
 
       <input
         matInput
@@ -17,33 +17,33 @@
 
     <!-- Property Type -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Property Type</mat-label>
+      <mat-label>{{'Property Type'|T}}</mat-label>
 
       <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
-        <mat-option value=""> All Properties </mat-option>
+        <mat-option value=""> {{'All Properties'|T}} </mat-option>
 
-        <mat-option value="apartment"> Apartment </mat-option>
+        <mat-option value="apartment"> {{'Apartment'|T}} </mat-option>
 
-        <mat-option value="villa"> Villa </mat-option>
+        <mat-option value="villa"> {{'Villa'|T}} </mat-option>
 
-        <mat-option value="house"> House </mat-option>
+        <mat-option value="house"> {{'House'|T}} </mat-option>
 
-        <mat-option value="plot"> Plot </mat-option>
+        <mat-option value="plot"> {{'Plot/Land'|T}} </mat-option>
       </mat-select>
     </mat-form-field>
 
     <!-- Budget -->
     <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Budget</mat-label>
+      <mat-label>{{'Budget'|T}}</mat-label>
 
       <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
-        <mat-option value=""> Any Budget </mat-option>
+        <mat-option value=""> {{'Any Budget'|T}} </mat-option>
 
-        <mat-option value="10-50"> ₹10L - ₹50L </mat-option>
+        <mat-option value="10-50"> ₹10{{'L'|T}} - ₹50{{'L'|T}} </mat-option>
 
-        <mat-option value="50-100"> ₹50L - ₹1Cr </mat-option>
+        <mat-option value="50-100"> ₹50{{'L'|T}} - ₹1{{'Cr'| T}} </mat-option>
 
-        <mat-option value="100+"> ₹1Cr+ </mat-option>
+        <mat-option value="100+"> ₹1{{'Cr'| T}}+ </mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -137,9 +137,9 @@
               </p>
             </div>
             @if (userId != property.clientid) {
-              <button class="view-btn1" [routerLink]="['/query', property.id]">Send Query</button>
+              <button class="view-btn1" [routerLink]="['/query', property.id]">{{'Send Query'|T}}</button>
             }
-            <button class="view-btn" [routerLink]="['/property', property.id]">View</button>
+            <button class="view-btn" [routerLink]="['/property', property.id]">{{'View'|T}}</button>
           </div>
         </div>
       </div>

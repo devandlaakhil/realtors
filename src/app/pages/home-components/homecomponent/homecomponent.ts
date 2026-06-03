@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth-services/auth-services';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-homecomponent',
@@ -23,6 +24,7 @@ import { AuthService } from '../../../auth-services/auth-services';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    TranslatePipe
   ],
   templateUrl: './homecomponent.html',
   styleUrl: './homecomponent.css',

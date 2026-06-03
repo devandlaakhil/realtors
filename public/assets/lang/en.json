@@ -61,6 +61,18 @@
   "Property Video":"Property Video",
   "Floor":"Floor",
   "Total Floors":"Total Floors",
-  "Furnishing":"Furnishing"
+  "Furnishing":"Furnishing",
+  "Search properties":"Search properties",
+  "All Properties":"All Properties",
+  "Apartment":"Apartment",
+  "Villa":"Villa",
+  "House":"House",
+  "Plot/Land":"Plot/Land",
+  "Budget":"Budget",
+  "Any Budget":"Any Budget",
+  "L":"L",
+  "Cr":"Cr",
+  "Send Query":"Send Query",
+  "View":"View"
 
 }
