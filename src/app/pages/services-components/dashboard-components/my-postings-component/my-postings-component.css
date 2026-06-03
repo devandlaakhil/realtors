@@ -241,3 +241,24 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.sold-overlay img {
+  width: 100%;
+  opacity: 0.25;
+  transform: rotate(-25deg);
+}
+
+.sold-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+}
+.sold-out-card .property-image {
+  filter: grayscale(40%);
+}

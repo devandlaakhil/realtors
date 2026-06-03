@@ -1,6 +1,9 @@
 <div class="property-grid">
-  <div class="property-card" *ngFor="let property of properties"
-   [class.sold-out-card]="property.availability === 'sold-out'">
+  <div
+    class="property-card"
+    *ngFor="let property of properties"
+    [class.sold-out-card]="property.availability === 'sold-out'"
+  >
     <!-- Image Section -->
     <div class="image-wrapper">
       <img
@@ -8,6 +11,9 @@
         alt="property"
         class="property-image"
       />
+      <div class="sold-overlay" *ngIf="property.availability === 'sold-out'">
+        <img src="images/soldout.jpg" alt="Sold Out" />
+      </div>
       <span class="status-badge sale">
         {{ property.status }}
       </span>
@@ -47,8 +53,16 @@
 
       <!-- Actions -->
       <div class="actions">
-        <button class="btn edit-btn" (click)="edit(property)"  [disabled]="property.availability === 'sold-out'">Edit</button>
-        <button class="btn sold-btn" (click)="availability(property.id)">{{property.availability}}</button>
+        <button
+          class="btn edit-btn"
+          (click)="edit(property)"
+          [disabled]="property.availability === 'sold-out'"
+        >
+          Edit
+        </button>
+        <button class="btn sold-btn" (click)="availability(property.id)">
+          {{ property.availability }}
+        </button>
         <button class="btn delete-btn" (click)="delete(property.id)">Delete</button>
       </div>
     </div>
