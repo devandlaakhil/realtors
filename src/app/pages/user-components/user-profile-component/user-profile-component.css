@@ -409,3 +409,21 @@
   margin-top: 6px;
   color: #64748b;
 }
+
+/* Combine selectors so they share the exact same styles */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit; 
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical; 
+  min-height: 80px;  
+}

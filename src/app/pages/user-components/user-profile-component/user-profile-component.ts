@@ -26,6 +26,7 @@ export class UserProfileComponent implements OnInit {
     name: '',
     email: '',
     mobile: '',
+    about: ''
   };
 
   passwordData = {
