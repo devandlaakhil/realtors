@@ -16,6 +16,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { CommonServices } from '../../../shared-services/common-services';
 import { take } from 'rxjs/operators';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
+import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 
 enum Property_Type {
   VILLA = 'Villa',
@@ -52,7 +53,7 @@ enum status {
     ReactiveFormsModule,
     MatCheckboxModule,
     MatTooltipModule,
-    TranslatePipe
+    TranslatePipe,
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
@@ -93,7 +94,7 @@ export class AdPostingServicesComponent implements OnInit {
   existingVideos: any[] = [];
   isPlotOrLand: boolean = false;
   commonSrv = inject(CommonServices);
-  showOfferField:boolean= false;
+  showOfferField: boolean = false;
 
   ngOnInit(): void {
     this.initForm();
@@ -108,6 +109,10 @@ export class AdPostingServicesComponent implements OnInit {
     });
     this.propertyForm.get('propertyType')?.valueChanges.subscribe((type) => {
       this.handlePropertyType(type);
+    });
+
+    this.propertyForm.get('location.city')?.valueChanges.subscribe((city: string) => {
+      this.setLocationCoordinates(city);
     });
   }
 
@@ -143,12 +148,19 @@ export class AdPostingServicesComponent implements OnInit {
         area: ['', Validators.required],
         address: [''],
         pincode: [''],
+        latitude: [null],
+        longitude: [null],
+
+        geoLocation: this.fb.group({
+          type: ['Point'],
+          coordinates: [[]],
+        }),
       }),
 
       price: ['', Validators.required],
       priceType: ['total'],
       negotiable: [false],
-      isOffer:[false],
+      isOffer: [false],
       offerdetails: [''],
       videoUrl: [''],
 
@@ -175,7 +187,7 @@ export class AdPostingServicesComponent implements OnInit {
     this.realestateApiSrv.getProduct(id).subscribe({
       next: (res: any) => {
         const property = res.data;
-        this.showOfferField = res.data.isOffer == true ? true : false; 
+        this.showOfferField = res.data.isOffer == true ? true : false;
         this.propertyForm.patchValue({
           title: property.title,
           description: property.description,
@@ -187,8 +199,8 @@ export class AdPostingServicesComponent implements OnInit {
           price: property.price,
           priceType: property.priceType,
           negotiable: property.negotiable,
-          isOffer : property.isOffer,
-          offerdetails : property.offerdetails,
+          isOffer: property.isOffer,
+          offerdetails: property.offerdetails,
           details: property.details,
 
           contact: property.contact,
@@ -388,19 +400,42 @@ export class AdPostingServicesComponent implements OnInit {
       this.commonSrv.address$.pipe(take(1)).subscribe((data) => {
         details.get('address')?.patchValue(data);
       });
-    }else{
+    } else {
       details.get('address')?.reset();
     }
   }
 
-  onOffer(event: MatCheckboxChange){
-    if(event.checked){
+  onOffer(event: MatCheckboxChange) {
+    if (event.checked) {
       this.showOfferField = true;
-    }else{
-      if(!this.isEditMode){
+    } else {
+      if (!this.isEditMode) {
         this.propertyForm.get('offerdetails')?.reset();
       }
       this.showOfferField = false;
     }
+  }
+
+  private setLocationCoordinates(city: string): void {
+    const coords = CITY_COORDINATES[city];
+
+    if (!coords) {
+      return;
+    }
+
+    this.propertyForm.patchValue(
+      {
+        location: {
+          latitude: coords.lat,
+          longitude: coords.lng,
+
+          geoLocation: {
+            type: 'Point',
+            coordinates: [coords.lng, coords.lat],
+          },
+        },
+      },
+      { emitEvent: false },
+    );
   }
 }
