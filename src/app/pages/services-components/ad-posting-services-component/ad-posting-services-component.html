@@ -58,8 +58,8 @@
           <mat-label>{{ 'Status' | T }}</mat-label>
 
           <mat-select formControlName="status">
-            <mat-option value="Sale">Sale</mat-option>
-            <mat-option value="Rent">Rent</mat-option>
+            <mat-option value="Sale">{{'Sale' | T}}</mat-option>
+            <mat-option value="Rent">{{'Rent' | T}}</mat-option>
           </mat-select>
           <mat-error>{{ getError('status') }}</mat-error>
         </mat-form-field>

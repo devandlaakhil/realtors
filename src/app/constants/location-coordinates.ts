@@ -33,4 +33,8 @@ export const CITY_COORDINATES: Record<string, CityCoordinate> = {
     lat: 17.6868,
     lng: 83.2185,
   },
+  Kukatpally: {
+    lat:17.4949,
+    lng:78.3997
+  }
 };

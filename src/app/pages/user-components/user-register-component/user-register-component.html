@@ -1,42 +1,42 @@
 <div class="registration-page">
     <div class="register-card">
-        <div class="card-header-premium">Register</div>
+        <div class="card-header-premium">{{'Register'|T}}</div>
         
         <div class="card-body">
             <form [formGroup]="registerForm" class="form-container">
                 
                 <mat-form-field appearance="outline">
-                    <mat-label>Username</mat-label>
+                    <mat-label>{{'Username'|T}}</mat-label>
                     <input matInput formControlName="name">
                     <mat-error>
-                        @if(registerForm.controls.name.errors?.required){ <span>Required</span> }
-                        @if(registerForm.controls.name.errors?.pattern){ <span>No special characters</span> }
+                        @if(registerForm.controls.name.errors?.required){ <span>{{'Required'|T}}</span> }
+                        @if(registerForm.controls.name.errors?.pattern){ <span>{{'No special characters'|T}}</span> }
                     </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
-                    <mat-label>Email</mat-label>
+                    <mat-label>{{'Email'|T}}</mat-label>
                     <input matInput formControlName="email">
                     <mat-error>
-                        @if(registerForm.controls.email.errors?.required){ <span>Required</span> }
-                        @if(registerForm.controls.email.errors?.email){ <span>Invalid Email</span> }
+                        @if(registerForm.controls.email.errors?.required){ <span>{{'Required'|T}}</span> }
+                        @if(registerForm.controls.email.errors?.email){ <span>{{'Invalid Email'|T}}</span> }
                     </mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
-                    <mat-label>Mobile</mat-label>
+                    <mat-label>{{'Mobile'|T}}</mat-label>
                     <input matInput formControlName="mobile">
-                    <mat-error><span>Mobile is required</span></mat-error>
+                    <mat-error><span>{{'Mobile is required'|T}}</span></mat-error>
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
-                    <mat-label>Password</mat-label>
+                    <mat-label>{{'Password'|T}}</mat-label>
                     <input matInput type="password" formControlName="password">
-                    <mat-error><span>Password is required</span></mat-error>
+                    <mat-error><span>{{'Password is required'|T}}</span></mat-error>
                 </mat-form-field>
 
                 <button mat-flat-button class="submit-btn" (click)="onRegister()">
-                    REGISTER
+                    {{'REGISTER'|T}}
                 </button>
             </form>
         </div>

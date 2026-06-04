@@ -12,6 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth-services/auth-services';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
+import { Location } from '../../../constants/enums/ad-posting-enums';
+import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 
 @Component({
   selector: 'app-homecomponent',
@@ -42,6 +44,7 @@ export class Homecomponent implements OnInit {
   searchEntered:boolean = false;
   authService = inject(AuthService);
   userId:string = '';
+  cities = Object.values(Location);
 
   ngOnInit(): void {
     this.userId = this.authService.getUser()?.id;
@@ -56,9 +59,7 @@ export class Homecomponent implements OnInit {
       next: (res) => {
         this.properties = res.data;
         this.filteredProperties = [...this.properties];
-
         this.setupSearch();
-
         this.cdr.detectChanges();
       },
       error: () => {
@@ -109,28 +110,31 @@ export class Homecomponent implements OnInit {
       const matchesType =
         !this.selectedType ||
         property.propertyType?.toLowerCase() === this.selectedType.toLowerCase();
-
       // Budget Filter
       const priceInLakhs = property.price / 100000; // convert to Lakhs
-
       let matchesBudget = true;
-
       switch (this.selectedBudget) {
         case '10-50':
           matchesBudget = priceInLakhs >= 10 && priceInLakhs <= 50;
           break;
-
         case '50-100':
           matchesBudget = priceInLakhs > 50 && priceInLakhs <= 100;
           break;
-
         case '100+':
           matchesBudget = priceInLakhs > 100;
           break;
       }
-
       return matchesType && matchesBudget;
     });
+  }
+
+  onLocationChange(city:string):void{
+    if(city == ""){
+      this.getAllProperites();
+    }else{
+      const coords = CITY_COORDINATES[city];
+      this.getAllProperites(coords.lat, coords.lng);
+    }
   }
 
   loadProperties(): void {

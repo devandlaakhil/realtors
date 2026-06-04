@@ -1,7 +1,6 @@
 <div class="container-fluid login-box">
   <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mx-auto px-2">
     <div class="card p-0" style="box-shadow: 1px 1px 10px #361a74">
-      
       <div
         class="card-header"
         style="
@@ -11,26 +10,20 @@
           font-weight: 500;
         "
       >
-        Login
+        {{'Login'|T}}
       </div>
-
       <div class="card-body">
         <form [formGroup]="loginForm">
-
           <p>
             <mat-form-field appearance="outline" style="width: 100%">
-              <mat-label>Email: </mat-label>
-
+              <mat-label>{{'Email'|T}} </mat-label>
               <input matInput formControlName="email" />
-
               <mat-error>
                 @if (loginForm.controls.email.touched &&
                 loginForm.controls.email.invalid) {
-
                   @if (loginForm.controls.email.errors?.required) {
-                    <span>Email is required</span>
+                    <span>{{'Email is required'|T}}</span>
                   }
-
                 }
               </mat-error>
             </mat-form-field>
@@ -38,7 +31,7 @@
 
           <p>
             <mat-form-field appearance="outline" style="width: 100%">
-              <mat-label>Password: </mat-label>
+              <mat-label>{{'Password'|T}} </mat-label>
 
               <input
                 matInput
@@ -51,25 +44,21 @@
                 loginForm.controls.password.invalid) {
 
                   @if (loginForm.controls.password.errors?.required) {
-                    <span>Password is required</span>
+                    <span>{{'Password is required'|T}}</span>
                   }
-
                 }
               </mat-error>
             </mat-form-field>
           </p>
-
         </form>
       </div>
-
       <div class="row align-items-center px-2 pb-2">
-
         <div class="col-12 col-md-4 text-center text-md-start mb-2">
           <a
             style="margin-left: 10px"
             routerLink="/register"
           >
-            Register Here
+           {{'Register Here'|T}}
           </a>
         </div>
 
@@ -78,12 +67,10 @@
             mat-flat-button
             (click)="loginUser()"
           >
-            Login
+            {{'Login'|T}}
           </button>
         </div>
-
         <div class="col-md-4 d-none d-md-block"></div>
-
       </div>
     </div>
   </div>

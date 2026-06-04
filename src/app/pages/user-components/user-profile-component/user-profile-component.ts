@@ -5,10 +5,11 @@ import { UserApiServices } from '../../../api-services/user-api-services';
 import { Subject, take, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { CommonServices } from '../../../shared-services/common-services';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-user-profile-component',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,TranslatePipe],
   templateUrl: './user-profile-component.html',
   styleUrl: './user-profile-component.css',
 })

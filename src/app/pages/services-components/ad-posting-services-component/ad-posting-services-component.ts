@@ -17,29 +17,8 @@ import { CommonServices } from '../../../shared-services/common-services';
 import { take } from 'rxjs/operators';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
+import { Property_Type,Location,status } from '../../../constants/enums/ad-posting-enums'
 
-enum Property_Type {
-  VILLA = 'Villa',
-  HOUSE = 'House',
-  APARTMENT = 'Apartment',
-  PLOT = 'Plot/Land',
-  SHOPE = 'Shop',
-}
-
-enum Location {
-  HYDERABAD = 'Hyderabad',
-  GUNTUR = 'Guntur',
-  ONGOLE = 'Ongole',
-  VIJAYAWADA = 'Vijayawada',
-  TIRUPATI = 'Tirupati',
-  VIZAG = 'Vizag',
-}
-
-enum status {
-  SALE = 'Sale',
-  LEASE = 'Lease',
-  RENT = 'Rent',
-}
 
 @Component({
   selector: 'app-ad-posting-services-component',

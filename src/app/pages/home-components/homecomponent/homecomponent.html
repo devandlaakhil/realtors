@@ -21,13 +21,9 @@
 
       <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
         <mat-option value=""> {{'All Properties'|T}} </mat-option>
-
         <mat-option value="apartment"> {{'Apartment'|T}} </mat-option>
-
         <mat-option value="villa"> {{'Villa'|T}} </mat-option>
-
         <mat-option value="house"> {{'House'|T}} </mat-option>
-
         <mat-option value="plot"> {{'Plot/Land'|T}} </mat-option>
       </mat-select>
     </mat-form-field>
@@ -38,20 +34,23 @@
 
       <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
         <mat-option value=""> {{'Any Budget'|T}} </mat-option>
-
         <mat-option value="10-50"> ₹10{{'L'|T}} - ₹50{{'L'|T}} </mat-option>
-
         <mat-option value="50-100"> ₹50{{'L'|T}} - ₹1{{'Cr'| T}} </mat-option>
-
         <mat-option value="100+"> ₹1{{'Cr'| T}}+ </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <!-- Button -->
-    <button mat-raised-button color="primary" class="filter-btn">
-      <mat-icon>search</mat-icon>
-      Search
-    </button>
+    <!-- Location -->
+   <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>{{'Location'|T}}</mat-label>
+
+      <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
+        <mat-option value=""> {{'All Locatons'|T}} </mat-option>
+        <mat-option *ngFor="let city of cities" [value]="city">
+              {{ city | T }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <!-- PROPERTY GRID -->
@@ -70,7 +69,7 @@
           <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
 
           <span class="badge">
-            {{ property.status }}
+            {{ property.status | T}}
           </span>
 
           <button class="wishlist">❤</button>

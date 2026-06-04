@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UserApiServices } from '../../../api-services/user-api-services';
 import { AuthService } from '../../../auth-services/auth-services';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-user-login-component',
@@ -17,7 +18,8 @@ import { DashboardServices } from '../../../shared-services/dashboard-services';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    ReactiveFormsModule,],
+    ReactiveFormsModule,
+    TranslatePipe],
   templateUrl: './user-login-component.html',
   styleUrl: './user-login-component.css',
 })

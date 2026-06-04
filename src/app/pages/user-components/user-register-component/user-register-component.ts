@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { UserApiServices } from '../../../api-services/user-api-services';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-user-register-component',
@@ -14,7 +15,9 @@ import { Router } from '@angular/router';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule],
+    MatButtonModule,
+    TranslatePipe 
+  ],
   templateUrl: './user-register-component.html',
   styleUrl: './user-register-component.css',
 })

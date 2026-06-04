@@ -39,31 +39,31 @@
   <!-- PERSONAL INFO -->
   <div class="glass-card">
     <div class="card-header">
-      <h3>Personal Information</h3>
+      <h3>{{'Personal Information' | T}}</h3>
 
-      <button *ngIf="!isEditingProfile" class="edit-btn" (click)="startEdit()">Edit</button>
+      <button *ngIf="!isEditingProfile" class="edit-btn" (click)="startEdit()">{{'Edit'|T}}</button>
     </div>
 
     <!-- VIEW MODE -->
 
     <div *ngIf="!isEditingProfile">
       <div class="info-row">
-        <span>Name</span>
+        <span>{{'Name'|T}}</span>
         <strong>{{ user.name }}</strong>
       </div>
 
       <div class="info-row">
-        <span>Email</span>
+        <span>{{'Email'|T}}</span>
         <strong>{{ user.email }}</strong>
       </div>
 
       <div class="info-row">
-        <span>Phone</span>
+        <span>{{'Phone'|T}}</span>
         <strong>{{ user.mobile }}</strong>
       </div>
 
       <div class="info-row">
-        <span>Location</span>
+        <span>{{'Location'|T}}</span>
         <strong>{{address}}</strong>
       </div>
     </div>
@@ -72,34 +72,34 @@
 
     <div *ngIf="isEditingProfile">
       <div class="form-group">
-        <label>Name</label>
+        <label>{{'Name'|T}}</label>
         <input type="text" [(ngModel)]="editUser.name" value="user.name" />
       </div>
 
       <div class="form-group">
-        <label>Email</label>
+        <label>{{'Email'|T}}</label>
         <input type="email" [(ngModel)]="editUser.email" value="user.email" />
       </div>
 
       <div class="form-group">
-        <label>Phone</label>
+        <label>{{'Phone'|T}}</label>
         <input type="text" [(ngModel)]="editUser.mobile" value="user.mobile" />
       </div>
 
       <div class="form-group">
-        <label>About</label>
+        <label>{{'About'|T}}</label>
         <textarea type="text" [(ngModel)]="editUser.about" value="user.about" ></textarea>
       </div>
 
       <div class="form-group">
-        <label>Location</label>
+        <label>{{'Location'|T}}</label>
         <input type="text" [(ngModel)]="address" value="address" disabled />
       </div>
 
       <div class="action-row">
-        <button class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+        <button class="cancel-btn" (click)="cancelEdit()">{{'Cancel'|T}}</button>
 
-        <button class="save-btn" (click)="saveProfile()">Save Changes</button>
+        <button class="save-btn" (click)="saveProfile()">{{'Save Changes'|T}}</button>
       </div>
     </div>
   </div>
@@ -108,10 +108,10 @@
 
   <div class="glass-card">
     <div class="card-header">
-      <h3>Security</h3>
+      <h3>{{'Security'|T}}</h3>
 
       <button *ngIf="!isChangingPassword" class="edit-btn" (click)="openPasswordSection()">
-        Change Password
+       {{'Change Password'|T}}
       </button>
     </div>
 
@@ -122,7 +122,7 @@
         <div class="security-icon">🔒</div>
 
         <div>
-          <h4>Password Protected</h4>
+          <h4>{{'Password Protected'|T}}</h4>
           <p>Last changed 45 days ago</p>
         </div>
       </div>
@@ -132,24 +132,24 @@
 
     <div *ngIf="isChangingPassword">
       <div class="form-group">
-        <label>Current Password</label>
+        <label>{{'Current Password'|T}}</label>
         <input type="password" [(ngModel)]="passwordData.currentPassword" />
       </div>
 
       <div class="form-group">
-        <label>New Password</label>
+        <label>{{'New Password'|T}}</label>
         <input type="password" [(ngModel)]="passwordData.newPassword" />
       </div>
 
       <div class="form-group">
-        <label>Confirm Password</label>
+        <label>{{'Confirm Password'|T}}</label>
         <input type="password" [(ngModel)]="passwordData.confirmPassword" />
       </div>
 
       <div class="action-row">
-        <button class="cancel-btn" (click)="cancelPasswordChange()">Cancel</button>
+        <button class="cancel-btn" (click)="cancelPasswordChange()">{{'Cancel'|T}}</button>
 
-        <button class="save-btn" (click)="updatePassword()">Update Password</button>
+        <button class="save-btn" (click)="updatePassword()">{{'Update Password'|T}}</button>
       </div>
     </div>
   </div>
@@ -158,7 +158,7 @@
 
   <div class="glass-card">
     <div class="card-header">
-      <h3>Subscription</h3>
+      <h3>{{'Subscription'|T}}</h3>
     </div>
 
     <div class="subscription-box">
