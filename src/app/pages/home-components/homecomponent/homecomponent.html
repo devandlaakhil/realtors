@@ -1,56 +1,120 @@
 <div class="property-page">
   <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <!-- Search -->
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>{{'Search properties'|T}}</mat-label>
+  <div class="map-container">
+    <google-map
+      class="property-map"
+      height="100%"
+      width="100%"
+      [center]="center"
+      [zoom]="zoom"
+      [options]="mapOptions"
+    >
+      <map-marker
+        *ngFor="let property of filteredProperties"
+        [position]="{
+          lat: property.location.geoLocation.coordinates[1],
+          lng: property.location.geoLocation.coordinates[0],
+        }"
+        (mapClick)="openInfo(marker, property)"
+        #marker="mapMarker"
+      >
+      </map-marker>
 
-      <input
-        matInput
-        type="text"
-        placeholder="Search properties..."
-        [formControl]="searchControl"
-      />
+      <map-info-window>
+        <div class="marker-preview" *ngIf="selectedProperty">
+          <img [src]="selectedProperty.images?.[0]?.url" alt="property" />
 
-      <mat-icon matPrefix>search</mat-icon>
-    </mat-form-field>
+          <div class="marker-content">
+            <h4>₹{{ selectedProperty.price | number }}</h4>
 
-    <!-- Property Type -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>{{'Property Type'|T}}</mat-label>
+            <p>
+              {{ selectedProperty.title }}
+            </p>
 
-      <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
-        <mat-option value=""> {{'All Properties'|T}} </mat-option>
-        <mat-option value="apartment"> {{'Apartment'|T}} </mat-option>
-        <mat-option value="villa"> {{'Villa'|T}} </mat-option>
-        <mat-option value="house"> {{'House'|T}} </mat-option>
-        <mat-option value="plot"> {{'Plot/Land'|T}} </mat-option>
-      </mat-select>
-    </mat-form-field>
+            <p>
+              {{ selectedProperty.location.area }}
+            </p>
+          </div>
+        </div>
+      </map-info-window>
+    </google-map>
 
-    <!-- Budget -->
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>{{'Budget'|T}}</mat-label>
+    <div class="filter-overlay">
+      <div class="filter-bar">
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>{{ 'Search properties' | T }}</mat-label>
 
-      <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
-        <mat-option value=""> {{'Any Budget'|T}} </mat-option>
-        <mat-option value="10-50"> ₹10{{'L'|T}} - ₹50{{'L'|T}} </mat-option>
-        <mat-option value="50-100"> ₹50{{'L'|T}} - ₹1{{'Cr'| T}} </mat-option>
-        <mat-option value="100+"> ₹1{{'Cr'| T}}+ </mat-option>
-      </mat-select>
-    </mat-form-field>
+          <input
+            matInput
+            type="text"
+            placeholder="Search properties..."
+            [formControl]="searchControl"
+          />
 
-    <!-- Location -->
-   <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>{{'Location'|T}}</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
 
-      <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
-        <mat-option value=""> {{'All Locatons'|T}} </mat-option>
-        <mat-option *ngFor="let city of cities" [value]="city">
+        <!-- Property Type -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'Property Type' | T }}</mat-label>
+
+          <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
+            <mat-option value="">
+              {{ 'All Properties' | T }}
+            </mat-option>
+
+            <mat-option value="apartment">
+              {{ 'Apartment' | T }}
+            </mat-option>
+
+            <mat-option value="villa">
+              {{ 'Villa' | T }}
+            </mat-option>
+
+            <mat-option value="house">
+              {{ 'House' | T }}
+            </mat-option>
+
+            <mat-option value="plot">
+              {{ 'Plot/Land' | T }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Budget -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'Budget' | T }}</mat-label>
+
+          <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
+            <mat-option value="">
+              {{ 'Any Budget' | T }}
+            </mat-option>
+
+            <mat-option value="10-50"> ₹10{{ 'L' | T }} - ₹50{{ 'L' | T }} </mat-option>
+
+            <mat-option value="50-100"> ₹50{{ 'L' | T }} - ₹1{{ 'Cr' | T }} </mat-option>
+
+            <mat-option value="100+"> ₹1{{ 'Cr' | T }}+ </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Location -->
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>{{ 'Location' | T }}</mat-label>
+
+          <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
+            <mat-option value="">
+              {{ 'All Locations' | T }}
+            </mat-option>
+
+            <mat-option *ngFor="let city of cities" [value]="city">
               {{ city | T }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
   </div>
 
   <!-- PROPERTY GRID -->
@@ -69,7 +133,7 @@
           <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
 
           <span class="badge">
-            {{ property.status | T}}
+            {{ property.status | T }}
           </span>
 
           <button class="wishlist">❤</button>
@@ -136,9 +200,13 @@
               </p>
             </div>
             @if (userId != property.clientid) {
-              <button class="view-btn1" [routerLink]="['/query', property.id]">{{'Send Query'|T}}</button>
+              <button class="view-btn1" [routerLink]="['/query', property.id]">
+                {{ 'Send Query' | T }}
+              </button>
             }
-            <button class="view-btn" [routerLink]="['/property', property.id]">{{'View'|T}}</button>
+            <button class="view-btn" [routerLink]="['/property', property.id]">
+              {{ 'View' | T }}
+            </button>
           </div>
         </div>
       </div>

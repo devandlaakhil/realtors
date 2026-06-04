@@ -13,7 +13,7 @@
    FILTER BAR
 ========================= */
 
-.filter-bar {
+/* .filter-bar {
   display: flex;
   align-items: stretch;
   gap: 16px;
@@ -22,12 +22,11 @@
   margin-bottom: 24px;
   padding: 20px;
 
-  background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
 
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
-}
+} */
 
 /* Form field wrapper */
 .filter-field {
@@ -70,6 +69,7 @@
 
 .property-grid {
   display: grid;
+  margin-top: 5px;
   grid-template-columns:
     repeat(auto-fill, minmax(280px, 1fr));
 
@@ -503,4 +503,156 @@
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.map-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 70px);
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.property-map {
+  width: 100%;
+  height: 100%;
+}
+
+.filter-overlay {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
+  width: 95%;
+  max-width: 1450px;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 35px;
+  padding: 12px 16px;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.search-field {
+  flex: 2;
+}
+
+.filter-field {
+  flex: 1;
+}
+
+/* Material field styling */
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background: rgba(255,255,255,0.85) !important;
+  border-radius: 14px !important;
+}
+
+::ng-deep .mdc-notched-outline__leading,
+::ng-deep .mdc-notched-outline__notch,
+::ng-deep .mdc-notched-outline__trailing {
+  border-color: rgba(0,0,0,0.12) !important;
+}
+
+/* Tablet */
+@media (max-width: 992px) {
+
+  .filter-bar {
+    flex-wrap: wrap;
+  }
+
+  .search-field {
+    flex: 1 1 100%;
+  }
+
+  .filter-field {
+    flex: 1 1 calc(50% - 10px);
+  }
+
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .map-container {
+    height: 60vh;
+  }
+
+  .filter-overlay {
+    top: 12px;
+    width: calc(100% - 16px);
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: nowrap;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    gap: 10px;
+    padding: 10px;
+
+    scrollbar-width: none;
+  }
+
+  .filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .search-field {
+    min-width: 260px;
+    flex: unset;
+  }
+
+  .filter-field {
+    min-width: 180px;
+    flex: unset;
+  }
+
+}
+
+
+.marker-preview {
+  width: 220px;
+}
+
+.marker-preview img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.marker-content {
+  padding-top: 8px;
+}
+
+.marker-content h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.marker-content p {
+  margin: 4px 0;
+  font-size: 13px;
 }
