@@ -372,97 +372,46 @@
 
 @media (max-width: 768px) {
 
-  .property-page {
-    padding: 14px;
+  .filter-overlay {
+    top: 12px;
+    width: calc(100% - 16px);
   }
 
-  /* FILTER BAR */
-  .filter-bar {
-    flex-direction: column;
-    gap: 14px;
-    padding: 18px;
-  }
+ .filter-bar {
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
 
-  .filter-field,
+  /* Search takes full row */
   .search-field {
+    grid-column: 1 / -1;
     width: 100%;
-    min-width: 100%;
-    flex: unset;
+    min-width: unset;
   }
 
-  .filter-field mat-form-field {
-    width: 100% !important;
-  }
-
-  .filter-btn {
+  /* Type, Budget, Location */
+  .filter-field {
     width: 100%;
-    min-width: 100%;
+    min-width: unset;
   }
 
-  /* GRID */
-  .property-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-  }
-
-  .image-container {
-    height: 150px;
-  }
-
-  .top-section {
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .price {
-    font-size: 16px;
-  }
-
-  .details {
-    font-size: 12px;
-    gap: 8px;
-  }
-
-  .card-content {
-    padding: 12px;
-  }
 }
 
 /* =========================
    SMALL MOBILE
 ========================= */
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
 
-  .property-grid {
-    grid-template-columns: 1fr;
+  .filter-bar {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .image-container {
-    height: 190px;
+  .search-field {
+    grid-column: 1 / -1;
   }
 
-  .top-section h3 {
-    font-size: 15px;
-  }
-
-  .price {
-    font-size: 15px;
-  }
-
-  .footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .view-btn {
-    width: 100%;
-  }
-
-  .view-btn1{
-    width: 100%;
-  }
 }
 
 /* .offer-banner {
