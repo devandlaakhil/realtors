@@ -4,11 +4,17 @@ import { provideRouter, withHashLocation } from '@angular/router';
 import { routes } from './app.routes';
 //import { GlobalErrorHandler } from '../app/interceptors/global-error-handler';
 import { provideToastr } from 'ngx-toastr';
-import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  HttpClient,
+  HTTP_INTERCEPTORS,
+} from '@angular/common/http';
 import { authInterceptor } from './interceptors/auth.interceptors';
 
-import { provideTranslateService} from '@ngx-translate/core';
+import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { LoaderInterceptors } from './interceptors/loader.interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,5 +28,10 @@ export const appConfig: ApplicationConfig = {
         suffix: '.json',
       }),
     }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptors,
+      multi: true,
+    },
   ],
 };

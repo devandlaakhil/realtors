@@ -14,6 +14,7 @@ import { AuthService } from '../../../auth-services/auth-services';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { Location } from '../../../constants/enums/ad-posting-enums';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
+import { LoaderServices } from '../../../shared-services/loader-services';
 
 @Component({
   selector: 'app-homecomponent',
@@ -45,6 +46,7 @@ export class Homecomponent implements OnInit {
   authService = inject(AuthService);
   userId:string = '';
   cities = Object.values(Location);
+  loaderService = inject(LoaderServices);
 
   ngOnInit(): void {
     this.userId = this.authService.getUser()?.id;
@@ -52,6 +54,7 @@ export class Homecomponent implements OnInit {
   }
 
   getAllProperites(lat?: number, lng?: number): void {
+  this.loaderService.show();
   this.realEstateApiSrv
     .getAllList(lat, lng)
     .pipe(takeUntil(this.destroy$))
@@ -61,9 +64,11 @@ export class Homecomponent implements OnInit {
         this.filteredProperties = [...this.properties];
         this.setupSearch();
         this.cdr.detectChanges();
+        this.loaderService.hide();
       },
       error: () => {
         this.toastr.error('Something went wrong', 'Fail');
+        this.loaderService.hide();
       },
     });
 }
