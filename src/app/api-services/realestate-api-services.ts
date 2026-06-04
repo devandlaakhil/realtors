@@ -12,8 +12,12 @@ export class RealEstateApiService {
 
   httpClient = inject(HttpClient);
 
-  getAllList(): Observable<any> {
-    return this.httpClient.get<any>(`${this._serverPort}/${this._apiUrl}/getpropeties`);
+  getAllList(lat?: number, lng?: number): Observable<any> {
+    let url = `${this._serverPort}/${this._apiUrl}/getpropeties`;
+    if (lat && lng) {
+      url += `?lat=${lat}&lng=${lng}`;
+    }
+    return this.httpClient.get<any>(url);
   }
 
   getProduct(id: string): Observable<any> {
@@ -58,16 +62,17 @@ export class RealEstateApiService {
     return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/messages/${propertyId}`);
   }
 
-  getMyMessage():Observable<any>{
+  getMyMessage(): Observable<any> {
     return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/get-my-messages`);
   }
 
-  getConversations(conversationId:string){
-    return this.httpClient.get(`${this._serverPort}/${this._apiUrl}/conversation/${conversationId}`);
+  getConversations(conversationId: string) {
+    return this.httpClient.get(
+      `${this._serverPort}/${this._apiUrl}/conversation/${conversationId}`,
+    );
   }
 
   replayQuery(data: any): Observable<any> {
     return this.httpClient.post<any>(`${this._serverPort}/${this._apiUrl}/reply-message`, data);
   }
-
 }

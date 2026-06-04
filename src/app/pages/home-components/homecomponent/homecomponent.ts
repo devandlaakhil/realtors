@@ -45,25 +45,27 @@ export class Homecomponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.authService.getUser()?.id;
-    this.getAllProperites();
+    this.loadProperties();
   }
 
-  getAllProperites() {
-    this.realEstateApiSrv
-      .getAllList()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.properties = res.data;
-          this.filteredProperties = [...this.properties];
-          this.setupSearch();
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
-        },
-      });
-  }
+  getAllProperites(lat?: number, lng?: number): void {
+  this.realEstateApiSrv
+    .getAllList(lat, lng)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res) => {
+        this.properties = res.data;
+        this.filteredProperties = [...this.properties];
+
+        this.setupSearch();
+
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.toastr.error('Something went wrong', 'Fail');
+      },
+    });
+}
 
   setupSearch() {
     this.searchControl.valueChanges.subscribe((value) => {
@@ -130,4 +132,31 @@ export class Homecomponent implements OnInit {
       return matchesType && matchesBudget;
     });
   }
+
+  loadProperties(): void {
+  if (!navigator.geolocation) {
+    console.warn('Geolocation is not supported by this browser.');
+    this.getAllProperites();
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      this.getAllProperites(lat, lng);
+    },
+    (error) => {
+      console.error('Location Error:', error);
+
+      // If user denies permission or location fails
+      this.getAllProperites();
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 60000,
+    }
+  );
+}
 }
