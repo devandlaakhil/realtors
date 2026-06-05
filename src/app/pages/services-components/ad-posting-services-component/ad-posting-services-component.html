@@ -134,7 +134,7 @@
         </mat-form-field>
 
         <mat-checkbox (change)="onGpsToggle($event)"> Use GPS </mat-checkbox>
-        <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap"> show Maps (Use Maps locating service for accuracy) </mat-checkbox>
+        <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap"> {{'show Maps' | T}} ({{'Select your location on the map to ensure accuracy' |T}}) </mat-checkbox>
         <mat-form-field appearance="fill" class="full">
           <mat-label>{{ 'Address' | T }}</mat-label>
 

@@ -13,7 +13,8 @@ export enum Location {
   VIJAYAWADA = 'Vijayawada',
   TIRUPATI = 'Tirupati',
   VIZAG = 'Vizag',
-  KUKATPALLY = 'Kukatpally'
+  KUKATPALLY = 'Kukatpally',
+  KARIMNAGAR = 'Karimnagar'
 }
 
 export enum status {

@@ -77,7 +77,7 @@ export class AdPostingServicesComponent implements OnInit {
   commonSrv = inject(CommonServices);
   showOfferField: boolean = false;
   showMap: boolean = false;
-  selectedLocation: any;
+  selectedLocation: any = { lat: '', lng: '' };
   zoom: number = 0;
   center: any;
 
@@ -163,7 +163,6 @@ export class AdPostingServicesComponent implements OnInit {
         phone: ['', Validators.required],
         email: ['', Validators.email],
       }),
-
       images: [[]],
     });
   }
@@ -178,31 +177,23 @@ export class AdPostingServicesComponent implements OnInit {
           description: property.description,
           propertyType: property.propertyType,
           status: property.status,
-
           location: property.location,
-
           price: property.price,
           priceType: property.priceType,
           negotiable: property.negotiable,
           isOffer: property.isOffer,
           offerdetails: property.offerdetails,
           details: property.details,
-
           contact: property.contact,
-
           videoUrl: property.videoLink || '',
         });
-
         // Existing images
         this.existingImages = property.images || [];
-
         property.images?.forEach((img: any) => {
           this.imagePreview[img.type] = img.url;
         });
-
         // Existing videos
         this.existingVideos = property.videos || [];
-
         if (property.videos?.length) {
           this.videoPreview = property.videos[0].url;
         }
@@ -274,9 +265,7 @@ export class AdPostingServicesComponent implements OnInit {
   submit() {
     if (this.propertyForm.invalid) {
       this.propertyForm.markAllAsTouched();
-
       this.toastr.error('Please fill all required fields', 'Validation');
-
       return;
     }
     const formData = new FormData();
@@ -291,20 +280,14 @@ export class AdPostingServicesComponent implements OnInit {
     formData.append('negotiable', String(formValue.negotiable));
     formData.append('isOffer', String(formValue.isOffer));
     formData.append('offerdetails', formValue.offerdetails);
-
     // VIDEO URL
     formData.append('videoUrl', formValue.videoUrl || '');
-
     // NESTED OBJECTS
     formData.append('location', JSON.stringify(formValue.location));
-
     formData.append('details', JSON.stringify(formValue.details));
-
     formData.append('contact', JSON.stringify(formValue.contact));
-
     // EXISTING IMAGES
     formData.append('existingImages', JSON.stringify(this.existingImages));
-
     // EXISTING VIDEOS
     formData.append('existingVideos', JSON.stringify(this.existingVideos));
 
@@ -312,7 +295,6 @@ export class AdPostingServicesComponent implements OnInit {
     Object.keys(this.images).forEach((type) => {
       if (this.images[type]) {
         formData.append('images', this.images[type]);
-
         formData.append('imageTypes', type);
       }
     });
@@ -330,7 +312,6 @@ export class AdPostingServicesComponent implements OnInit {
         .subscribe({
           next: () => {
             this.toastr.success('Property updated successfully', 'Success');
-
             this.router.navigate(['/dashboard']);
           },
           error: () => {
@@ -360,19 +341,15 @@ export class AdPostingServicesComponent implements OnInit {
 
   getError(controlName: string): string {
     const control = this.propertyForm.get(controlName);
-
     if (!control || !control.touched) {
       return '';
     }
-
     if (control.hasError('required')) {
       return 'This field is required';
     }
-
     if (control.hasError('email')) {
       return 'Enter a valid email address';
     }
-
     return '';
   }
 
@@ -389,7 +366,12 @@ export class AdPostingServicesComponent implements OnInit {
 
   onMapsToggle(event: MatCheckboxChange) {
     if (event.checked) {
-      navigator.geolocation.getCurrentPosition(
+      const details = this.propertyForm.get('location') as FormGroup;
+      const city = details.get('city')?.value;
+      if(city){
+        this.setLocationCoordinates(city);
+      }else{
+         navigator.geolocation.getCurrentPosition(
         (position) => {
           const lat = position.coords.latitude;
           const lng = position.coords.longitude;
@@ -413,6 +395,7 @@ export class AdPostingServicesComponent implements OnInit {
           maximumAge: 60000,
         },
       );
+      }
       this.showMap = true;
     } else {
       this.showMap = false;
@@ -460,10 +443,7 @@ export class AdPostingServicesComponent implements OnInit {
     if (!coords) {
       return;
     }
-    if (
-      this.selectedLocation &&
-      (this.selectedLocation.lng == '' || this.selectedLocation.lng == '')
-    ) {
+    if (this.selectedLocation.lng == '' || this.selectedLocation.lng == '') {
       this.propertyForm.patchValue(
         {
           location: {
@@ -479,5 +459,17 @@ export class AdPostingServicesComponent implements OnInit {
         { emitEvent: false },
       );
     }
+
+ 
+      // Update map center
+      this.center = {
+        lat: coords.lat,
+        lng: coords.lng,
+      };
+      this.selectedLocation = {
+        lat: coords.lat,
+        lng: coords.lng,
+      };
+      this.zoom = 15;
   }
 }

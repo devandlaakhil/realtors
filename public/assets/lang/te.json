@@ -84,6 +84,8 @@
   "Password is required":"పాస్‌వర్డ్ అవసరం",
   "Email is required":"ఈమెయిల్ తప్పనిసరి",
   "Sale":"అమ్మకం",
+  "show Maps":"మ్యాప్‌ను చూపించు",
+  "Select your location on the map to ensure accuracy":"ఖచ్చితత్వాన్ని నిర్ధారించుకోవడానికి మ్యాప్‌లో మీ స్థానాన్ని ఎంచుకోండి",
   "Lease":"అద్దె ఒప్పందం",
   "Rent":"అద్దెకు",
   "Current Password":"ప్రస్తుత పాస్‌వర్డ్",
@@ -107,5 +109,6 @@
   "Vijayawada":"విజయవాడ",
   "Tirupati":"తిరుపతి",
   "Vizag":"విశాఖపట్నం",
-  "Kukatpally":"కూకట్‌పల్లి"
+  "Kukatpally":"కూకట్‌పల్లి",
+  "Karimnagar":"కరీంనగర్"
 }

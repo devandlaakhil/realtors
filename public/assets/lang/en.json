@@ -92,6 +92,8 @@
   "Password":"Password",
   "Mobile":"Mobile",
   "Username":"Username",
+  "show Maps":"show Maps",
+  "Select your location on the map to ensure accuracy":"Select your location on the map to ensure accuracy",
   "New Password":"New Password",
   "Confirm Password":"Confirm Password",
   "Change Password":"Change Password",
@@ -107,6 +109,7 @@
   "VIJAYAWADA":"Vijayawada",
   "TIRUPATI":"Tirupati",
   "VIZAG":"Vizag",
-  "KUKATPALLY":"Kukatpally"
+  "KUKATPALLY":"Kukatpally",
+  "KARIMNAGAR":"Karimnagar"
 
 }
