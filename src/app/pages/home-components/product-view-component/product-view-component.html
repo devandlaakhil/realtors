@@ -8,7 +8,7 @@
         <div class="big-image-card">
           <img [src]="selectedImage" alt="property" class="big-image" />
 
-          <div class="image-count">{{ property.images.length }} Photos</div>
+          <div class="image-count">{{ property.images.length }}{{ 'Photos' | T }}</div>
         </div>
 
         <!-- THUMBNAILS -->
@@ -30,7 +30,7 @@
         <!-- STATUS -->
         <div class="status-row">
           <span class="status-badge">
-            {{ property.status }}
+            {{ property.status | T }}
           </span>
 
           <button class="wishlist-btn">❤</button>
@@ -61,12 +61,12 @@
         <div class="spec-grid">
           <div class="spec-box">
             <h3>{{ property.details.bedrooms }}</h3>
-            <p>Bedrooms</p>
+            <p>{{ 'Bedrooms' | T }}</p>
           </div>
 
           <div class="spec-box">
             <h3>{{ property.details.bathrooms }}</h3>
-            <p>Bathrooms</p>
+            <p>{{ 'Bathrooms' | T }}</p>
           </div>
 
           <div class="spec-box">
@@ -76,15 +76,17 @@
 
           <div class="spec-box">
             <h3>{{ property.details.floor }}</h3>
-            <p>Floor</p>
+            <p>{{ 'Floor' | T }}</p>
           </div>
         </div>
 
         <!-- BUTTONS -->
         <div class="action-row">
-          <button class="contact-btn">📞 Contact Owner</button>
+          <a [href]="'tel:' + property.contact.phone">
+            <button class="contact-btn">📞 {{ 'Contact Owner' | T }}</button>
+          </a>
 
-          <button class="whatsapp-btn">💬 WhatsApp</button>
+          <button class="whatsapp-btn" (click)="openWhatsApp(property.contact.phone)">💬 {{ 'WhatsApp' | T }}</button>
         </div>
 
         <!-- OWNER -->
@@ -109,7 +111,7 @@
     <!-- PROPERTY VIDEO -->
     @if (property.videos?.length > 0 || property.videoLink) {
       <div class="content-card media-card">
-        <h2>Property Video</h2>
+        <h2>{{'Property Video'|T}}</h2>
 
         <!-- Uploaded Video -->
         @if (property.videos?.length > 0) {
@@ -128,7 +130,7 @@
         } -->
         @if (safeVideoUrl) {
           <div class="video-frame">
-            <iframe [src]="safeVideoUrl" width="100%" height="450" frameborder="0"  allowfullscreen>
+            <iframe [src]="safeVideoUrl" width="100%" height="450" frameborder="0" allowfullscreen>
             </iframe>
           </div>
         }
@@ -137,7 +139,7 @@
 
     <!-- DESCRIPTION -->
     <div class="content-card">
-      <h2>Description</h2>
+      <h2>{{ 'Description' | T }}</h2>
 
       <p>
         {{ property.description }}
@@ -146,38 +148,38 @@
 
     <!-- PROPERTY DETAILS -->
     <div class="content-card">
-      <h2>Property Details</h2>
+      <h2>{{ 'Property Details' | T }}</h2>
 
       <div class="details-grid">
         <div class="detail-item">
-          <span>Property Type</span>
+          <span>{{ 'Property Type' | T }}</span>
           <h4>{{ property.propertyType }}</h4>
         </div>
 
         <div class="detail-item">
-          <span>Furnishing</span>
+          <span>{{ 'Furnishing' | T }}</span>
           <h4>{{ property.details.furnishing }}</h4>
         </div>
 
         <div class="detail-item">
-          <span>Total Floors</span>
+          <span>{{ 'Total Floors' | T }}</span>
           <h4>{{ property.details.totalFloors }}</h4>
         </div>
 
         <div class="detail-item">
-          <span>Negotiable</span>
+          <span>{{ 'Negotiable' | T }}</span>
           <h4>
             {{ property.negotiable ? 'Yes' : 'No' }}
           </h4>
         </div>
 
         <div class="detail-item">
-          <span>Pincode</span>
+          <span>{{ 'Pincode' | T }}</span>
           <h4>{{ property.location.pincode }}</h4>
         </div>
 
         <div class="detail-item">
-          <span>Address</span>
+          <span>{{ 'Address' | T }}</span>
           <h4>{{ property.location.address }}</h4>
         </div>
       </div>
