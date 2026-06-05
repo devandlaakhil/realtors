@@ -472,8 +472,6 @@
   top: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
-
   width: 95%;
   max-width: 1450px;
 }
@@ -553,13 +551,11 @@
   .filter-bar {
     display: flex;
     flex-wrap: nowrap;
-
     overflow-x: auto;
     overflow-y: hidden;
-
     gap: 10px;
     padding: 10px;
-
+    margin-top: 60px;
     scrollbar-width: none;
   }
 
