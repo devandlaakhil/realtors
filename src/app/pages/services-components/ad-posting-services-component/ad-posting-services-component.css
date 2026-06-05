@@ -457,7 +457,7 @@ input[type='number'] {
 .map-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 70px);
+  height: calc(55vh - 70px);
   margin-top: 0;
   overflow: hidden;
 }
