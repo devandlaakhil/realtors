@@ -26,11 +26,9 @@
 
           <div class="marker-content">
             <h4>₹{{ selectedProperty.price | number }}</h4>
-
             <p>
               {{ selectedProperty.title }}
             </p>
-
             <p>
               {{ selectedProperty.location.area }}
             </p>
@@ -63,19 +61,15 @@
             <mat-option value="">
               {{ 'All Properties' | T }}
             </mat-option>
-
             <mat-option value="apartment">
               {{ 'Apartment' | T }}
             </mat-option>
-
             <mat-option value="villa">
               {{ 'Villa' | T }}
             </mat-option>
-
             <mat-option value="house">
               {{ 'House' | T }}
             </mat-option>
-
             <mat-option value="plot">
               {{ 'Plot/Land' | T }}
             </mat-option>
@@ -90,11 +84,8 @@
             <mat-option value="">
               {{ 'Any Budget' | T }}
             </mat-option>
-
             <mat-option value="10-50"> ₹10{{ 'L' | T }} - ₹50{{ 'L' | T }} </mat-option>
-
             <mat-option value="50-100"> ₹50{{ 'L' | T }} - ₹1{{ 'Cr' | T }} </mat-option>
-
             <mat-option value="100+"> ₹1{{ 'Cr' | T }}+ </mat-option>
           </mat-select>
         </mat-form-field>
@@ -171,9 +162,7 @@
           <!-- DETAILS -->
           <div class="details">
             <div>🛏 {{ property.details.bedrooms }}</div>
-
             <div>🛁 {{ property.details.bathrooms }}</div>
-
             <div>📐 {{ property.details.area }} sqft</div>
           </div>
 

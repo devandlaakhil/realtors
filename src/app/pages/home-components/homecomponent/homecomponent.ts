@@ -160,8 +160,13 @@ export class Homecomponent implements OnInit {
   onLocationChange(city: string): void {
     if (city == '') {
       this.getAllProperites();
+      this.zoom = 5;
     } else {
-      const coords = CITY_COORDINATES[city];
+      let coords = CITY_COORDINATES[city];
+      this.center = {
+          lat: coords.lat,
+          lng: coords.lng
+        };
       this.getAllProperites(coords.lat, coords.lng);
     }
   }
@@ -187,7 +192,6 @@ export class Homecomponent implements OnInit {
       },
       (error) => {
         console.error('Location Error:', error);
-
         // If user denies permission or location fails
         this.getAllProperites();
       },

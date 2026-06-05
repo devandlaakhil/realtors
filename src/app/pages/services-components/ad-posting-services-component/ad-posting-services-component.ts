@@ -17,8 +17,8 @@ import { CommonServices } from '../../../shared-services/common-services';
 import { take } from 'rxjs/operators';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
-import { Property_Type,Location,status } from '../../../constants/enums/ad-posting-enums'
-
+import { Property_Type, Location, status } from '../../../constants/enums/ad-posting-enums';
+import { GoogleMap, MapMarker } from '@angular/google-maps';
 
 @Component({
   selector: 'app-ad-posting-services-component',
@@ -33,6 +33,8 @@ import { Property_Type,Location,status } from '../../../constants/enums/ad-posti
     MatCheckboxModule,
     MatTooltipModule,
     TranslatePipe,
+    GoogleMap,
+    MapMarker,
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
@@ -74,6 +76,10 @@ export class AdPostingServicesComponent implements OnInit {
   isPlotOrLand: boolean = false;
   commonSrv = inject(CommonServices);
   showOfferField: boolean = false;
+  showMap: boolean = false;
+  selectedLocation: any;
+  zoom: number = 0;
+  center: any;
 
   ngOnInit(): void {
     this.initForm();
@@ -342,14 +348,11 @@ export class AdPostingServicesComponent implements OnInit {
       .subscribe({
         next: () => {
           this.propertyForm.reset();
-
           this.toastr.success('Property posted successfully', 'Success');
-
           this.router.navigate(['/']);
         },
         error: (err) => {
           console.log(err);
-
           this.toastr.error('Something went wrong', 'Fail');
         },
       });
@@ -384,6 +387,62 @@ export class AdPostingServicesComponent implements OnInit {
     }
   }
 
+  onMapsToggle(event: MatCheckboxChange) {
+    if (event.checked) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          // Update map center
+          this.center = {
+            lat,
+            lng,
+          };
+          this.selectedLocation = {
+            lat,
+            lng,
+          };
+          this.zoom = 15;
+        },
+        (error) => {
+          console.error('Location Error:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000,
+        },
+      );
+      this.showMap = true;
+    } else {
+      this.showMap = false;
+    }
+  }
+
+  markerDragged(event: google.maps.MapMouseEvent) {
+    if (!event.latLng) return;
+
+    this.selectedLocation = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+    };
+
+    this.propertyForm.patchValue(
+      {
+        location: {
+          latitude: event.latLng.lat(),
+          longitude: event.latLng.lng(),
+
+          geoLocation: {
+            type: 'Point',
+            coordinates: [this.selectedLocation.lng, this.selectedLocation.lat],
+          },
+        },
+      },
+      { emitEvent: false },
+    );
+  }
+
   onOffer(event: MatCheckboxChange) {
     if (event.checked) {
       this.showOfferField = true;
@@ -401,20 +460,24 @@ export class AdPostingServicesComponent implements OnInit {
     if (!coords) {
       return;
     }
+    if (
+      this.selectedLocation &&
+      (this.selectedLocation.lng == '' || this.selectedLocation.lng == '')
+    ) {
+      this.propertyForm.patchValue(
+        {
+          location: {
+            latitude: coords.lat,
+            longitude: coords.lng,
 
-    this.propertyForm.patchValue(
-      {
-        location: {
-          latitude: coords.lat,
-          longitude: coords.lng,
-
-          geoLocation: {
-            type: 'Point',
-            coordinates: [coords.lng, coords.lat],
+            geoLocation: {
+              type: 'Point',
+              coordinates: [coords.lng, coords.lat],
+            },
           },
         },
-      },
-      { emitEvent: false },
-    );
+        { emitEvent: false },
+      );
+    }
   }
 }
