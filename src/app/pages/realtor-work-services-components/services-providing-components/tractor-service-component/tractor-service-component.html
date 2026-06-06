@@ -3,7 +3,7 @@
     <div class="page-header">
       <div>
         <h2>🚜 Tractors Near You</h2>
-        <span>{{totalAvailTractors}} tractors available</span>
+        <span>{{ totalAvailTractors }} tractors available</span>
       </div>
 
       <button class="post-btn" (click)="openPostService()">+ Post Service</button>
@@ -45,7 +45,7 @@
 
       <!-- RIGHT SIDE MAP -->
 
-      <div class="map-panel">
+      <!-- <div class="map-panel">
         <div class="fake-map">
           <div class="map-title">Nearby Tractors</div>
 
@@ -60,25 +60,58 @@
             🚜
           </div>
         </div>
-      </div>
+      </div> -->
+      <google-map [center]="center" [zoom]="12" width="100%" height="600px">
+        <map-marker
+          *ngFor="let tractor of tractors"
+          #marker="mapMarker"
+          [position]="{
+            lat: tractor.lat,
+            lng: tractor.lng,
+          }"
+          (mapClick)="openInfo(marker, tractor)"
+        >
+        </map-marker>
+
+        <map-info-window>
+          <div class="info-window">
+            <img [src]="selectedTractor?.image" width="120" />
+
+            <h4>{{ selectedTractor?.name }}</h4>
+
+            <p>₹{{ selectedTractor?.price }}/hour</p>
+
+            <p>{{ selectedTractor?.distance }}</p>
+          </div>
+        </map-info-window>
+      </google-map>
     </div>
 
     <!-- MOBILE -->
 
     <div class="mobile-layout">
       <div class="mobile-map">
-        <div class="fake-map">
-          <div
+        <google-map [center]="center" [zoom]="12" width="100%" height="600px">
+          <map-marker
             *ngFor="let tractor of tractors"
-            class="marker"
-            [class.active-marker]="selectedTractor?.id === tractor?.id"
-            [style.top]="tractor.top"
-            [style.left]="tractor.left"
-            (click)="selectTractor(tractor)"
+            #marker="mapMarker"
+            [position]="{
+              lat: tractor.lat,
+              lng: tractor.lng,
+            }"
+            (mapClick)="openInfo(marker, tractor)"
           >
-            🚜
-          </div>
-        </div>
+          </map-marker>
+
+          <map-info-window>
+            <div class="info-window">
+              <img [src]="selectedTractor?.image" width="120" />
+              <h4>{{ selectedTractor?.name }}</h4>
+              <p>₹{{ selectedTractor?.price }}/hour</p>
+              <p>{{ selectedTractor?.distance }}</p>
+            </div>
+          </map-info-window>
+        </google-map>
       </div>
 
       <div class="bottom-sheet">

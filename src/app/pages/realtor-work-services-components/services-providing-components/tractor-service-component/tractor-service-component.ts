@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,9 +11,10 @@ import { RealtorsServicesApiServices } from '../../../../api-services/realtors-s
 import { Subject, takeUntil } from 'rxjs';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { ToastrService } from 'ngx-toastr';
-import { GoogleMap, MapMarker } from '@angular/google-maps';
+import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -28,6 +29,8 @@ import { TractorCard } from '../../../../../app/constants/enums/common-interface
     ReactiveFormsModule,
     GoogleMap,
     MapMarker,
+    MapInfoWindow,
+    GoogleMapsModule,
   ],
   templateUrl: './tractor-service-component.html',
   styleUrl: './tractor-service-component.css',
@@ -47,7 +50,10 @@ export class TractorServiceComponent implements OnInit {
   center: any;
   tractors: TractorCard[] = [];
   selectedTractor: TractorCard | null = null;
-  totalAvailTractors:number = 0;
+  totalAvailTractors: number = 0;
+
+  @ViewChild(MapInfoWindow)
+  infoWindow!: MapInfoWindow;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -70,6 +76,8 @@ export class TractorServiceComponent implements OnInit {
             rating: tractor.averageRating,
             distance: `${tractor.distanceKm} km`,
             image: tractor.images?.[0]?.url || 'assets/images/no-image.png',
+            lng: tractor.location.coordinates.coordinates[0],
+            lat: tractor.location.coordinates.coordinates[1],
             top: '20%',
             left: '30%',
           }));
@@ -265,5 +273,10 @@ export class TractorServiceComponent implements OnInit {
 
   selectTractor(tractor: TractorCard) {
     this.selectedTractor = tractor;
+  }
+
+  openInfo(marker: MapMarker, tractor: TractorCard) {
+    this.selectedTractor = tractor;
+    this.infoWindow.open(marker);
   }
 }

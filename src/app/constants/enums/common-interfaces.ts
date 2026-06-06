@@ -7,6 +7,9 @@ export interface TractorCard {
   distance: string;
   image: string;
 
+  lat: number;
+  lng: number;
+
   top?: string;
   left?: string;
 }
