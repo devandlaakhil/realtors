@@ -3,7 +3,7 @@
     <div class="page-header">
       <div>
         <h2>🚜 Tractors Near You</h2>
-        <span>24 tractors available</span>
+        <span>{{totalAvailTractors}} tractors available</span>
       </div>
 
       <button class="post-btn" (click)="openPostService()">+ Post Service</button>
@@ -29,21 +29,15 @@
           class="tractor-card"
           *ngFor="let tractor of tractors"
           (click)="selectTractor(tractor)"
-          [class.active]="selectedTractor.id === tractor.id"
+          [class.active]="selectedTractor?.id === tractor?.id"
         >
           <img [src]="tractor.image" />
-
           <div class="card-content">
             <h3>{{ tractor.name }}</h3>
-
             <p>⭐ {{ tractor.rating }}</p>
-
             <p>📍 {{ tractor.distance }}</p>
-
             <p>👤 {{ tractor.owner }}</p>
-
             <h4>₹{{ tractor.price }}/hour</h4>
-
             <button>View Details</button>
           </div>
         </div>
@@ -58,7 +52,7 @@
           <div
             *ngFor="let tractor of tractors"
             class="marker"
-            [class.active-marker]="selectedTractor.id === tractor.id"
+            [class.active-marker]="selectedTractor?.id === tractor?.id"
             [style.top]="tractor.top"
             [style.left]="tractor.left"
             (click)="selectTractor(tractor)"
@@ -77,7 +71,7 @@
           <div
             *ngFor="let tractor of tractors"
             class="marker"
-            [class.active-marker]="selectedTractor.id === tractor.id"
+            [class.active-marker]="selectedTractor?.id === tractor?.id"
             [style.top]="tractor.top"
             [style.left]="tractor.left"
             (click)="selectTractor(tractor)"

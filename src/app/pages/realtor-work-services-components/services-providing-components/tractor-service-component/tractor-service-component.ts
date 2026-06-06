@@ -13,6 +13,7 @@ import { API_CONSTANTS } from '../../../../constants/realtors-services-api-const
 import { ToastrService } from 'ngx-toastr';
 import { GoogleMap, MapMarker } from '@angular/google-maps';
 import { LoaderServices } from '../../../../shared-services/loader-services';
+import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -44,10 +45,41 @@ export class TractorServiceComponent implements OnInit {
   zoom: number = 0;
   selectedLocation: any = { lat: '', lng: '' };
   center: any;
+  tractors: TractorCard[] = [];
+  selectedTractor: TractorCard | null = null;
+  totalAvailTractors:number = 0;
 
   ngOnInit(): void {
     this.initializeForm();
     this.getCurrentLocation();
+  }
+
+  getAllNearByTractors() {
+    this.loaderService.show();
+    this.realtorsApiSrv
+      .get(API_CONSTANTS.tractorServices.list, this.selectedLocation)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.totalAvailTractors = res.count;
+          this.tractors = res.data.map((tractor: any) => ({
+            id: tractor.id,
+            name: tractor.title,
+            owner: tractor.ownerName,
+            price: tractor.pricePerHour,
+            rating: tractor.averageRating,
+            distance: `${tractor.distanceKm} km`,
+            image: tractor.images?.[0]?.url || 'assets/images/no-image.png',
+            top: '20%',
+            left: '30%',
+          }));
+          this.loaderService.hide();
+        },
+        error: () => {
+          this.loaderService.hide();
+          this.toastr.error('Something went wrong', 'Fail');
+        },
+      });
   }
 
   initializeForm(): void {
@@ -122,11 +154,9 @@ export class TractorServiceComponent implements OnInit {
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-
         this.center = { lat, lng };
-
         this.selectedLocation = { lat, lng };
-
+        this.getAllNearByTractors();
         this.tractorForm.patchValue({
           location: {
             latitude: lat,
@@ -192,52 +222,6 @@ export class TractorServiceComponent implements OnInit {
       { emitEvent: false },
     );
   }
-  tractors = [
-    {
-      id: 1,
-      name: 'Mahindra 575 DI',
-      owner: 'Ramesh',
-      price: 800,
-      rating: 4.8,
-      distance: '2 km',
-      image: 'https://picsum.photos/500/300?1',
-      top: '20%',
-      left: '30%',
-    },
-    {
-      id: 2,
-      name: 'Swaraj 744 FE',
-      owner: 'Suresh',
-      price: 950,
-      rating: 4.9,
-      distance: '5 km',
-      image: 'https://picsum.photos/500/300?2',
-      top: '40%',
-      left: '70%',
-    },
-    {
-      id: 3,
-      name: 'John Deere 5310',
-      owner: 'Kiran',
-      price: 1100,
-      rating: 4.7,
-      distance: '7 km',
-      image: 'https://picsum.photos/500/300?3',
-      top: '70%',
-      left: '45%',
-    },
-    {
-      id: 4,
-      name: 'Farmtrac 60',
-      owner: 'Mahesh',
-      price: 750,
-      rating: 4.6,
-      distance: '10 km',
-      image: 'https://picsum.photos/500/300?4',
-      top: '25%',
-      left: '55%',
-    },
-  ];
 
   onImageSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -279,9 +263,7 @@ export class TractorServiceComponent implements OnInit {
       });
   }
 
-  selectedTractor = this.tractors[0];
-
-  selectTractor(tractor: any) {
+  selectTractor(tractor: TractorCard) {
     this.selectedTractor = tractor;
   }
 }
