@@ -15,6 +15,7 @@ import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
 import { GoogleMapsModule } from '@angular/google-maps';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -51,6 +52,7 @@ export class TractorServiceComponent implements OnInit {
   tractors: TractorCard[] = [];
   selectedTractor: TractorCard | null = null;
   totalAvailTractors: number = 0;
+  router = inject(Router);
 
   @ViewChild(MapInfoWindow)
   infoWindow!: MapInfoWindow;
@@ -262,6 +264,7 @@ export class TractorServiceComponent implements OnInit {
           this.tractorForm.reset();
           this.selectedImages = [];
           this.loaderService.hide();
+          this.router.navigate(['/services,home'])
           this.toastr.success('Successfully posted your service');
         },
         error: () => {
