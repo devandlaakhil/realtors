@@ -110,4 +110,8 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+    path:'services',
+    loadChildren: () => import('../app/pages/realtor-work-services-components/work.services.routes').then(m => m.WORK_SERVICE_ROUTES)
+  }
 ];

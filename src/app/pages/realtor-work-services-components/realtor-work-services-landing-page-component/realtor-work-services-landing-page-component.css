@@ -1,0 +1,301 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.home-page {
+  background: #f5f7fb;
+  min-height: 100vh;
+  margin-top: 65px;
+}
+
+/* HEADER */
+
+.header {
+  height: 80px;
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  justify-content: space-between;
+  box-shadow: 0 2px 20px rgba(0,0,0,.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.search-box {
+  width: 40%;
+}
+
+.search-box input {
+  width: 100%;
+  height: 50px;
+  border-radius: 40px;
+  border: none;
+  background: #f1f5f9;
+  padding: 0 20px;
+  font-size: 15px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.profile-btn {
+  border: none;
+  background: #16a34a;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* HERO */
+
+.hero {
+  height: 400px;
+  background:
+    linear-gradient(
+      rgba(0,0,0,.4),
+      rgba(0,0,0,.4)
+    ),
+    url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+}
+
+.hero-content {
+  padding-left: 80px;
+  color: white;
+}
+
+.hero-content h1 {
+  font-size: 52px;
+  max-width: 700px;
+}
+
+.hero-content p {
+  margin-top: 15px;
+  font-size: 18px;
+}
+
+.hero-btn {
+  margin-top: 25px;
+  border: none;
+  background: #16a34a;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+/* CATEGORIES */
+
+.categories {
+  display: flex;
+  gap: 20px;
+  padding: 30px 40px;
+  overflow-x: auto;
+}
+
+.category-card {
+  min-width: 140px;
+  height: 120px;
+  background: white;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+  cursor: pointer;
+  transition: .3s;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+}
+
+.icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* MAIN CONTENT */
+
+.listing-map {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 25px;
+  padding: 20px 40px 40px;
+}
+
+.service-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+.service-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.service-info {
+  padding: 20px;
+}
+
+.service-info h3 {
+  margin-bottom: 10px;
+}
+
+.service-info p {
+  margin-bottom: 8px;
+}
+
+.service-info h4 {
+  color: #16a34a;
+  margin-top: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.actions button {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.call-btn {
+  background: #16a34a;
+  color: white;
+}
+
+/* MAP */
+
+.map-section {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.map-placeholder {
+  height: 700px;
+  background: white;
+  border-radius: 24px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,.05);
+}
+
+.map-placeholder span {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-weight: 600;
+}
+
+.marker {
+  position: absolute;
+  font-size: 30px;
+}
+
+.marker1 {
+  top: 120px;
+  left: 120px;
+}
+
+.marker2 {
+  top: 260px;
+  right: 160px;
+}
+
+.marker3 {
+  bottom: 150px;
+  left: 240px;
+}
+
+/* MOBILE */
+
+@media(max-width: 991px){
+
+  .header {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  .search-box {
+    width: 100%;
+    order: 3;
+  }
+
+  .hero {
+    height: 300px;
+  }
+
+  .hero-content {
+    padding: 25px;
+  }
+
+  .hero-content h1 {
+    font-size: 32px;
+  }
+
+  .categories {
+    padding: 20px;
+  }
+
+  .listing-map {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .map-section {
+    order: -1;
+    position: static;
+  }
+
+  .map-placeholder {
+    height: 300px;
+  }
+
+}
+
+@media(max-width: 576px){
+
+  .hero-content h1 {
+    font-size: 26px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .service-card img {
+    height: 180px;
+  }
+
+}

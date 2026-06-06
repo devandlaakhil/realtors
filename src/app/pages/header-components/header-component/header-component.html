@@ -17,7 +17,7 @@
       <button mat-button routerLink="/dashboard" routerLinkActive="active-link">{{'Dashboard' | T}}</button>
     }
     <button mat-button routerLink="/about" routerLinkActive="active-link">{{'About' | T}}</button>
-    <button mat-button routerLink="/service" routerLinkActive="active-link">{{'Services' | T}}</button>
+    <button mat-button routerLink="/services/home" routerLinkActive="active-link">{{'Services' | T}}</button>
     <button mat-button routerLink="/contact-us" routerLinkActive="active-link">{{'Contact' | T}}</button>
   </div>
 
@@ -70,13 +70,13 @@
     <button mat-button routerLink="/dashboard" (click)="toggleMobileMenu()">{{'Dashboard' | T}}</button>
     <button mat-button routerLink="/ad-post" (click)="toggleMobileMenu()">{{'Post Property' | T}}</button>
     <button mat-button (click)="navToProfile(); toggleMobileMenu()">{{'Profile'| T}}</button>
-    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">{{'Services' | T}}</button>
+    <button mat-button routerLink="/services/home" (click)="toggleMobileMenu()">{{'Services' | T}}</button>
     <button mat-button (click)="logout(); toggleMobileMenu()">{{'Logout'| T}}</button>
   }
   <!-- LOGGED OUT USER -->
   @else {
     <button mat-button routerLink="/about" (click)="toggleMobileMenu()">{{'About'| T}}</button>
-    <button mat-button routerLink="/service" (click)="toggleMobileMenu()">{{'Services'| T}}</button>
+    <button mat-button routerLink="/services/home" (click)="toggleMobileMenu()">{{'Services'| T}}</button>
     <button mat-button routerLink="/login" (click)="toggleMobileMenu()">{{'Login'|T}}</button>
     <button mat-button routerLink="/register" (click)="toggleMobileMenu()">{{'Register'|T}}</button>
   }

@@ -1,0 +1,343 @@
+@if (!showPostServiceForm) {
+  <div class="tractor-page">
+    <div class="page-header">
+      <div>
+        <h2>🚜 Tractors Near You</h2>
+        <span>24 tractors available</span>
+      </div>
+
+      <button class="post-btn" (click)="openPostService()">+ Post Service</button>
+    </div>
+
+    <!-- DESKTOP -->
+
+    <div class="desktop-layout">
+      <!-- LEFT SIDE -->
+
+      <div class="listing-panel">
+        <div class="search-box">
+          <input placeholder="Search tractors..." />
+        </div>
+
+        <div class="filters">
+          <button>5 KM</button>
+          <button>10 KM</button>
+          <button>20 KM</button>
+        </div>
+
+        <div
+          class="tractor-card"
+          *ngFor="let tractor of tractors"
+          (click)="selectTractor(tractor)"
+          [class.active]="selectedTractor.id === tractor.id"
+        >
+          <img [src]="tractor.image" />
+
+          <div class="card-content">
+            <h3>{{ tractor.name }}</h3>
+
+            <p>⭐ {{ tractor.rating }}</p>
+
+            <p>📍 {{ tractor.distance }}</p>
+
+            <p>👤 {{ tractor.owner }}</p>
+
+            <h4>₹{{ tractor.price }}/hour</h4>
+
+            <button>View Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE MAP -->
+
+      <div class="map-panel">
+        <div class="fake-map">
+          <div class="map-title">Nearby Tractors</div>
+
+          <div
+            *ngFor="let tractor of tractors"
+            class="marker"
+            [class.active-marker]="selectedTractor.id === tractor.id"
+            [style.top]="tractor.top"
+            [style.left]="tractor.left"
+            (click)="selectTractor(tractor)"
+          >
+            🚜
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+
+    <div class="mobile-layout">
+      <div class="mobile-map">
+        <div class="fake-map">
+          <div
+            *ngFor="let tractor of tractors"
+            class="marker"
+            [class.active-marker]="selectedTractor.id === tractor.id"
+            [style.top]="tractor.top"
+            [style.left]="tractor.left"
+            (click)="selectTractor(tractor)"
+          >
+            🚜
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-sheet">
+        <div class="drag-line"></div>
+
+        <div class="mini-card" *ngFor="let tractor of tractors" (click)="selectTractor(tractor)">
+          <img [src]="tractor.image" />
+
+          <div>
+            <h4>{{ tractor.name }}</h4>
+
+            <p>₹{{ tractor.price }}/hour</p>
+
+            <p>⭐ {{ tractor.rating }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<div *ngIf="showPostServiceForm" class="post-service-container">
+  <div class="form-header">
+    <h2>🚜 Add Tractor Service</h2>
+
+    <button mat-stroked-button color="warn" (click)="closePostService()">Cancel</button>
+  </div>
+
+  <form [formGroup]="tractorForm" class="tractor-form">
+    <!-- BASIC DETAILS -->
+
+    <mat-card>
+      <h3>Basic Details</h3>
+
+      <div class="grid" formGroupName="tractorDetails">
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input matInput formControlName="title" placeholder="Mahindra 575 DI Tractor" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Brand</mat-label>
+
+          <mat-select formControlName="brand">
+            <mat-option value="Mahindra"> Mahindra </mat-option>
+
+            <mat-option value="Swaraj"> Swaraj </mat-option>
+
+            <mat-option value="John Deere"> John Deere </mat-option>
+
+            <mat-option value="Farmtrac"> Farmtrac </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Model</mat-label>
+          <input matInput formControlName="model" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Horse Power</mat-label>
+          <input matInput type="number" formControlName="horsePower" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Manufacturing Year</mat-label>
+          <input matInput type="number" formControlName="manufacturingYear" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Registration Number</mat-label>
+          <input matInput formControlName="registrationNumber" placeholder="AP 15 AS 1234" />
+        </mat-form-field>
+      </div>
+    </mat-card>
+
+    <!-- PRICING -->
+
+    <mat-card>
+      <h3>Pricing</h3>
+
+      <div class="grid" formGroupName="pricing">
+        <mat-form-field appearance="outline">
+          <mat-label>Price Per Hour</mat-label>
+
+          <input matInput type="number" formControlName="pricePerHour" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Price Per Acre</mat-label>
+
+          <input matInput type="number" formControlName="pricePerAcre" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Minimum Booking Hours</mat-label>
+
+          <input matInput type="number" formControlName="minimumBookingHours" />
+        </mat-form-field>
+      </div>
+    </mat-card>
+
+    <!-- OWNER DETAILS -->
+
+    <mat-card>
+      <h3>Owner Details</h3>
+
+      <div class="grid" formGroupName="ownerDetails">
+        <mat-form-field appearance="outline">
+          <mat-label>Owner Name</mat-label>
+          <input matInput formControlName="ownerName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mobile Number</mat-label>
+          <input matInput formControlName="mobileNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Whatsapp Number</mat-label>
+          <input matInput formControlName="whatsappNumber" />
+        </mat-form-field>
+      </div>
+    </mat-card>
+
+    <!-- LOCATION -->
+
+    <mat-card>
+      <h3>Location</h3>
+
+      <div class="grid" formGroupName="location">
+        <!-- <mat-form-field appearance="outline">
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field> -->
+
+        <mat-form-field appearance="outline">
+          <mat-label>Village</mat-label>
+          <input matInput formControlName="village" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Mandal</mat-label>
+          <input matInput formControlName="mandal" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>District</mat-label>
+          <input matInput formControlName="district" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>State</mat-label>
+          <input matInput formControlName="state" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Pincode</mat-label>
+          <input matInput formControlName="pincode" />
+        </mat-form-field>
+
+        <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
+          Show Maps (Select your location on the map to ensure accuracy)
+        </mat-checkbox>
+      </div>
+
+      @if (showMap) {
+        <div class="map-container">
+          <google-map
+            class="property-map"
+            [center]="center"
+            [zoom]="zoom"
+            width="100%"
+            height="450px"
+          >
+            <map-marker
+              *ngIf="selectedLocation"
+              [position]="selectedLocation"
+              [options]="{
+                draggable: true,
+              }"
+              (mapDragend)="markerDragged($event)"
+            >
+            </map-marker>
+          </google-map>
+        </div>
+      }
+    </mat-card>
+
+    <!-- FEATURES -->
+
+    <mat-card>
+      <h3>Available Features</h3>
+
+      <div class="feature-grid" formGroupName="features">
+        <mat-checkbox formControlName="includesDriver"> Driver Included </mat-checkbox>
+        <mat-checkbox formControlName="fuelIncluded"> Fuel Included </mat-checkbox>
+        <mat-checkbox formControlName="rotavatorAvailable"> Rotavator Available </mat-checkbox>
+        <mat-checkbox formControlName="cultivatorAvailable"> Cultivator Available </mat-checkbox>
+        <mat-checkbox formControlName="trailerAvailable"> Trailer Available </mat-checkbox>
+      </div>
+    </mat-card>
+
+    <!-- AVAILABILITY -->
+
+    <!-- <mat-card>
+      <h3>Availability</h3>
+
+      <div class="grid" formGroupName="availability">
+        <mat-checkbox formControlName="isAvailable"> Available Now </mat-checkbox>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Available From</mat-label>
+          <input matInput type="date" formControlName="availableFrom" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Available To</mat-label>
+          <input matInput type="date" formControlName="availableTo" />
+        </mat-form-field>
+      </div>
+    </mat-card> -->
+
+    <!-- DESCRIPTION -->
+
+    <mat-card>
+      <h3>Description</h3>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+
+        <textarea rows="5" matInput formControlName="description"> </textarea>
+      </mat-form-field>
+    </mat-card>
+
+    <!-- IMAGES -->
+
+    <mat-card>
+      <h3>Upload Images</h3>
+
+      <input type="file" multiple (change)="onImageSelect($event)" />
+    </mat-card>
+
+    <!-- BUTTONS -->
+
+    <div class="actions">
+      <button mat-stroked-button color="warn" type="button" (click)="closePostService()">
+        Cancel
+      </button>
+
+      <button mat-raised-button color="primary" type="button" (click)="saveTractor()">
+        Publish Tractor
+      </button>
+    </div>
+  </form>
+</div>
