@@ -15,7 +15,7 @@ import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
 import { GoogleMapsModule } from '@angular/google-maps';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
@@ -36,7 +36,7 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
     MapInfoWindow,
     GoogleMapsModule,
     MatIcon,
-    TranslatePipe
+    TranslatePipe,
   ],
   templateUrl: './tractor-service-component.html',
   styleUrl: './tractor-service-component.css',
@@ -51,6 +51,7 @@ export class TractorServiceComponent implements OnInit {
   toastr = inject(ToastrService);
   loaderService = inject(LoaderServices);
   phoneCall = inject(MobileDialpadService);
+  route = inject(ActivatedRoute);
   showMap: boolean = false;
   zoom: number = 0;
   selectedLocation: any = { lat: '', lng: '' };
@@ -60,13 +61,101 @@ export class TractorServiceComponent implements OnInit {
   totalAvailTractors: number = 0;
   router = inject(Router);
   expandedTractorId: number | string | null = null;
+  isEditMode: boolean = false;
+  propertyId: string = '';
 
   @ViewChild(MapInfoWindow)
   infoWindow!: MapInfoWindow;
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+
+      if (id) {
+        this.isEditMode = true;
+        this.propertyId = id;
+        this.loadProperty(id);
+      }
+    });
     this.initializeForm();
     this.getCurrentLocation();
+  }
+
+  loadProperty(id: string) {
+    this.isEditMode = true;
+    this.realtorsApiSrv
+      .get(API_CONSTANTS.tractorServices.getsingleitem, {
+        id: id,
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          const tractor = res.data[0];
+          this.tractorForm.patchValue({
+            ownerDetails: {
+              ownerName: tractor.ownerName,
+              mobileNumber: tractor.mobileNumber,
+              whatsappNumber: tractor.whatsappNumber,
+            },
+            tractorDetails: {
+              title: tractor.title,
+              brand: tractor.brand,
+              model: tractor.model,
+              horsePower: tractor.horsePower,
+              manufacturingYear: tractor.manufacturingYear,
+              registrationNumber: tractor.registrationNumber,
+            },
+            pricing: {
+              pricePerHour: tractor.pricePerHour,
+              pricePerAcre: tractor.pricePerAcre,
+              minimumBookingHours: tractor.minimumBookingHours,
+            },
+            location: {
+              address: tractor.location?.address,
+              village: tractor.location?.village,
+              mandal: tractor.location?.mandal,
+              district: tractor.location?.district,
+              state: tractor.location?.state,
+              pincode: tractor.location?.pincode,
+              latitude: tractor.location?.coordinates?.coordinates?.[1] ?? null,
+              longitude: tractor.location?.coordinates?.coordinates?.[0] ?? null,
+              geoLocation: {
+                type: tractor.location?.coordinates?.type ?? 'Point',
+                coordinates: tractor.location?.coordinates?.coordinates ?? [],
+              },
+            },
+            features: {
+              includesDriver: tractor.includesDriver,
+              fuelIncluded: tractor.fuelIncluded,
+              rotavatorAvailable: tractor.rotavatorAvailable,
+              cultivatorAvailable: tractor.cultivatorAvailable,
+              trailerAvailable: tractor.trailerAvailable,
+            },
+            availability: {
+              isAvailable: tractor.isAvailable,
+              availableFrom: tractor.availableFrom,
+              availableTo: tractor.availableTo,
+            },
+            description: tractor.description,
+            images: tractor.images || [],
+          });
+          if (tractor.location?.coordinates?.coordinates?.length === 2) {
+            const [lng, lat] = tractor.location.coordinates.coordinates;
+            this.selectedLocation = {
+              lat,
+              lng,
+            };
+            this.center = {
+              lat,
+              lng,
+            };
+          }
+          this.selectedImages = tractor.images || [];
+        },
+        error: () => {
+          this.toastr.error('Something went wrong', 'Fail');
+        },
+      });
   }
 
   getAllNearByTractors() {
@@ -85,9 +174,9 @@ export class TractorServiceComponent implements OnInit {
             rating: tractor.averageRating,
             mobile: tractor.mobileNumber,
             distance: `${tractor.distanceKm} km`,
-            village:tractor.location.village,
-            district:tractor.location.district,
-            registrationNumber:tractor.registrationNumber,
+            village: tractor.location.village,
+            district: tractor.location.district,
+            registrationNumber: tractor.registrationNumber,
             addOns: [
               tractor.includesDriver && {
                 label: 'Driver Included',
@@ -279,30 +368,51 @@ export class TractorServiceComponent implements OnInit {
     }
     this.loaderService.show();
     const formData = new FormData();
-    // Form Data
     formData.append('payload', JSON.stringify(this.tractorForm.value));
-    // Images
-    if (this.selectedImages?.length) {
-      this.selectedImages.forEach((file: File) => {
-        formData.append('images', file, file.name);
-      });
+    const existingImages = this.selectedImages.filter((img: any) => !(img instanceof File));
+    formData.append('existingImages', JSON.stringify(existingImages));
+    this.selectedImages.forEach((img: any) => {
+      if (img instanceof File) {
+        formData.append('images', img, img.name);
+      }
+    });
+
+    if (!this.isEditMode) {
+      this.realtorsApiSrv
+        .post(API_CONSTANTS.tractorServices.save, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.tractorForm.reset();
+            this.selectedImages = [];
+            this.loaderService.hide();
+            this.router.navigate(['/services/home']);
+            this.toastr.success('Successfully posted your service');
+          },
+          error: () => {
+            this.loaderService.hide();
+            this.toastr.error('Failed to post your service');
+          },
+        });
+    } else {
+      formData.append('id', this.propertyId);
+      this.realtorsApiSrv
+        .put(API_CONSTANTS.tractorServices.updateItem, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.tractorForm.reset();
+            this.selectedImages = [];
+            this.loaderService.hide();
+            this.router.navigate(['/services/home']);
+            this.toastr.success('Successfully updated your service');
+          },
+          error: () => {
+            this.loaderService.hide();
+            this.toastr.error('Failed to update your service');
+          },
+        });
     }
-    this.realtorsApiSrv
-      .post(API_CONSTANTS.tractorServices.save, formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.tractorForm.reset();
-          this.selectedImages = [];
-          this.loaderService.hide();
-          this.router.navigate(['/services/home']);
-          this.toastr.success('Successfully posted your service');
-        },
-        error: () => {
-          this.loaderService.hide();
-          this.toastr.error('Failed to post your service');
-        },
-      });
   }
 
   selectTractor(tractor: TractorCard) {

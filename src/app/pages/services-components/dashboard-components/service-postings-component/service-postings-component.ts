@@ -5,6 +5,7 @@ import {API_CONSTANTS} from '../../../../constants/realtors-services-api-constan
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-service-postings-component',
@@ -16,6 +17,7 @@ export class ServicePostingsComponent implements OnInit {
 
   realtorApiSrv = inject(RealtorsServicesApiServices);
   loaderSrv = inject(LoaderServices);
+  router = inject(Router);
 
   serviceGroups: any[] = [];
 
@@ -68,7 +70,10 @@ export class ServicePostingsComponent implements OnInit {
   }
 
   edit(elem:any){
-
+    switch(elem.serviceType){
+      case "Tractor":
+        this.router.navigate(['/services/edit-tractor',elem.id]);
+    }
   }
 
   toggleStatus(elem:any){

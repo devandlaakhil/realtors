@@ -1,12 +1,12 @@
-@if (!showPostServiceForm) {
+@if (!showPostServiceForm && !isEditMode) {
   <div class="tractor-page">
     <div class="page-header">
       <div>
-        <h2>🚜 {{'Tractors Near You'|T}}</h2>
-        <span>{{ totalAvailTractors }} {{'tractors available'|T}}</span>
+        <h2>🚜 {{ 'Tractors Near You' | T }}</h2>
+        <span>{{ totalAvailTractors }} {{ 'tractors available' | T }}</span>
       </div>
 
-      <button class="post-btn" (click)="openPostService()">+ {{'Post Service'|T}}</button>
+      <button class="post-btn" (click)="openPostService()">+ {{ 'Post Service' | T }}</button>
     </div>
 
     <!-- DESKTOP -->
@@ -16,7 +16,7 @@
 
       <div class="listing-panel">
         <div class="search-box">
-          <input placeholder="{{'Search tractors' | T}}..." />
+          <input placeholder="{{ 'Search tractors' | T }}..." />
         </div>
 
         <div class="filters">
@@ -40,9 +40,9 @@
               <p>📍 {{ tractor.distance }}</p>
               <p>🚜 {{ tractor.name }}</p>
               <p>📱 {{ tractor.mobile }}</p>
-              <h4>₹ {{ tractor.price }}/{{'hour'|T}}</h4>
+              <h4>₹ {{ tractor.price }}/{{ 'hour' | T }}</h4>
               <!-- Pass the event and tractor id to your click handler -->
-              <button (click)="toggleDetails($event, tractor.id)">{{'View Details'|T}}</button>
+              <button (click)="toggleDetails($event, tractor.id)">{{ 'View Details' | T }}</button>
             </div>
           } @else {
             <div class="tractor-details-card">
@@ -60,7 +60,7 @@
 
                 <div class="price-badge">
                   ₹{{ tractor.price }}
-                  <small>/{{'hour'|T}}</small>
+                  <small>/{{ 'hour' | T }}</small>
                 </div>
               </div>
 
@@ -73,7 +73,7 @@
                 <div class="info-item">
                   <mat-icon>badge</mat-icon>
                   <div>
-                    <span class="label">{{'Registration'|T}}</span>
+                    <span class="label">{{ 'Registration' | T }}</span>
                     <span class="value">{{ tractor.registrationNumber }}</span>
                   </div>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="info-item">
                   <mat-icon>call</mat-icon>
                   <div>
-                    <span class="label">{{'Contact'|T}}</span>
+                    <span class="label">{{ 'Contact' | T }}</span>
                     <span class="value">{{ tractor.mobile }}</span>
                   </div>
                 </div>
@@ -89,7 +89,7 @@
                 <div class="info-item">
                   <mat-icon>route</mat-icon>
                   <div>
-                    <span class="label">{{'Distance'|T}}</span>
+                    <span class="label">{{ 'Distance' | T }}</span>
                     <span class="value">{{ tractor.distance }}</span>
                   </div>
                 </div>
@@ -98,11 +98,11 @@
               <div class="addons-container" *ngIf="tractor.addOns?.length">
                 <span class="addon-chip" *ngFor="let addon of tractor.addOns">
                   <mat-icon>{{ addon.icon }}</mat-icon>
-                  {{ addon.label | T}}
+                  {{ addon.label | T }}
                 </span>
               </div>
               <button class="btn btn-success mt-1 w-100" (click)="toggleDetails($event, null)">
-                {{'Close Details'|T}}
+                {{ 'Close Details' | T }}
               </button>
             </div>
 
@@ -205,11 +205,11 @@
                     class="mobile-buttons"
                     (click)="phoneCall.call(tractor.mobile); $event.stopPropagation()"
                   >
-                    {{'Call Owner'|T}}
+                    {{ 'Call Owner' | T }}
                   </button>
 
                   <button class="mobile-buttons" (click)="toggleDetails($event, tractor.id)">
-                    {{'View Details'|T}}
+                    {{ 'View Details' | T }}
                   </button>
                 </div>
               </div>
@@ -228,7 +228,7 @@
 
                 <div class="price-badge">
                   ₹{{ tractor.price }}
-                  <small>/{{'hour'|T}}</small>
+                  <small>/{{ 'hour' | T }}</small>
                 </div>
               </div>
 
@@ -244,7 +244,7 @@
                 <div class="info-item">
                   <mat-icon>badge</mat-icon>
                   <div>
-                    <span class="label">{{'Registration'|T}}</span>
+                    <span class="label">{{ 'Registration' | T }}</span>
                     <span class="value">
                       {{ tractor.registrationNumber }}
                     </span>
@@ -254,7 +254,7 @@
                 <div class="info-item">
                   <mat-icon>call</mat-icon>
                   <div>
-                    <span class="label">{{'Contact'|T}}</span>
+                    <span class="label">{{ 'Contact' | T }}</span>
                     <span class="value">
                       {{ tractor.mobile }}
                     </span>
@@ -264,7 +264,7 @@
                 <div class="info-item">
                   <mat-icon>route</mat-icon>
                   <div>
-                    <span class="label">{{'Distance'|T}}</span>
+                    <span class="label">{{ 'Distance' | T }}</span>
                     <span class="value">
                       {{ tractor.distance }}
                     </span>
@@ -275,7 +275,7 @@
               <div class="addons-container" *ngIf="tractor.addOns?.length">
                 <span class="addon-chip" *ngFor="let addon of tractor.addOns">
                   <mat-icon>{{ addon.icon }}</mat-icon>
-                  {{ addon.label | T}}
+                  {{ addon.label | T }}
                 </span>
               </div>
 
@@ -284,11 +284,11 @@
                   class="btn btn-success flex-grow-1"
                   (click)="phoneCall.call(tractor.mobile)"
                 >
-                  {{'Call Owner'|T}}
+                  {{ 'Call Owner' | T }}
                 </button>
 
                 <button class="btn btn btn-outline-info" (click)="toggleDetails($event, null)">
-                  {{'Close'|T}}
+                  {{ 'Close' | T }}
                 </button>
               </div>
             </div>
@@ -299,56 +299,56 @@
   </div>
 }
 
-<div *ngIf="showPostServiceForm" class="post-service-container">
+<div *ngIf="showPostServiceForm || isEditMode" class="post-service-container">
   <div class="form-header">
-    <h2>🚜 {{'Add Tractor Service'|T}}</h2>
+    <h2>🚜 {{ 'Add Tractor Service' | T }}</h2>
 
-    <button mat-stroked-button color="warn" (click)="closePostService()">{{'Cancel'|T}}</button>
+    <button mat-stroked-button color="warn" (click)="closePostService()">{{ 'Cancel' | T }}</button>
   </div>
 
   <form [formGroup]="tractorForm" class="tractor-form">
     <!-- BASIC DETAILS -->
 
     <mat-card>
-      <h3>{{'Basic Details'|T}}</h3>
+      <h3>{{ 'Basic Details' | T }}</h3>
 
       <div class="grid" formGroupName="tractorDetails">
         <mat-form-field appearance="outline">
-          <mat-label>{{'Title'|T}}</mat-label>
+          <mat-label>{{ 'Title' | T }}</mat-label>
           <input matInput formControlName="title" placeholder="Mahindra 575 DI Tractor" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Brand'|T}}</mat-label>
+          <mat-label>{{ 'Brand' | T }}</mat-label>
 
           <mat-select formControlName="brand">
-            <mat-option value="Mahindra"> {{'Mahindra'|T}} </mat-option>
+            <mat-option value="Mahindra"> {{ 'Mahindra' | T }} </mat-option>
 
-            <mat-option value="Swaraj"> {{'Swaraj'|T}} </mat-option>
+            <mat-option value="Swaraj"> {{ 'Swaraj' | T }} </mat-option>
 
-            <mat-option value="John Deere"> {{'John Deere'|T}} </mat-option>
+            <mat-option value="John Deere"> {{ 'John Deere' | T }} </mat-option>
 
-            <mat-option value="Farmtrac"> {{'Farmtrac'|T}} </mat-option>
+            <mat-option value="Farmtrac"> {{ 'Farmtrac' | T }} </mat-option>
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Model'|T}}</mat-label>
+          <mat-label>{{ 'Model' | T }}</mat-label>
           <input matInput formControlName="model" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Horse Power'|T}}</mat-label>
+          <mat-label>{{ 'Horse Power' | T }}</mat-label>
           <input matInput type="number" formControlName="horsePower" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Manufacturing Year'|T}}</mat-label>
+          <mat-label>{{ 'Manufacturing Year' | T }}</mat-label>
           <input matInput type="number" formControlName="manufacturingYear" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Registration Number'|T}}</mat-label>
+          <mat-label>{{ 'Registration Number' | T }}</mat-label>
           <input matInput formControlName="registrationNumber" placeholder="AP 15 AS 1234" />
         </mat-form-field>
       </div>
@@ -357,23 +357,23 @@
     <!-- PRICING -->
 
     <mat-card>
-      <h3>{{'Pricing'|T}}</h3>
+      <h3>{{ 'Pricing' | T }}</h3>
 
       <div class="grid" formGroupName="pricing">
         <mat-form-field appearance="outline">
-          <mat-label>{{'Price Per Hour'|T}}</mat-label>
+          <mat-label>{{ 'Price Per Hour' | T }}</mat-label>
 
           <input matInput type="number" formControlName="pricePerHour" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Price Per Acre'|T}}</mat-label>
+          <mat-label>{{ 'Price Per Acre' | T }}</mat-label>
 
           <input matInput type="number" formControlName="pricePerAcre" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Minimum Booking Hours'|T}}</mat-label>
+          <mat-label>{{ 'Minimum Booking Hours' | T }}</mat-label>
 
           <input matInput type="number" formControlName="minimumBookingHours" />
         </mat-form-field>
@@ -383,21 +383,21 @@
     <!-- OWNER DETAILS -->
 
     <mat-card>
-      <h3>{{'Owner Details'|T}}</h3>
+      <h3>{{ 'Owner Details' | T }}</h3>
 
       <div class="grid" formGroupName="ownerDetails">
         <mat-form-field appearance="outline">
-          <mat-label>{{'Owner Name'|T}}</mat-label>
+          <mat-label>{{ 'Owner Name' | T }}</mat-label>
           <input matInput formControlName="ownerName" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Mobile Number'|T}}</mat-label>
+          <mat-label>{{ 'Mobile Number' | T }}</mat-label>
           <input matInput formControlName="mobileNumber" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Whatsapp Number'|T}}</mat-label>
+          <mat-label>{{ 'Whatsapp Number' | T }}</mat-label>
           <input matInput formControlName="whatsappNumber" />
         </mat-form-field>
       </div>
@@ -406,7 +406,7 @@
     <!-- LOCATION -->
 
     <mat-card>
-      <h3>{{'Location'|T}}</h3>
+      <h3>{{ 'Location' | T }}</h3>
 
       <div class="grid" formGroupName="location">
         <!-- <mat-form-field appearance="outline">
@@ -415,32 +415,32 @@
         </mat-form-field> -->
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Village'|T}}</mat-label>
+          <mat-label>{{ 'Village' | T }}</mat-label>
           <input matInput formControlName="village" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Mandal'|T}}</mat-label>
+          <mat-label>{{ 'Mandal' | T }}</mat-label>
           <input matInput formControlName="mandal" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'District'|T}}</mat-label>
+          <mat-label>{{ 'District' | T }}</mat-label>
           <input matInput formControlName="district" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'State'|T}}</mat-label>
+          <mat-label>{{ 'State' | T }}</mat-label>
           <input matInput formControlName="state" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>{{'Pincode'|T}}</mat-label>
+          <mat-label>{{ 'Pincode' | T }}</mat-label>
           <input matInput formControlName="pincode" />
         </mat-form-field>
 
         <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
-          {{'show Maps' | T}} ({{'Select your location on the map to ensure accuracy' |T}})
+          {{ 'show Maps' | T }} ({{ 'Select your location on the map to ensure accuracy' | T }})
         </mat-checkbox>
       </div>
 
@@ -470,14 +470,20 @@
     <!-- FEATURES -->
 
     <mat-card>
-      <h3>{{'Available Features'| T}}</h3>
+      <h3>{{ 'Available Features' | T }}</h3>
 
       <div class="feature-grid" formGroupName="features">
-        <mat-checkbox formControlName="includesDriver">{{'Driver Included'|T}} </mat-checkbox>
-        <mat-checkbox formControlName="fuelIncluded">{{'Fuel Included'|T}} </mat-checkbox>
-        <mat-checkbox formControlName="rotavatorAvailable">{{'Rotavator Available'|T}} </mat-checkbox>
-        <mat-checkbox formControlName="cultivatorAvailable">{{'Cultivator Available'|T}} </mat-checkbox>
-        <mat-checkbox formControlName="trailerAvailable">{{'Trailer Available'|T}} </mat-checkbox>
+        <mat-checkbox formControlName="includesDriver">{{ 'Driver Included' | T }} </mat-checkbox>
+        <mat-checkbox formControlName="fuelIncluded">{{ 'Fuel Included' | T }} </mat-checkbox>
+        <mat-checkbox formControlName="rotavatorAvailable"
+          >{{ 'Rotavator Available' | T }}
+        </mat-checkbox>
+        <mat-checkbox formControlName="cultivatorAvailable"
+          >{{ 'Cultivator Available' | T }}
+        </mat-checkbox>
+        <mat-checkbox formControlName="trailerAvailable"
+          >{{ 'Trailer Available' | T }}
+        </mat-checkbox>
       </div>
     </mat-card>
 
@@ -504,10 +510,10 @@
     <!-- DESCRIPTION -->
 
     <mat-card>
-      <h3>{{'Description'|T}}</h3>
+      <h3>{{ 'Description' | T }}</h3>
 
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{'Description'|T}}</mat-label>
+        <mat-label>{{ 'Description' | T }}</mat-label>
 
         <textarea rows="5" matInput formControlName="description"> </textarea>
       </mat-form-field>
@@ -516,7 +522,7 @@
     <!-- IMAGES -->
 
     <mat-card>
-      <h3>{{'Upload Images'|T}}</h3>
+      <h3>{{ 'Upload Images' | T }}</h3>
 
       <input type="file" multiple (change)="onImageSelect($event)" />
     </mat-card>
@@ -525,11 +531,11 @@
 
     <div class="actions">
       <button mat-stroked-button color="warn" type="button" (click)="closePostService()">
-        {{'Cancel'|T}}
+        {{ 'Cancel' | T }}
       </button>
 
       <button mat-raised-button color="primary" type="button" (click)="saveTractor()">
-        {{'Publish Tractor'|T}}
+        {{ 'Publish Tractor' | T }}
       </button>
     </div>
   </form>
