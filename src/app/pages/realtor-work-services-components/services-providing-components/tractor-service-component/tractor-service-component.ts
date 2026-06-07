@@ -34,7 +34,7 @@ import { MatIcon } from '@angular/material/icon';
     MapMarker,
     MapInfoWindow,
     GoogleMapsModule,
-    MatIcon
+    MatIcon,
   ],
   templateUrl: './tractor-service-component.html',
   styleUrl: './tractor-service-component.css',

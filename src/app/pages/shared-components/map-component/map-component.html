@@ -1,0 +1,22 @@
+<google-map [center]="center" [zoom]="15" width="100%" height="600px">
+  <map-marker
+    *ngFor="let t of data"
+    #marker="mapMarker"
+    [position]="{
+      lat: t.lat,
+      lng: t.lng,
+    }"
+    (mapClick)="openInfo(marker, t)"
+  >
+  </map-marker>
+
+  <map-info-window>
+    <div class="info-window">
+      <img [src]="selectedItem?.image" width="120" />
+
+      <h4>{{ selectedItem?.name }}</h4>
+      <p>₹{{ selectedItem?.price }}/hour</p>
+      <p>{{ selectedItem?.distance }}</p>
+    </div>
+  </map-info-window>
+</google-map>
