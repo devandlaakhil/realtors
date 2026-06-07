@@ -3,8 +3,7 @@ import { authGuard } from '../../auth-services/auth.guard';
 
 export const WORK_SERVICE_ROUTES: Routes = [
   { 
-    path: '', 
-    canActivateChild: [authGuard], 
+    path: '',  
     children: [
         {
             path:'home',

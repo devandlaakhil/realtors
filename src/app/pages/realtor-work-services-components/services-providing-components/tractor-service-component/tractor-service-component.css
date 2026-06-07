@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
 }
 
 .page-header span {
@@ -78,7 +78,7 @@
   overflow: hidden;
   cursor: pointer;
   border: 2px solid transparent;
-  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .06);
 }
 
 .tractor-card.active {
@@ -121,11 +121,9 @@
   position: relative;
 
   background:
-  linear-gradient(
-    135deg,
-    #d9f99d,
-    #bbf7d0
-  );
+    linear-gradient(135deg,
+      #d9f99d,
+      #bbf7d0);
 }
 
 .fake-map::before {
@@ -134,15 +132,11 @@
   inset: 0;
 
   background-image:
-  linear-gradient(
-      rgba(255,255,255,.4) 1px,
-      transparent 1px
-  ),
-  linear-gradient(
-      90deg,
-      rgba(255,255,255,.4) 1px,
-      transparent 1px
-  );
+    linear-gradient(rgba(255, 255, 255, .4) 1px,
+      transparent 1px),
+    linear-gradient(90deg,
+      rgba(255, 255, 255, .4) 1px,
+      transparent 1px);
 
   background-size: 80px 80px;
 }
@@ -180,7 +174,7 @@
   display: none;
 }
 
-@media(max-width:992px){
+@media(max-width:992px) {
 
   .desktop-layout {
     display: none;
@@ -213,7 +207,7 @@
     overflow-y: auto;
 
     box-shadow:
-    0 -10px 30px rgba(0,0,0,.15);
+      0 -10px 30px rgba(0, 0, 0, .15);
 
     z-index: 10;
   }
@@ -344,10 +338,168 @@ mat-card h3 {
 
 }
 
+.mobile-buttons {
+  flex: 1;
+  height: 46px;
+  padding: 0 8px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  /* Text Ellipsis Magic */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* UX Touchups */
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Micro-interaction for mobile taps */
+.mobile-buttons:active {
+  background: #15803d;
+  transform: scale(0.98);
+}
+
 .map-container {
   position: relative;
   width: 100%;
   height: calc(55vh - 70px);
   margin-top: 0;
   overflow: hidden;
+}
+
+.tractor-details-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+}
+
+.tractor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.tractor-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.owner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #64748b;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.owner mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.price-badge {
+  background: linear-gradient(
+    135deg,
+    #16a34a,
+    #22c55e
+  );
+
+  color: white;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 14px;
+  text-align: center;
+  min-width: 90px;
+}
+
+.price-badge small {
+  display: block;
+  opacity: .9;
+}
+
+.location-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+  margin-bottom: 16px;
+}
+
+.location-row mat-icon {
+  color: #22c55e;
+}
+
+.info-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.info-item mat-icon {
+  color: #16a34a;
+}
+
+.label {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.value {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.addons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.addon-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  background: #ecfdf5;
+  color: #166534;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.addon-chip mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
 }

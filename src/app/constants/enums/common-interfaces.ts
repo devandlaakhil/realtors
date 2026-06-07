@@ -6,6 +6,15 @@ export interface TractorCard {
   rating: number;
   distance: string;
   image: string;
+  mobile: string;
+  village?: string;
+  mandal?: string;
+  district?: string;
+  registrationNumber?: string;
+  addOns?: {
+    label: string;
+    icon: string;
+  }[];
 
   lat: number;
   lng: number;

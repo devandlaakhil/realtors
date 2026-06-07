@@ -16,6 +16,8 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { Router } from '@angular/router';
+import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -32,6 +34,7 @@ import { Router } from '@angular/router';
     MapMarker,
     MapInfoWindow,
     GoogleMapsModule,
+    MatIcon
   ],
   templateUrl: './tractor-service-component.html',
   styleUrl: './tractor-service-component.css',
@@ -45,6 +48,7 @@ export class TractorServiceComponent implements OnInit {
   destroy$ = new Subject<any>();
   toastr = inject(ToastrService);
   loaderService = inject(LoaderServices);
+  phoneCall = inject(MobileDialpadService);
   showMap: boolean = false;
   zoom: number = 0;
   selectedLocation: any = { lat: '', lng: '' };
@@ -53,6 +57,7 @@ export class TractorServiceComponent implements OnInit {
   selectedTractor: TractorCard | null = null;
   totalAvailTractors: number = 0;
   router = inject(Router);
+  expandedTractorId: number | string | null = null;
 
   @ViewChild(MapInfoWindow)
   infoWindow!: MapInfoWindow;
@@ -76,12 +81,36 @@ export class TractorServiceComponent implements OnInit {
             owner: tractor.ownerName,
             price: tractor.pricePerHour,
             rating: tractor.averageRating,
+            mobile: tractor.mobileNumber,
             distance: `${tractor.distanceKm} km`,
+            village:tractor.location.village,
+            district:tractor.location.district,
+            registrationNumber:tractor.registrationNumber,
+            addOns: [
+              tractor.includesDriver && {
+                label: 'Driver Included',
+                icon: 'person',
+              },
+              tractor.fuelIncluded && {
+                label: 'Fuel Included',
+                icon: 'local_gas_station',
+              },
+              tractor.rotavatorAvailable && {
+                label: 'Rotavator',
+                icon: 'agriculture',
+              },
+              tractor.cultivatorAvailable && {
+                label: 'Cultivator',
+                icon: 'grass',
+              },
+              tractor.trailerAvailable && {
+                label: 'Trailer',
+                icon: 'local_shipping',
+              },
+            ].filter(Boolean),
             image: tractor.images?.[0]?.url || 'assets/images/no-image.png',
             lng: tractor.location.coordinates.coordinates[0],
             lat: tractor.location.coordinates.coordinates[1],
-            top: '20%',
-            left: '30%',
           }));
           this.loaderService.hide();
         },
@@ -264,7 +293,7 @@ export class TractorServiceComponent implements OnInit {
           this.tractorForm.reset();
           this.selectedImages = [];
           this.loaderService.hide();
-          this.router.navigate(['/services,home'])
+          this.router.navigate(['/services/home']);
           this.toastr.success('Successfully posted your service');
         },
         error: () => {
@@ -281,5 +310,10 @@ export class TractorServiceComponent implements OnInit {
   openInfo(marker: MapMarker, tractor: TractorCard) {
     this.selectedTractor = tractor;
     this.infoWindow.open(marker);
+  }
+
+  toggleDetails(event: Event, tractorId: number | string | null) {
+    event.stopPropagation();
+    this.expandedTractorId = tractorId;
   }
 }
