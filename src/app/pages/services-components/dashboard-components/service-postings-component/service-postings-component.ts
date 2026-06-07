@@ -4,10 +4,11 @@ import { forkJoin } from 'rxjs';
 import {API_CONSTANTS} from '../../../../constants/realtors-services-api-constants';
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { LoaderServices } from '../../../../shared-services/loader-services';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-service-postings-component',
-  imports: [CommonModule],
+  imports: [CommonModule,TranslatePipe],
   templateUrl: './service-postings-component.html',
   styleUrl: './service-postings-component.css',
 })

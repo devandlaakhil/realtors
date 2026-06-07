@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-realtor-work-services-landing-page-component',
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule,TranslatePipe],
   templateUrl: './realtor-work-services-landing-page-component.html',
   styleUrl: './realtor-work-services-landing-page-component.css',
 })
 export class RealtorWorkServicesLandingPageComponent {
   categories = [
   { icon: '🚜', name: 'Tractors', navigation: 'tractor' },
-  { icon: '🌾', name: 'Harvesters', navigation: 'harvesters' },
+  { icon: '🌾', name: 'Hardware', navigation: 'harvesters' },
   { icon: '🚚', name: 'Transport', navigation: 'transport' },
   { icon: '👷', name: 'Workers', navigation: 'workers' },
   { icon: '💧', name: 'Borewell', navigation: 'borewell' },

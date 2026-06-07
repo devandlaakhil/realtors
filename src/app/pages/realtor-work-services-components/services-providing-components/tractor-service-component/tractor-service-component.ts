@@ -18,6 +18,7 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { Router } from '@angular/router';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { MatIcon } from '@angular/material/icon';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -35,6 +36,7 @@ import { MatIcon } from '@angular/material/icon';
     MapInfoWindow,
     GoogleMapsModule,
     MatIcon,
+    TranslatePipe
   ],
   templateUrl: './tractor-service-component.html',
   styleUrl: './tractor-service-component.css',

@@ -3,10 +3,10 @@
     <div class="category-header">
       <h2>
         {{ group.icon }}
-        {{ group.category }}
+        {{ group.category | T }}
       </h2>
 
-      <span> {{ group.items.length }} Services </span>
+      <span> {{ group.items.length }} {{'Services'|T}} </span>
     </div>
 
     <div class="cards-grid">
@@ -22,7 +22,7 @@
 
           <div class="price">
             ₹{{ item.pricePerHour }}
-            <small>/hour</small>
+            <small>/{{'hour'|T}}</small>
           </div>
 
           <div class="status" [class.active]="item.status === 'ACTIVE'">
@@ -30,13 +30,13 @@
           </div>
 
           <div class="actions">
-            <button class="edit-btn" (click)="edit(item)">Edit</button>
+            <button class="edit-btn" (click)="edit(item)">{{'Edit'|T}}</button>
 
             <button class="inactive-btn" (click)="toggleStatus(item)">
-              {{ item.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+              {{ item.status === 'ACTIVE' ? ('Deactivate' | T) : ('Activate' | T) }}
             </button>
 
-            <button class="delete-btn" (click)="delete(item)">Delete</button>
+            <button class="delete-btn" (click)="delete(item)">{{'Delete'|T}}</button>
           </div>
         </div>
       </div>
