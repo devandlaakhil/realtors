@@ -39,7 +39,8 @@ export class DashboardComponent implements OnInit {
         this.route.navigateByUrl('/dashboard/my-posts');
         break;
 
-      case 'enquiries':
+      case 'services':
+        this.route.navigateByUrl('/dashboard/services')
         break;
 
       case 'settings':

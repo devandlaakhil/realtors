@@ -102,6 +102,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path : 'services',
+        loadComponent: () => 
+          import('../app/pages/services-components/dashboard-components/service-postings-component/service-postings-component').then(
+            m => m.ServicePostingsComponent
+          )
+      },
+      {
         path: 'home',
         loadComponent: () =>
           import('../app/pages/services-components/dashboard-components/dashboard-home-component/dashboard-home-component').then(

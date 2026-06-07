@@ -1,0 +1,45 @@
+<div class="service-groups mt-3">
+  <div *ngFor="let group of serviceGroups" class="category-section">
+    <div class="category-header">
+      <h2>
+        {{ group.icon }}
+        {{ group.category }}
+      </h2>
+
+      <span> {{ group.items.length }} Services </span>
+    </div>
+
+    <div class="cards-grid">
+      <div class="service-card" *ngFor="let item of group.items">
+        <img [src]="item.images?.[0]?.url" />
+
+        <div class="card-body">
+          <h3>{{ item.ownerName }}</h3>
+
+          <div class="owner">
+            {{ item.title}}
+          </div>
+
+          <div class="price">
+            ₹{{ item.pricePerHour }}
+            <small>/hour</small>
+          </div>
+
+          <div class="status" [class.active]="item.status === 'ACTIVE'">
+            {{ item.status }}
+          </div>
+
+          <div class="actions">
+            <button class="edit-btn" (click)="edit(item)">Edit</button>
+
+            <button class="inactive-btn" (click)="toggleStatus(item)">
+              {{ item.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+            </button>
+
+            <button class="delete-btn" (click)="delete(item)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
