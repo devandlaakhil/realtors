@@ -188,21 +188,111 @@
       <div class="bottom-sheet">
         <div class="drag-line"></div>
 
-        <div class="mini-card" *ngFor="let tractor of tractors" (click)="selectTractor(tractor)">
-          <img [src]="tractor.image" />
+        <div *ngFor="let tractor of tractors">
+          @if (expandedTractorId !== tractor.id) {
+            <div class="mini-card" (click)="selectTractor(tractor)">
+              <img [src]="tractor.image" />
 
-          <div>
-            <h4>👤{{ tractor.owner }}</h4>
-            <h6>{{ tractor.name }}</h6>
-            <p>₹{{ tractor.price }}/hour</p>
-            <p>📱{{ tractor.mobile }}</p>
-            <div class="d-flex gap-2 w-100">
-              <button class="mobile-buttons" (click)="phoneCall.call(tractor.mobile)">
-                Call Owner
-              </button>
-              <button class="mobile-buttons" title="View Details">View Details</button>
+              <div>
+                <h4>👤 {{ tractor.owner }}</h4>
+                <h6>🚜 {{ tractor.name }}</h6>
+
+                <p>₹{{ tractor.price }}/hour</p>
+                <p>📱 {{ tractor.mobile }}</p>
+
+                <div class="d-flex gap-2 w-100">
+                  <button
+                    class="mobile-buttons"
+                    (click)="phoneCall.call(tractor.mobile); $event.stopPropagation()"
+                  >
+                    Call Owner
+                  </button>
+
+                  <button class="mobile-buttons" (click)="toggleDetails($event, tractor.id)">
+                    View Details
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          } @else {
+            <div class="tractor-details-card">
+              <div class="tractor-header">
+                <div>
+                  <span class="owner">
+                    <mat-icon>person</mat-icon>
+                    <h3>{{ tractor.owner }}</h3>
+                  </span>
+
+                  <span class="owner"> 🚜 {{ tractor.name }} </span>
+                </div>
+
+                <div class="price-badge">
+                  ₹{{ tractor.price }}
+                  <small>/hr</small>
+                </div>
+              </div>
+
+              <div class="location-row">
+                <mat-icon>location_on</mat-icon>
+                <span>
+                  {{ tractor.village }},
+                  {{ tractor.district }}
+                </span>
+              </div>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>badge</mat-icon>
+                  <div>
+                    <span class="label">Registration</span>
+                    <span class="value">
+                      {{ tractor.registrationNumber }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>call</mat-icon>
+                  <div>
+                    <span class="label">Contact</span>
+                    <span class="value">
+                      {{ tractor.mobile }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>route</mat-icon>
+                  <div>
+                    <span class="label">Distance</span>
+                    <span class="value">
+                      {{ tractor.distance }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="addons-container" *ngIf="tractor.addOns?.length">
+                <span class="addon-chip" *ngFor="let addon of tractor.addOns">
+                  <mat-icon>{{ addon.icon }}</mat-icon>
+                  {{ addon.label }}
+                </span>
+              </div>
+
+              <div class="d-flex gap-2 mt-3">
+                <button
+                  class="btn btn-success flex-grow-1"
+                  (click)="phoneCall.call(tractor.mobile)"
+                >
+                  Call Owner
+                </button>
+
+                <button class="btn btn btn-outline-info" (click)="toggleDetails($event, null)">
+                  Close
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
     </div>
