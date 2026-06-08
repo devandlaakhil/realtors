@@ -4,8 +4,11 @@
 
 .property-page {
   min-height: 100vh;
-  background: #f8fafc;
+  background:
+    linear-gradient(180deg, #eef7ff 0, #f8fafc 220px),
+    #f8fafc;
   font-family: Inter, sans-serif;
+  padding-bottom: 24px;
 }
 
 /* =========================
@@ -68,7 +71,8 @@
 
 .property-grid {
   display: grid;
-  margin-top: 5px;
+  margin-top: 18px;
+  padding: 0 18px 18px;
   grid-template-columns:
     repeat(auto-fill, minmax(280px, 1fr));
 
@@ -81,7 +85,7 @@
 
 .property-card {
   background: white;
-  border-radius: 22px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid #e5e7eb;
 
@@ -208,6 +212,7 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  align-items: flex-start;
 }
 
 .top-section h3 {
@@ -250,6 +255,8 @@
 
 .details {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   justify-content: space-between;
 
   margin-top: 14px;
@@ -291,6 +298,8 @@
   margin-top: 16px;
 
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: space-between;
   align-items: center;
 }
@@ -456,7 +465,7 @@
 .map-container {
   position: relative;
   width: 100%;
-  height: calc(80vh - 100px);
+  height: clamp(360px, calc(78vh - 92px), 660px);
   margin-top: 0;
   overflow: hidden;
 }
@@ -479,7 +488,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-top: 50px;
+  margin-top: 16px;
   padding: 12px 16px;
 
   border-radius: 18px;
@@ -539,7 +548,9 @@
 @media (max-width: 768px) {
 
   .map-container {
-    height: 60vh;
+    height: 58vh;
+    min-height: 420px;
+    border-radius: 0 0 22px 22px;
   }
 
   .filter-overlay {
@@ -554,7 +565,7 @@
     overflow-y: hidden;
     gap: 10px;
     padding: 10px;
-    margin-top: 60px;
+    margin-top: 0;
     scrollbar-width: none;
   }
 
@@ -563,15 +574,65 @@
   }
 
   .search-field {
-    min-width: 260px;
+    min-width: min(260px, calc(100vw - 44px));
     flex: unset;
   }
 
   .filter-field {
-    min-width: 180px;
+    min-width: 172px;
     flex: unset;
   }
 
+  .property-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 14px;
+  }
+
+  .property-card {
+    border-radius: 16px;
+  }
+
+  .image-container {
+    height: 210px;
+  }
+
+  .top-section {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .price {
+    white-space: normal;
+  }
+
+  .footer {
+    align-items: stretch;
+  }
+
+  .owner {
+    flex: 1 1 100%;
+  }
+
+  .view-btn,
+  .view-btn1 {
+    flex: 1 1 calc(50% - 5px);
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 420px) {
+  .map-container {
+    min-height: 390px;
+  }
+
+  .image-container {
+    height: 190px;
+  }
+
+  .card-content {
+    padding: 14px;
+  }
 }
 
 

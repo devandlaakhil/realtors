@@ -1,7 +1,7 @@
 /* Container */
 .property-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 18px;
   padding: 20px;
 
@@ -22,7 +22,7 @@
 /* Card */
 .property-card {
   background: #fff;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
@@ -153,6 +153,7 @@
 /* Property Details */
 .details {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 16px;
@@ -219,15 +220,21 @@
 
 /* Mobile tweaks */
 @media (max-width: 600px) {
+  .property-grid {
+    gap: 14px;
+  }
+
   .image-wrapper {
     height: 200px;
   }
 
   .actions {
-    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .btn {
+    flex: 1 1 30%;
+    min-width: 92px;
     padding: 12px 8px;
     font-size: 12px;
   }

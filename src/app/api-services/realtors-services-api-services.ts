@@ -32,7 +32,7 @@ export class RealtorsServicesApiServices {
     return this.http.patch<T>(this.getUrl(endpoint), body);
   }
 
-  delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(this.getUrl(endpoint));
+  delete<T>(endpoint: string,params?: any): Observable<T> {
+    return this.http.delete<T>(this.getUrl(endpoint),{ params });
   }
 }

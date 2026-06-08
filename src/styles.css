@@ -1,8 +1,42 @@
 @import '../node_modules/@fontsource/poppins/index.css';
 @import 'ngx-toastr/toastr';
 
-body{
-    font-family: 'Poppins',sans-sarif;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  min-width: 320px;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: 'Poppins', sans-serif;
+  background:
+    linear-gradient(180deg, rgba(248, 250, 252, 0.92), rgba(241, 245, 249, 0.98)),
+    #f8fafc;
+  color: #0f172a;
+}
+
+img,
+video,
+iframe {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 .app-header {
@@ -11,6 +45,17 @@ body{
   left: 0;
   width: 100%;
   z-index: 1000;
+}
+
+.toast-container {
+  z-index: 10000 !important;
+}
+
+.toast-top-right,
+.toast-top-center,
+.toast-top-left,
+.toast-top-full-width {
+  top: 82px !important;
 }
 
 
@@ -22,8 +67,43 @@ body{
     Optional: Ensure content takes up the full screen height 
     min-height: 100vh;
     */
-     padding-top: 10px; 
+    padding-top: 70px;
     box-sizing: border-box;
     margin-bottom: 70px;
+}
+
+.mat-mdc-button-base,
+.btn,
+button {
+  min-height: 40px;
+}
+
+.mat-mdc-form-field {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .toast-top-right,
+  .toast-top-center,
+  .toast-top-left,
+  .toast-top-full-width {
+    top: 76px !important;
+  }
+
+  .main-content-wrapper {
+    padding-top: 64px;
+    margin-bottom: 28px;
+  }
+
+  .mat-mdc-dialog-container,
+  .modal-dialog {
+    margin: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
 }
 

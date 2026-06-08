@@ -1,3 +1,42 @@
-.login-box{
-    margin-top: 80px;
+.login-box {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  padding: 24px 12px;
+  background:
+    linear-gradient(135deg, rgba(54, 26, 116, 0.08), rgba(6, 182, 212, 0.1)),
+    #f8fafc;
+}
+
+.login-box .card {
+  overflow: hidden;
+  border: 0;
+  border-radius: 18px;
+}
+
+.login-box .card-header {
+  background: linear-gradient(135deg, #361a74, #155e75) !important;
+  padding: 16px 20px;
+}
+
+.login-box .card-body {
+  padding: 24px 20px 12px;
+}
+
+.login-box button[mat-flat-button] {
+  width: 100%;
+  border-radius: 10px;
+  background: #361a74;
+  color: #fff;
+}
+
+@media (max-width: 576px) {
+  .login-box {
+    align-items: flex-start;
+    padding-top: 22px;
+  }
+
+  .login-box .card {
+    border-radius: 16px;
+  }
 }

@@ -2,7 +2,7 @@
 .about-wrapper {
   position: relative;
   overflow: hidden;
-  padding: 100px 24px;
+  padding: 72px 24px;
   background: #f8fafc; /* Clean, crisp slate-white background */
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   color: #334155; /* Soft dark text for high legibility */
@@ -56,7 +56,7 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 .gradient-text {
-  font-size: 3.8rem;
+  font-size: clamp(2.15rem, 7vw, 3.8rem);
   font-weight: 800;
   line-height: 1.15;
   margin-bottom: 24px;
@@ -66,7 +66,7 @@
   -webkit-text-fill-color: transparent;
 }
 .lead-text {
-  font-size: 1.3rem;
+  font-size: clamp(1rem, 3vw, 1.3rem);
   line-height: 1.7;
   color: #475569;
 }
@@ -81,14 +81,14 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
   gap: 32px;
 }
 .card {
   position: relative;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 24px;
+  border-radius: 18px;
   padding: 40px;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.12);
@@ -145,7 +145,7 @@
   background: linear-gradient(135deg, #eff6ff 0%, #f0fdfa 100%);
   border: 1px solid #bfdbfe;
   padding: 60px 40px;
-  border-radius: 32px;
+  border-radius: 22px;
   text-align: center;
   box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.15);
 }
@@ -196,7 +196,17 @@
 
 /* Responsiveness Adaptations */
 @media (max-width: 768px) {
-  .gradient-text { font-size: 2.6rem; }
   .trust-banner h2 { font-size: 1.8rem; }
-  .about-wrapper { padding: 60px 16px; }
+  .about-wrapper { padding: 48px 16px; }
+  .hero-container { margin-bottom: 42px; }
+  .cards-grid { gap: 18px; }
+  .card { padding: 24px; }
+  .trust-banner {
+    margin-top: 48px;
+    padding: 32px 18px;
+  }
+  .btn {
+    width: 100%;
+    padding: 14px 18px;
+  }
 }

@@ -6,6 +6,7 @@ export const API_CONSTANTS = {
     list: 'get-tractor-services',
     mylist: 'get-my-tractors-list',
     updateItem: 'update-tractor',
-    getsingleitem : 'get-single-tractor'
+    getsingleitem : 'get-single-tractor',
+    statusUpdate:'update-tractor-status',
   },
 };

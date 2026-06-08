@@ -7,7 +7,6 @@
 .home-page {
   background: #f5f7fb;
   min-height: 100vh;
-  margin-top: 65px;
 }
 
 /* HEADER */
@@ -17,7 +16,7 @@
   background: white;
   display: flex;
   align-items: center;
-  padding: 0 40px;
+  padding: 0 32px;
   justify-content: space-between;
   box-shadow: 0 2px 20px rgba(0,0,0,.06);
   position: sticky;
@@ -77,12 +76,12 @@
 }
 
 .hero-content {
-  padding-left: 80px;
+  padding: 24px clamp(22px, 7vw, 80px);
   color: white;
 }
 
 .hero-content h1 {
-  font-size: 52px;
+  font-size: clamp(28px, 7vw, 52px);
   max-width: 700px;
 }
 
@@ -137,7 +136,7 @@
 
 .listing-map {
   display: grid;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: minmax(280px, 40%) minmax(0, 60%);
   gap: 25px;
   padding: 20px 40px 40px;
 }
@@ -201,7 +200,7 @@
 }
 
 .map-placeholder {
-  height: 700px;
+  height: min(700px, calc(100dvh - 150px));
   background: white;
   border-radius: 24px;
   position: relative;
@@ -269,7 +268,7 @@
 
   .listing-map {
     grid-template-columns: 1fr;
-    padding: 20px;
+    padding: 18px;
   }
 
   .map-section {
@@ -292,6 +291,20 @@
   .header-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .category-card {
+    min-width: 118px;
+    height: 104px;
+    border-radius: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
   }
 
   .service-card img {
