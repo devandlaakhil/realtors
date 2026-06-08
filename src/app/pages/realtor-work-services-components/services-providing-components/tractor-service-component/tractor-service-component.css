@@ -4,13 +4,12 @@
 
 .tractor-page {
   height: 100vh;
-  margin-top: 70px;
   background: #f8fafc;
 }
 
 .page-header {
   height: 70px;
-  padding: 0 24px;
+  padding: 0 0px;
   background: white;
   display: flex;
   justify-content: space-between;

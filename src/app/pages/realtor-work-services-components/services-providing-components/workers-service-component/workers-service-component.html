@@ -1,0 +1,139 @@
+<div class="services-container">
+  <!-- Header -->
+  <div class="service-header">
+    <div>
+      <h2>👷 Workers Near You</h2>
+      <p>{{ filteredWorkers.length }} workers available</p>
+    </div>
+
+    <button class="post-btn" (click)="openPostWorker()">
+      <mat-icon>add</mat-icon>
+      Post Worker
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+
+    <input type="text" [(ngModel)]="searchText" placeholder="Search worker..." />
+  </div>
+
+  <!-- Categories -->
+  <div class="category-chips">
+    <button
+      *ngFor="let category of categories"
+      [class.active]="activeCategory === category.name"
+      (click)="setCategory(category.name)"
+    >
+      {{ category.label }}
+    </button>
+  </div>
+
+  <!-- Desktop Layout -->
+  <div class="content-layout">
+
+     <!-- Right Side Map -->
+    <div class="map-wrapper">
+      <app-map-component></app-map-component>
+    </div>
+    <!-- Left Side Workers -->
+    <div class="worker-list">
+      <ng-container *ngFor="let worker of filteredWorkers">
+        <!-- Compact Card -->
+        <div class="mini-card" *ngIf="expandedWorkerId !== worker.id">
+          <img src="assets/images/worker-placeholder.png" />
+
+          <div class="card-content">
+            <h4>👤 {{ worker.name }}</h4>
+
+            <h6>{{ worker.category }}</h6>
+
+            <p>₹{{ worker.price }}/day</p>
+
+            <p>📍 {{ worker.distance }}</p>
+
+            <div class="card-actions">
+              <button class="mobile-btn" (click)="toggleDetails(worker.id)">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Expanded Card -->
+        <div class="worker-details-card" *ngIf="expandedWorkerId === worker.id">
+          <div class="worker-header">
+            <div>
+              <h3>👤 {{ worker.name }}</h3>
+              <span>{{ worker.category }}</span>
+            </div>
+
+            <div class="price-badge">
+              ₹{{ worker.price }}
+              <small>/day</small>
+            </div>
+          </div>
+
+          <div class="location-row">
+            <mat-icon>location_on</mat-icon>
+
+            <span>
+              {{ worker.village }},
+              {{ worker.district }}
+            </span>
+          </div>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon>call</mat-icon>
+              <div>
+                <span class="label">Contact</span>
+                <span class="value">{{ worker.mobile }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>work</mat-icon>
+              <div>
+                <span class="label">Experience</span>
+                <span class="value">{{ worker.experience }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>groups</mat-icon>
+              <div>
+                <span class="label">Team Size</span>
+                <span class="value">{{ worker.teamSize }}</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>verified</mat-icon>
+              <div>
+                <span class="label">Status</span>
+                <span class="value">
+                  {{ worker.verified ? 'Verified' : 'Not Verified' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="skills-container" *ngIf="worker.skills.length">
+            <span class="skill-chip" *ngFor="let skill of worker.skills">
+              {{ skill }}
+            </span>
+          </div>
+
+          <div class="expanded-actions">
+            <button class="primary-btn" (click)="phoneCall.call(worker.mobile)">
+              Contact Worker
+            </button>
+
+            <button class="secondary-btn" (click)="toggleDetails(worker.id)">Close Details</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+</div>

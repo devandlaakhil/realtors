@@ -17,6 +17,10 @@ export const WORK_SERVICE_ROUTES: Routes = [
           path:'edit-tractor/:id',
           canActivate: [authGuard],
           loadComponent:() => import('./services-providing-components/tractor-service-component/tractor-service-component').then(n => n.TractorServiceComponent)
+        },
+        {
+          path:'workers',
+          loadComponent:() => import('./services-providing-components/workers-service-component/workers-service-component').then(n => n.WorkersServiceComponent)
         }
     ] 
   },
