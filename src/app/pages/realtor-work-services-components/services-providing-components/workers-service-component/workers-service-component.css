@@ -78,6 +78,36 @@ app-map-component {
   height: 100%;
 }
 
+.image-preview{
+  height: 100px;
+  width: 100px;
+}
+
+.image-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .image-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .image-actions button {
+    width: 100%;
+  }
+}
+
 /* ==================================
    HEADER
 ================================== */
@@ -407,5 +437,69 @@ app-map-component {
 
   .expanded-actions {
     flex-direction: column;
+  }
+}
+
+.post-worker-container {
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+
+.worker-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+mat-card {
+  padding: 20px;
+  border-radius: 18px;
+
+  h3 {
+    margin-bottom: 16px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
   }
 }

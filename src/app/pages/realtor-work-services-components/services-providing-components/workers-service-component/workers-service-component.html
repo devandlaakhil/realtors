@@ -1,139 +1,262 @@
-<div class="services-container">
-  <!-- Header -->
-  <div class="service-header">
-    <div>
-      <h2>👷 Workers Near You</h2>
-      <p>{{ filteredWorkers.length }} workers available</p>
+@if (!showPostWorkerForm) {
+  <div class="services-container">
+    <!-- Header -->
+    <div class="service-header">
+      <div>
+        <h2>👷 Workers Near You</h2>
+        <p>{{ filteredWorkers.length }} workers available</p>
+      </div>
+
+      <button class="post-btn" (click)="openPostWorker()">
+        <mat-icon>add</mat-icon>
+        Post Worker
+      </button>
     </div>
 
-    <button class="post-btn" (click)="openPostWorker()">
-      <mat-icon>add</mat-icon>
-      Post Worker
-    </button>
-  </div>
+    <!-- Search -->
+    <div class="search-bar">
+      <mat-icon>search</mat-icon>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <mat-icon>search</mat-icon>
-
-    <input type="text" [(ngModel)]="searchText" placeholder="Search worker..." />
-  </div>
-
-  <!-- Categories -->
-  <div class="category-chips">
-    <button
-      *ngFor="let category of categories"
-      [class.active]="activeCategory === category.name"
-      (click)="setCategory(category.name)"
-    >
-      {{ category.label }}
-    </button>
-  </div>
-
-  <!-- Desktop Layout -->
-  <div class="content-layout">
-
-     <!-- Right Side Map -->
-    <div class="map-wrapper">
-      <app-map-component></app-map-component>
+      <input type="text" [(ngModel)]="searchText" placeholder="Search worker..." />
     </div>
-    <!-- Left Side Workers -->
-    <div class="worker-list">
-      <ng-container *ngFor="let worker of filteredWorkers">
-        <!-- Compact Card -->
-        <div class="mini-card" *ngIf="expandedWorkerId !== worker.id">
-          <img src="assets/images/worker-placeholder.png" />
 
-          <div class="card-content">
-            <h4>👤 {{ worker.name }}</h4>
+    <!-- Categories -->
+    <div class="category-chips">
+      <button
+        *ngFor="let category of categories"
+        [class.active]="activeCategory === category.name"
+        (click)="setCategory(category.name)"
+      >
+        {{ category.label }}
+      </button>
+    </div>
 
-            <h6>{{ worker.category }}</h6>
+    <!-- Desktop Layout -->
+    <div class="content-layout">
+      <!-- Right Side Map -->
+      <div class="map-wrapper">
+        <app-map-component></app-map-component>
+      </div>
+      <!-- Left Side Workers -->
+      <div class="worker-list">
+        <ng-container *ngFor="let worker of filteredWorkers">
+          <!-- Compact Card -->
+          <div class="mini-card" *ngIf="expandedWorkerId !== worker.id">
+            <img src="assets/images/worker-placeholder.png" />
 
-            <p>₹{{ worker.price }}/day</p>
+            <div class="card-content">
+              <h4>👤 {{ worker.name }}</h4>
 
-            <p>📍 {{ worker.distance }}</p>
+              <h6>{{ worker.category }}</h6>
 
-            <div class="card-actions">
-              <button class="mobile-btn" (click)="toggleDetails(worker.id)">View Details</button>
+              <p>₹{{ worker.price }}/day</p>
+
+              <p>📍 {{ worker.distance }}</p>
+
+              <div class="card-actions">
+                <button class="mobile-btn" (click)="toggleDetails(worker.id)">View Details</button>
+              </div>
             </div>
           </div>
+
+          <!-- Expanded Card -->
+          <div class="worker-details-card" *ngIf="expandedWorkerId === worker.id">
+            <div class="worker-header">
+              <div>
+                <h3>👤 {{ worker.name }}</h3>
+                <span>{{ worker.category }}</span>
+              </div>
+
+              <div class="price-badge">
+                ₹{{ worker.price }}
+                <small>/day</small>
+              </div>
+            </div>
+
+            <div class="location-row">
+              <mat-icon>location_on</mat-icon>
+
+              <span>
+                {{ worker.village }},
+                {{ worker.district }}
+              </span>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-item">
+                <mat-icon>call</mat-icon>
+                <div>
+                  <span class="label">Contact</span>
+                  <span class="value">{{ worker.mobile }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <mat-icon>work</mat-icon>
+                <div>
+                  <span class="label">Experience</span>
+                  <span class="value">{{ worker.experience }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <mat-icon>groups</mat-icon>
+                <div>
+                  <span class="label">Team Size</span>
+                  <span class="value">{{ worker.teamSize }}</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <mat-icon>verified</mat-icon>
+                <div>
+                  <span class="label">Status</span>
+                  <span class="value">
+                    {{ worker.verified ? 'Verified' : 'Not Verified' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="skills-container" *ngIf="worker.skills.length">
+              <span class="skill-chip" *ngFor="let skill of worker.skills">
+                {{ skill }}
+              </span>
+            </div>
+
+            <div class="expanded-actions">
+              <button class="primary-btn" (click)="phoneCall.call(worker.mobile)">
+                Contact Worker
+              </button>
+
+              <button class="secondary-btn" (click)="toggleDetails(worker.id)">
+                Close Details
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="post-worker-container">
+    <div class="form-header">
+      <h2>👷 Post Worker Service</h2>
+
+      <button mat-stroked-button color="warn" type="button" (click)="closePostWorker()">
+        Cancel
+      </button>
+    </div>
+
+    <form [formGroup]="workerForm" class="worker-form" (ngSubmit)="saveWorker()">
+      <!-- BASIC DETAILS -->
+
+      <mat-card>
+        <h3>Basic Details</h3>
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Category</mat-label>
+
+            <mat-select formControlName="category">
+              @for (type of workerType; track type) {
+                <mat-option [value]="type">
+                  {{ type }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput formControlName="mobile" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Daily Price</mat-label>
+            <input matInput type="number" formControlName="price" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Village</mat-label>
+            <input matInput formControlName="village" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>District</mat-label>
+            <input matInput formControlName="district" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Experience</mat-label>
+            <input matInput formControlName="experience" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Team Size</mat-label>
+            <input matInput formControlName="teamSize" />
+          </mat-form-field>
         </div>
 
-        <!-- Expanded Card -->
-        <div class="worker-details-card" *ngIf="expandedWorkerId === worker.id">
-          <div class="worker-header">
-            <div>
-              <h3>👤 {{ worker.name }}</h3>
-              <span>{{ worker.category }}</span>
-            </div>
+        <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
+          Show Map (Select worker location)
+        </mat-checkbox>
 
-            <div class="price-badge">
-              ₹{{ worker.price }}
-              <small>/day</small>
-            </div>
+        @if (showMap) {
+          <div class="map-wrapper">
+            <app-map-component (locationSelected)="onLocationSelected($event)"> </app-map-component>
           </div>
+        }
+      </mat-card>
 
-          <div class="location-row">
-            <mat-icon>location_on</mat-icon>
+      <!-- SKILLS -->
 
-            <span>
-              {{ worker.village }},
-              {{ worker.district }}
-            </span>
-          </div>
+      <mat-card>
+        <div *ngIf="availableSkills.length">
+          <h4>Select Skills</h4>
 
-          <div class="info-grid">
-            <div class="info-item">
-              <mat-icon>call</mat-icon>
-              <div>
-                <span class="label">Contact</span>
-                <span class="value">{{ worker.mobile }}</span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon>work</mat-icon>
-              <div>
-                <span class="label">Experience</span>
-                <span class="value">{{ worker.experience }}</span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon>groups</mat-icon>
-              <div>
-                <span class="label">Team Size</span>
-                <span class="value">{{ worker.teamSize }}</span>
-              </div>
-            </div>
-
-            <div class="info-item">
-              <mat-icon>verified</mat-icon>
-              <div>
-                <span class="label">Status</span>
-                <span class="value">
-                  {{ worker.verified ? 'Verified' : 'Not Verified' }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="skills-container" *ngIf="worker.skills.length">
-            <span class="skill-chip" *ngFor="let skill of worker.skills">
+          <div class="skills-grid">
+            <mat-checkbox
+              *ngFor="let skill of availableSkills"
+              (change)="onSkillChange(skill, $event.checked)"
+            >
               {{ skill }}
-            </span>
-          </div>
-
-          <div class="expanded-actions">
-            <button class="primary-btn" (click)="phoneCall.call(worker.mobile)">
-              Contact Worker
-            </button>
-
-            <button class="secondary-btn" (click)="toggleDetails(worker.id)">Close Details</button>
+            </mat-checkbox>
           </div>
         </div>
-      </ng-container>
-    </div>
+      </mat-card>
 
+      <!-- ROLE -->
+
+      <mat-card>
+        <h3>Work Details</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Role Description</mat-label>
+
+          <textarea matInput rows="4" formControlName="role"></textarea>
+        </mat-form-field>
+      </mat-card>
+
+      <mat-card>
+        <!-- IMAGE -->
+
+        <app-image-upload-component
+          (fileSelected)="onWorkerImageSelected($event)"
+        ></app-image-upload-component>
+      </mat-card>
+
+      <div class="actions">
+        <button mat-stroked-button color="warn" type="button" (click)="closePostWorker()">
+          Cancel
+        </button>
+
+        <button mat-raised-button color="primary" type="submit">Publish Worker</button>
+      </div>
+    </form>
   </div>
-</div>
+}

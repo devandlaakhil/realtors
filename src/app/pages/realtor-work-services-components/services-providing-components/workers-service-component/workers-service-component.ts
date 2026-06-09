@@ -1,12 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
-
+import { MatLabel } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCard } from '@angular/material/card';
+import { MatInput } from '@angular/material/input';
+import { MatButton } from '@angular/material/button';
+import { Worker_Type } from '../../../../constants/enums/worker-posting-enums';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
+import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
+import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
+import { WORKER_CATEGORIES } from '../../../../constants/workers-category-skills';
 @Component({
   selector: 'app-workers-service-component',
   imports: [
@@ -16,11 +31,18 @@ import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad
     FormsModule,
     MatIconModule,
     MapComponent,
+    ImageUploadComponent,
+    MatLabel,
+    MatSelectModule,
+    MatCard,
+    MatInput,
+    MatButton,
+    MatCheckbox,
   ],
   templateUrl: './workers-service-component.html',
   styleUrl: './workers-service-component.css',
 })
-export class WorkersServiceComponent {
+export class WorkersServiceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
   phoneCall = inject(MobileDialpadService);
@@ -32,6 +54,28 @@ export class WorkersServiceComponent {
   selectedWorkerId = 1;
   sheetExpanded: boolean = false;
   expandedWorkerId: number | null = null;
+  workerType = Object.values(Worker_Type);
+  showMap: boolean = false;
+  selectedLocation: any = { lat: '', lng: '' };
+  zoom: number = 0;
+  workerForm!: FormGroup;
+  selectedImageFile!: File | null;
+  availableSkills: string[] = [];
+  selectedSkills: string[] = [];
+
+  ngOnInit(): void {
+    this.initForm();
+    this.getCurrentLocation();
+    this.workerForm.get('category')?.valueChanges.subscribe((category) => {
+      this.availableSkills = WORKER_CATEGORIES[category] || [];
+
+      this.selectedSkills = [];
+
+      this.workerForm.patchValue({
+        skills: [],
+      });
+    });
+  }
 
   categories = [
     { name: 'All', label: 'All', icon: 'apps', count: 12 },
@@ -178,18 +222,71 @@ export class WorkersServiceComponent {
     this.expandedWorkerId = this.expandedWorkerId === workerId ? null : workerId;
   }
 
-  workerForm = this.fb.group({
-    name: ['', Validators.required],
-    category: ['Daily Wage', Validators.required],
-    mobile: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-    village: ['', Validators.required],
-    district: ['', Validators.required],
-    price: [null as number | null, Validators.required],
-    experience: [''],
-    teamSize: ['Solo'],
-    role: ['', Validators.required],
-    skills: [''],
+  onSkillChange(skill: string, checked: boolean): void {
+  if (checked) {
+    this.selectedSkills.push(skill);
+  } else {
+    this.selectedSkills =
+      this.selectedSkills.filter(
+        (s) => s !== skill
+      );
+  }
+
+  this.workerForm.patchValue({
+    skills: this.selectedSkills,
   });
+}
+
+  onMapsToggle(event: MatCheckboxChange): void {
+    if (event.checked) {
+      if (this.selectedLocation) {
+        this.zoom = 15;
+        this.showMap = true;
+
+        return;
+      }
+    } else {
+      this.showMap = false;
+    }
+  }
+
+  getCurrentLocation(): void {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.workerForm.patchValue({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+    });
+  }
+
+  onLocationSelected(location: { lat: number; lng: number }): void {
+    this.workerForm.patchValue({
+      latitude: location.lat,
+      longitude: location.lng,
+    });
+  }
+
+  initForm(): void {
+    this.workerForm = this.fb.group({
+      name: ['', Validators.required],
+      category: ['', Validators.required],
+      mobile: ['', Validators.required],
+      price: ['', Validators.required],
+      village: [''],
+      district: [''],
+      experience: [''],
+      teamSize: [''],
+      skills: [[]],
+      role: [''],
+
+      // image
+      image: [null],
+
+      // coordinates
+      latitude: [null],
+      longitude: [null],
+    });
+  }
 
   get filteredWorkers() {
     const query = this.searchText.trim().toLowerCase();
@@ -242,53 +339,30 @@ export class WorkersServiceComponent {
     this.showPostWorkerForm = false;
   }
 
-  saveWorker() {
+  onWorkerImageSelected(file: File | null): void {
+    this.selectedImageFile = file;
+    this.workerForm.patchValue({
+      image: file,
+    });
+  }
+
+  saveWorker(): void {
     if (this.workerForm.invalid) {
       this.workerForm.markAllAsTouched();
-      this.toastr.error('Please fill all required fields', 'Validation');
       return;
     }
 
-    const value = this.workerForm.getRawValue();
-    const name = value.name ?? '';
-    const newWorker = {
-      id: Date.now(),
-      name,
-      category: value.category ?? 'Daily Wage',
-      role: value.role ?? '',
-      mobile: value.mobile ?? '',
-      village: value.village ?? '',
-      district: value.district ?? '',
-      price: value.price ?? 0,
-      unit: 'day',
-      rating: 4.5,
-      jobs: 0,
-      distance: 'New',
-      experience: value.experience || 'New worker',
-      teamSize: value.teamSize || 'Solo',
-      availableToday: true,
-      verified: false,
-      skills: (value.skills || '')
-        .split(',')
-        .map((skill) => skill.trim())
-        .filter(Boolean),
-      initials: name
-        .split(' ')
-        .map((part) => part[0])
-        .join('')
-        .slice(0, 2)
-        .toUpperCase(),
-      color: '#0f766e',
-    };
+    const formData = new FormData();
 
-    this.workers = [newWorker, ...this.workers];
-    this.selectedWorkerId = newWorker.id;
-    this.activeCategory = newWorker.category;
-    this.workerForm.reset({
-      category: 'Daily Wage',
-      teamSize: 'Solo',
+    Object.keys(this.workerForm.value).forEach((key) => {
+      formData.append(key, this.workerForm.value[key]);
     });
-    this.showPostWorkerForm = false;
-    this.toastr.success('Worker posted successfully', 'Success');
+
+    console.log(this.workerForm.value);
+
+    // API Call
+    // this.workerService.saveWorker(formData).subscribe(...)
+
+    this.closePostWorker();
   }
 }

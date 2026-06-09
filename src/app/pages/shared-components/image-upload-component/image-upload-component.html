@@ -1,0 +1,24 @@
+<div class="upload-wrapper">
+  <div class="preview-container">
+    <img *ngIf="preview" [src]="preview" class="preview-image" />
+
+    <div *ngIf="!preview" class="placeholder">📷 Upload Image</div>
+
+    <button mat-raised-button
+      *ngIf="preview"
+      mat-mini-fab
+      color="warn"
+      type="button"
+      class="remove-btn"
+      (click)="removeImage(fileInput)"
+    >
+      ✕
+    </button>
+  </div>
+
+  <input #fileInput hidden  [multiple]="multiple" type="file" accept="image/*" (change)="onImageSelected($event)" />
+
+  <button mat-raised-button color="primary" type="button" (click)="fileInput.click()">
+    Choose Image
+  </button>
+</div>

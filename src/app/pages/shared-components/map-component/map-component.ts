@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 
@@ -12,52 +20,89 @@ import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 export class MapComponent implements OnInit {
   selectedLocation: any = { lat: '', lng: '' };
   zoom: number = 0;
+  onDataChange = Output();
+  cdr = inject(ChangeDetectorRef);
 
   @Input() data: any[] = [];
   @Input() center: any;
   @Input() selectedItem: any;
   @Input() showMap: boolean = false;
 
-  onDataChange = Output();
+  @Output() locationSelected = new EventEmitter<{lat: number;lng: number;}>();
+
+ 
 
   ngOnInit(): void {
     this.getCurrentLocation();
   }
 
-  getCurrentLocation(showMap = false): void {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        this.center = { lat, lng };
-        this.selectedLocation = { lat, lng };
-        // this.tractorForm.patchValue({
-        //   location: {
-        //     latitude: lat,
-        //     longitude: lng,
-        //     geoLocation: {
-        //       type: 'Point',
-        //       coordinates: [lng, lat],
-        //     },
-        //   },
-        // });
-
-        if (showMap) {
-          this.zoom = 15;
-          this.showMap = true;
-        }
-      },
-      (error) => {
-        console.error('Location Error:', error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 60000,
-      },
-    );
+  getCurrentLocation(): void {
+  if (!navigator.geolocation) {
+    return;
   }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      this.center = { lat, lng };
+
+      this.selectedLocation = {
+        lat,
+        lng,
+      };
+
+      // Send current location to parent
+      this.locationSelected.emit({
+        lat,
+        lng,
+      });
+    },
+    (error) => {
+      console.error('Location Error:', error);
+    },
+    {
+      enableHighAccuracy: true,
+    }
+  );
+}
+
+ markerDragged(event: google.maps.MapMouseEvent): void {
+  if (!event.latLng) return;
+
+  const lat = event.latLng.lat();
+  const lng = event.latLng.lng();
+
+  this.selectedLocation = {
+    lat,
+    lng,
+  };
+
+  this.locationSelected.emit({
+    lat,
+    lng,
+  });
+}
+
+ onMapClick(event: google.maps.MapMouseEvent): void {
+  if (!event.latLng) return;
+
+  const lat = event.latLng.lat();
+  const lng = event.latLng.lng();
+
+  this.selectedLocation = {
+    lat,
+    lng,
+  };
+
+  this.locationSelected.emit({
+    lat,
+    lng,
+  });
+}
+
   openInfo(marker: any, tractor: any) {
-    this.onDataChange.emit({ marker, tractor })
+    this.onDataChange.emit({ marker, tractor });
   }
 }
