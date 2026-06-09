@@ -10,7 +10,7 @@ export class RealtorsServicesApiServices {
   private http = inject(HttpClient);
 
   private _serverPort = environment.serverPort;
-  private _apiUrl = 'realtor-services';
+  private _apiUrl = 'tractor-services';
 
   private getUrl(endpoint: string): string {
     return `${this._serverPort}/${this._apiUrl}/${endpoint}`;
