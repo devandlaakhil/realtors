@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -62,7 +62,8 @@ export class WorkersServiceComponent implements OnInit {
   availabilityFilter = 'All';
   searchText = '';
   selectedWorkerId = 1;
-  sheetExpanded: boolean = false;
+  sheetExpanded = false;
+  sheetHeight = '60vh';
   expandedWorkerId: string | null = null;
   workerType = Object.values(Worker_Type);
   showMap: boolean = false;
@@ -73,6 +74,9 @@ export class WorkersServiceComponent implements OnInit {
   availableSkills: string[] = [];
   selectedSkills: string[] = [];
   workers: any[] = [];
+  private isDragging = false;
+  private dragStartY = 0;
+  private dragStartHeight = 60;
 
   categories = [
     { name: 'All', label: 'All', icon: 'apps', count: 12 },
@@ -101,6 +105,57 @@ export class WorkersServiceComponent implements OnInit {
 
   toggleDetails(workerId: string): void {
     this.expandedWorkerId = this.expandedWorkerId === workerId ? null : workerId;
+  }
+
+  toggleSheet(): void {
+    this.sheetExpanded = !this.sheetExpanded;
+    this.sheetHeight = this.sheetExpanded ? '100vh' : '60vh';
+  }
+
+  onDragStart(event: any): void {
+    event.preventDefault();
+    this.isDragging = true;
+    this.dragStartY = this.getClientY(event);
+    this.dragStartHeight = parseFloat(this.sheetHeight) || 60;
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  @HostListener('window:touchmove', ['$event'])
+  onDragMove(event: any): void {
+    if (!this.isDragging) {
+      return;
+    }
+
+    const currentY = this.getClientY(event);
+    const delta = (this.dragStartY - currentY) / window.innerHeight * 100;
+    const nextHeight = Math.min(Math.max(this.dragStartHeight + delta, 60), 100);
+    this.sheetHeight = `${nextHeight}vh`;
+    this.sheetExpanded = nextHeight >= 85;
+  }
+
+  @HostListener('window:mouseup')
+  @HostListener('window:touchend')
+  onDragEnd(): void {
+    if (!this.isDragging) {
+      return;
+    }
+    this.isDragging = false;
+
+    const height = parseFloat(this.sheetHeight) || 60;
+    if (height >= 85) {
+      this.sheetHeight = '100vh';
+      this.sheetExpanded = true;
+    } else {
+      this.sheetHeight = '60vh';
+      this.sheetExpanded = false;
+    }
+  }
+
+  private getClientY(event: any): number {
+    if (event.touches?.length) {
+      return event.touches[0].clientY;
+    }
+    return event.clientY ?? 0;
   }
 
   onSkillChange(skill: string, checked: boolean): void {
