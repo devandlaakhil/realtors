@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -63,6 +63,11 @@ export class TractorServiceComponent implements OnInit {
   expandedTractorId: number | string | null = null;
   isEditMode: boolean = false;
   propertyId: string = '';
+  sheetExpanded = false;
+  sheetHeight = '60vh';
+  private isDragging = false;
+  private dragStartY = 0;
+  private dragStartHeight = 60;
 
   @ViewChild(MapInfoWindow)
   infoWindow!: MapInfoWindow;
@@ -424,8 +429,58 @@ export class TractorServiceComponent implements OnInit {
     this.infoWindow.open(marker);
   }
 
-  toggleDetails(event: Event, tractorId: number | string | null) {
-    event.stopPropagation();
-    this.expandedTractorId = tractorId;
+  toggleDetails(tractorId: number | string | null) {
+    this.expandedTractorId = this.expandedTractorId === tractorId ? null : tractorId;
+  }
+
+  toggleSheet(): void {
+    this.sheetExpanded = !this.sheetExpanded;
+    this.sheetHeight = this.sheetExpanded ? '100vh' : '60vh';
+  }
+
+  onDragStart(event: any): void {
+    event.preventDefault();
+    this.isDragging = true;
+    this.dragStartY = this.getClientY(event);
+    this.dragStartHeight = parseFloat(this.sheetHeight) || 60;
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  @HostListener('window:touchmove', ['$event'])
+  onDragMove(event: any): void {
+    if (!this.isDragging) {
+      return;
+    }
+
+    const currentY = this.getClientY(event);
+    const delta = (this.dragStartY - currentY) / window.innerHeight * 100;
+    const nextHeight = Math.min(Math.max(this.dragStartHeight + delta, 40), 100);
+    this.sheetHeight = `${nextHeight}vh`;
+    this.sheetExpanded = nextHeight >= 85;
+  }
+
+  @HostListener('window:mouseup')
+  @HostListener('window:touchend')
+  onDragEnd(): void {
+    if (!this.isDragging) {
+      return;
+    }
+
+    this.isDragging = false;
+    const height = parseFloat(this.sheetHeight) || 60;
+    if (height >= 85) {
+      this.sheetHeight = '100vh';
+      this.sheetExpanded = true;
+    } else {
+      this.sheetHeight = '60vh';
+      this.sheetExpanded = false;
+    }
+  }
+
+  private getClientY(event: any): number {
+    if (event.touches?.length) {
+      return event.touches[0].clientY;
+    }
+    return event.clientY ?? 0;
   }
 }

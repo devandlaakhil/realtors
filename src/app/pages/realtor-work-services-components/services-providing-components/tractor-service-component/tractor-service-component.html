@@ -1,178 +1,34 @@
-@if (!showPostServiceForm && !isEditMode) {
-  <div class="tractor-page">
-    <div class="page-header">
+﻿@if (!showPostServiceForm && !isEditMode) {
+  <div class="services-container">
+    <div class="service-header">
       <div>
         <h2>🚜 {{ 'Tractors Near You' | T }}</h2>
-        <span>{{ totalAvailTractors }} {{ 'tractors available' | T }}</span>
+        <p>{{ totalAvailTractors }} {{ 'tractors available' | T }}</p>
       </div>
 
       <button class="post-btn" (click)="openPostService()">+ {{ 'Post Service' | T }}</button>
     </div>
 
-    <!-- DESKTOP -->
-
-    <div class="desktop-layout">
-      <!-- LEFT SIDE -->
-
-      <div class="listing-panel">
-        <div class="search-box">
-          <input placeholder="{{ 'Search tractors' | T }}..." />
-        </div>
-
-        <div class="filters">
-          <button>5 KM</button>
-          <button>10 KM</button>
-          <button>20 KM</button>
-        </div>
-
-        <div
-          class="tractor-card"
-          *ngFor="let tractor of tractors"
-          (click)="selectTractor(tractor)"
-          [class.active]="selectedTractor?.id === tractor?.id"
-        >
-          <!-- Check if THIS specific tractor id is the one marked as expanded -->
-          @if (expandedTractorId !== tractor.id) {
-            <img [src]="tractor.image" />
-            <div class="card-content">
-              <h3>👤{{ tractor.owner }}</h3>
-              <!-- <p>⭐ {{ tractor.rating }}</p> -->
-              <p>📍 {{ tractor.distance }}</p>
-              <p>🚜 {{ tractor.name }}</p>
-              <p>📱 {{ tractor.mobile }}</p>
-              <h4>₹ {{ tractor.price }}/{{ 'hour' | T }}</h4>
-              <!-- Pass the event and tractor id to your click handler -->
-              <button (click)="toggleDetails($event, tractor.id)">{{ 'View Details' | T }}</button>
-            </div>
-          } @else {
-            <div class="tractor-details-card">
-              <div class="tractor-header">
-                <div>
-                  <span class="owner">
-                    <!-- <mat-icon>{{'person'|T}}</mat-icon> -->
-                    <h3>{{ tractor.owner }}</h3>
-                  </span>
-                  <span class="owner">
-                    <!-- <mat-icon>tractor</mat-icon> -->
-                    🚜 {{ tractor.name }}
-                  </span>
-                </div>
-
-                <div class="price-badge">
-                  ₹{{ tractor.price }}
-                  <small>/{{ 'hour' | T }}</small>
-                </div>
-              </div>
-
-              <div class="location-row">
-                <mat-icon>location_on</mat-icon>
-                <span> {{ tractor.village }}, {{ tractor.district }} </span>
-              </div>
-
-              <div class="info-grid">
-                <div class="info-item">
-                  <mat-icon>badge</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Registration' | T }}</span>
-                    <span class="value">{{ tractor.registrationNumber }}</span>
-                  </div>
-                </div>
-
-                <div class="info-item">
-                  <mat-icon>call</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Contact' | T }}</span>
-                    <span class="value">{{ tractor.mobile }}</span>
-                  </div>
-                </div>
-
-                <div class="info-item">
-                  <mat-icon>route</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Distance' | T }}</span>
-                    <span class="value">{{ tractor.distance }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="addons-container" *ngIf="tractor.addOns?.length">
-                <span class="addon-chip" *ngFor="let addon of tractor.addOns">
-                  <mat-icon>{{ addon.icon }}</mat-icon>
-                  {{ addon.label | T }}
-                </span>
-              </div>
-              <button class="btn btn-success mt-1 w-100" (click)="toggleDetails($event, null)">
-                {{ 'Close Details' | T }}
-              </button>
-            </div>
-
-            <!-- <div class="addons-container">
-              <span *ngFor="let addon of tractor.addOns" class="addon-chip">
-                <mat-icon>{{ addon.icon }}</mat-icon>
-                {{ addon.label }}
-              </span>
-            </div> -->
-          }
-        </div>
-      </div>
-
-      <!-- RIGHT SIDE MAP -->
-
-      <!-- <div class="map-panel">
-        <div class="fake-map">
-          <div class="map-title">Nearby Tractors</div>
-
-          <div
-            *ngFor="let tractor of tractors"
-            class="marker"
-            [class.active-marker]="selectedTractor?.id === tractor?.id"
-            [style.top]="tractor.top"
-            [style.left]="tractor.left"
-            (click)="selectTractor(tractor)"
-          >
-            🚜
-          </div>
-        </div>
-      </div> -->
-      <google-map [center]="center" [zoom]="15" width="100%" height="600px">
-        <map-marker
-          *ngFor="let tractor of tractors"
-          #marker="mapMarker"
-          [position]="{
-            lat: tractor.lat,
-            lng: tractor.lng,
-          }"
-          (mapClick)="openInfo(marker, tractor)"
-        >
-        </map-marker>
-
-        <map-info-window>
-          <div class="info-window">
-            <img [src]="selectedTractor?.image" width="120" />
-
-            <h4>{{ selectedTractor?.name }}</h4>
-            <p>₹{{ selectedTractor?.price }}/hour</p>
-            <p>{{ selectedTractor?.distance }}</p>
-          </div>
-        </map-info-window>
-      </google-map>
+    <div class="search-bar">
+      <input placeholder="{{ 'Search tractors' | T }}..." />
     </div>
 
-    <!-- MOBILE -->
+    <div class="filters">
+      <button>5 KM</button>
+      <button>10 KM</button>
+      <button>20 KM</button>
+    </div>
 
-    <div class="mobile-layout">
-      <div class="mobile-map">
-        <google-map [center]="center" [zoom]="12" width="100%" height="600px">
+    <div class="content-layout">
+      <div class="map-panel">
+        <div class="map-title">Nearby Tractors</div>
+        <google-map [center]="center" [zoom]="15" width="100%" height="100%">
           <map-marker
             *ngFor="let tractor of tractors"
             #marker="mapMarker"
-            [position]="{
-              lat: tractor.lat,
-              lng: tractor.lng,
-            }"
+            [position]="{ lat: tractor.lat, lng: tractor.lng }"
             (mapClick)="openInfo(marker, tractor)"
-          >
-          </map-marker>
+          ></map-marker>
 
           <map-info-window>
             <div class="info-window">
@@ -185,114 +41,91 @@
         </google-map>
       </div>
 
-      <div class="bottom-sheet">
-        <div class="drag-line"></div>
-
-        <div *ngFor="let tractor of tractors">
-          @if (expandedTractorId !== tractor.id) {
-            <div class="mini-card" (click)="selectTractor(tractor)">
-              <img [src]="tractor.image" />
-
+      <div class="sheet-container">
+        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
+          <div class="drag-line" (pointerdown)="onDragStart($event)" (touchstart)="onDragStart($event)"></div>
+          <div class="sheet-content">
+            <div class="sheet-title">
               <div>
-                <h4>👤 {{ tractor.owner }}</h4>
-                <h6>🚜 {{ tractor.name }}</h6>
-
-                <p>₹{{ tractor.price }}/hour</p>
-                <p>📱 {{ tractor.mobile }}</p>
-
-                <div class="d-flex gap-2 w-100">
-                  <button
-                    class="mobile-buttons"
-                    (click)="phoneCall.call(tractor.mobile); $event.stopPropagation()"
-                  >
-                    {{ 'Call Owner' | T }}
-                  </button>
-
-                  <button class="mobile-buttons" (click)="toggleDetails($event, tractor.id)">
-                    {{ 'View Details' | T }}
-                  </button>
-                </div>
+                <h3>Tractor Details</h3>
+                <p>{{ totalAvailTractors }} {{ 'services ready' | T }}</p>
               </div>
+              <button class="sheet-toggle" type="button" (click)="toggleSheet()">
+                {{ sheetExpanded ? 'Minimize' : 'Expand' }}
+              </button>
             </div>
-          } @else {
-            <div class="tractor-details-card">
-              <div class="tractor-header">
-                <div>
-                  <span class="owner">
-                    <mat-icon>person</mat-icon>
-                    <h3>{{ tractor.owner }}</h3>
-                  </span>
 
-                  <span class="owner"> 🚜 {{ tractor.name }} </span>
-                </div>
-
-                <div class="price-badge">
-                  ₹{{ tractor.price }}
-                  <small>/{{ 'hour' | T }}</small>
-                </div>
-              </div>
-
-              <div class="location-row">
-                <mat-icon>location_on</mat-icon>
-                <span>
-                  {{ tractor.village }},
-                  {{ tractor.district }}
-                </span>
-              </div>
-
-              <div class="info-grid">
-                <div class="info-item">
-                  <mat-icon>badge</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Registration' | T }}</span>
-                    <span class="value">
-                      {{ tractor.registrationNumber }}
-                    </span>
+            <div class="worker-list">
+              <ng-container *ngFor="let tractor of tractors">
+                <div class="mini-card" *ngIf="expandedTractorId !== tractor.id" (click)="selectTractor(tractor)">
+                  <img [src]="tractor.image" />
+                  <div class="card-content">
+                    <h4>👤 {{ tractor.owner }}</h4>
+                    <h6>🚜 {{ tractor.name }}</h6>
+                    <p>₹{{ tractor.price }}/hour</p>
+                    <p>📍 {{ tractor.distance }}</p>
+                    <div class="card-actions">
+                      <button class="primary-btn" type="button" (click)="toggleDetails(tractor.id)">{{ 'View Details' | T }}</button>
+                    </div>
                   </div>
                 </div>
 
-                <div class="info-item">
-                  <mat-icon>call</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Contact' | T }}</span>
-                    <span class="value">
-                      {{ tractor.mobile }}
+                <div class="worker-details-card" *ngIf="expandedTractorId === tractor.id">
+                  <div class="worker-header">
+                    <div>
+                      <h3>👤 {{ tractor.owner }}</h3>
+                      <span>🚜 {{ tractor.name }}</span>
+                    </div>
+                    <div class="price-badge">
+                      ₹{{ tractor.price }}
+                      <small>/{{ 'hour' | T }}</small>
+                    </div>
+                  </div>
+
+                  <div class="location-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ tractor.village }}, {{ tractor.district }}</span>
+                  </div>
+
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <mat-icon>badge</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Registration' | T }}</span>
+                        <span class="value">{{ tractor.registrationNumber }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <mat-icon>call</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Contact' | T }}</span>
+                        <span class="value">{{ tractor.mobile }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <mat-icon>route</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Distance' | T }}</span>
+                        <span class="value">{{ tractor.distance }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="skills-container" *ngIf="tractor.addOns?.length">
+                    <span class="skill-chip" *ngFor="let addon of tractor.addOns">
+                      <mat-icon>{{ addon.icon }}</mat-icon>
+                      {{ addon.label | T }}
                     </span>
                   </div>
-                </div>
 
-                <div class="info-item">
-                  <mat-icon>route</mat-icon>
-                  <div>
-                    <span class="label">{{ 'Distance' | T }}</span>
-                    <span class="value">
-                      {{ tractor.distance }}
-                    </span>
+                  <div class="expanded-actions">
+                    <button class="primary-btn" type="button" (click)="phoneCall.call(tractor.mobile)">{{ 'Call Owner' | T }}</button>
+                    <button class="secondary-btn" type="button" (click)="toggleDetails(null)">{{ 'Close Details' | T }}</button>
                   </div>
                 </div>
-              </div>
-
-              <div class="addons-container" *ngIf="tractor.addOns?.length">
-                <span class="addon-chip" *ngFor="let addon of tractor.addOns">
-                  <mat-icon>{{ addon.icon }}</mat-icon>
-                  {{ addon.label | T }}
-                </span>
-              </div>
-
-              <div class="d-flex gap-2 mt-3">
-                <button
-                  class="btn btn-success flex-grow-1"
-                  (click)="phoneCall.call(tractor.mobile)"
-                >
-                  {{ 'Call Owner' | T }}
-                </button>
-
-                <button class="btn btn btn-outline-info" (click)="toggleDetails($event, null)">
-                  {{ 'Close' | T }}
-                </button>
-              </div>
+              </ng-container>
             </div>
-          }
+          </div>
         </div>
       </div>
     </div>
@@ -300,243 +133,198 @@
 }
 
 <div *ngIf="showPostServiceForm || isEditMode" class="post-service-container">
-  <div class="form-header">
-    <h2>🚜 {{ 'Add Tractor Service' | T }}</h2>
+    <div class="form-header">
+      <h2>{{ 'Add Tractor Service' | T }}</h2>
 
-    <button mat-stroked-button color="warn" (click)="closePostService()">{{ 'Cancel' | T }}</button>
-  </div>
-
-  <form [formGroup]="tractorForm" class="tractor-form">
-    <!-- BASIC DETAILS -->
-
-    <mat-card>
-      <h3>{{ 'Basic Details' | T }}</h3>
-
-      <div class="grid" formGroupName="tractorDetails">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Title' | T }}</mat-label>
-          <input matInput formControlName="title" placeholder="Mahindra 575 DI Tractor" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Brand' | T }}</mat-label>
-
-          <mat-select formControlName="brand">
-            <mat-option value="Mahindra"> {{ 'Mahindra' | T }} </mat-option>
-
-            <mat-option value="Swaraj"> {{ 'Swaraj' | T }} </mat-option>
-
-            <mat-option value="John Deere"> {{ 'John Deere' | T }} </mat-option>
-
-            <mat-option value="Farmtrac"> {{ 'Farmtrac' | T }} </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Model' | T }}</mat-label>
-          <input matInput formControlName="model" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Horse Power' | T }}</mat-label>
-          <input matInput type="number" formControlName="horsePower" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Manufacturing Year' | T }}</mat-label>
-          <input matInput type="number" formControlName="manufacturingYear" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Registration Number' | T }}</mat-label>
-          <input matInput formControlName="registrationNumber" placeholder="AP 15 AS 1234" />
-        </mat-form-field>
-      </div>
-    </mat-card>
-
-    <!-- PRICING -->
-
-    <mat-card>
-      <h3>{{ 'Pricing' | T }}</h3>
-
-      <div class="grid" formGroupName="pricing">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Price Per Hour' | T }}</mat-label>
-
-          <input matInput type="number" formControlName="pricePerHour" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Price Per Acre' | T }}</mat-label>
-
-          <input matInput type="number" formControlName="pricePerAcre" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Minimum Booking Hours' | T }}</mat-label>
-
-          <input matInput type="number" formControlName="minimumBookingHours" />
-        </mat-form-field>
-      </div>
-    </mat-card>
-
-    <!-- OWNER DETAILS -->
-
-    <mat-card>
-      <h3>{{ 'Owner Details' | T }}</h3>
-
-      <div class="grid" formGroupName="ownerDetails">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Owner Name' | T }}</mat-label>
-          <input matInput formControlName="ownerName" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Mobile Number' | T }}</mat-label>
-          <input matInput formControlName="mobileNumber" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Whatsapp Number' | T }}</mat-label>
-          <input matInput formControlName="whatsappNumber" />
-        </mat-form-field>
-      </div>
-    </mat-card>
-
-    <!-- LOCATION -->
-
-    <mat-card>
-      <h3>{{ 'Location' | T }}</h3>
-
-      <div class="grid" formGroupName="location">
-        <!-- <mat-form-field appearance="outline">
-          <mat-label>Address</mat-label>
-          <input matInput formControlName="address" />
-        </mat-form-field> -->
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Village' | T }}</mat-label>
-          <input matInput formControlName="village" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Mandal' | T }}</mat-label>
-          <input matInput formControlName="mandal" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'District' | T }}</mat-label>
-          <input matInput formControlName="district" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'State' | T }}</mat-label>
-          <input matInput formControlName="state" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'Pincode' | T }}</mat-label>
-          <input matInput formControlName="pincode" />
-        </mat-form-field>
-
-        <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
-          {{ 'show Maps' | T }} ({{ 'Select your location on the map to ensure accuracy' | T }})
-        </mat-checkbox>
-      </div>
-
-      @if (showMap) {
-        <div class="map-container">
-          <google-map
-            class="property-map"
-            [center]="center"
-            [zoom]="zoom"
-            width="100%"
-            height="450px"
-          >
-            <map-marker
-              *ngIf="selectedLocation"
-              [position]="selectedLocation"
-              [options]="{
-                draggable: true,
-              }"
-              (mapDragend)="markerDragged($event)"
-            >
-            </map-marker>
-          </google-map>
-        </div>
-      }
-    </mat-card>
-
-    <!-- FEATURES -->
-
-    <mat-card>
-      <h3>{{ 'Available Features' | T }}</h3>
-
-      <div class="feature-grid" formGroupName="features">
-        <mat-checkbox formControlName="includesDriver">{{ 'Driver Included' | T }} </mat-checkbox>
-        <mat-checkbox formControlName="fuelIncluded">{{ 'Fuel Included' | T }} </mat-checkbox>
-        <mat-checkbox formControlName="rotavatorAvailable"
-          >{{ 'Rotavator Available' | T }}
-        </mat-checkbox>
-        <mat-checkbox formControlName="cultivatorAvailable"
-          >{{ 'Cultivator Available' | T }}
-        </mat-checkbox>
-        <mat-checkbox formControlName="trailerAvailable"
-          >{{ 'Trailer Available' | T }}
-        </mat-checkbox>
-      </div>
-    </mat-card>
-
-    <!-- AVAILABILITY -->
-
-    <!-- <mat-card>
-      <h3>Availability</h3>
-
-      <div class="grid" formGroupName="availability">
-        <mat-checkbox formControlName="isAvailable"> Available Now </mat-checkbox>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Available From</mat-label>
-          <input matInput type="date" formControlName="availableFrom" />
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Available To</mat-label>
-          <input matInput type="date" formControlName="availableTo" />
-        </mat-form-field>
-      </div>
-    </mat-card> -->
-
-    <!-- DESCRIPTION -->
-
-    <mat-card>
-      <h3>{{ 'Description' | T }}</h3>
-
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>{{ 'Description' | T }}</mat-label>
-
-        <textarea rows="5" matInput formControlName="description"> </textarea>
-      </mat-form-field>
-    </mat-card>
-
-    <!-- IMAGES -->
-
-    <mat-card>
-      <h3>{{ 'Upload Images' | T }}</h3>
-
-      <input type="file" multiple (change)="onImageSelect($event)" />
-    </mat-card>
-
-    <!-- BUTTONS -->
-
-    <div class="actions">
-      <button mat-stroked-button color="warn" type="button" (click)="closePostService()">
-        {{ 'Cancel' | T }}
-      </button>
-
-      <button mat-raised-button color="primary" type="button" (click)="saveTractor()">
-        {{ 'Publish Tractor' | T }}
-      </button>
+      <button mat-stroked-button color="warn" (click)="closePostService()">{{ 'Cancel' | T }}</button>
     </div>
-  </form>
-</div>
+
+    <form [formGroup]="tractorForm" class="tractor-form">
+      <!-- BASIC DETAILS -->
+
+      <mat-card>
+        <h3>{{ 'Basic Details' | T }}</h3>
+
+        <div class="grid" formGroupName="tractorDetails">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Title' | T }}</mat-label>
+            <input matInput formControlName="title" placeholder="Mahindra 575 DI Tractor" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Brand' | T }}</mat-label>
+
+            <mat-select formControlName="brand">
+              <mat-option value="Mahindra"> {{ 'Mahindra' | T }} </mat-option>
+              <mat-option value="Swaraj"> {{ 'Swaraj' | T }} </mat-option>
+              <mat-option value="John Deere"> {{ 'John Deere' | T }} </mat-option>
+              <mat-option value="Farmtrac"> {{ 'Farmtrac' | T }} </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Model' | T }}</mat-label>
+            <input matInput formControlName="model" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Horse Power' | T }}</mat-label>
+            <input matInput type="number" formControlName="horsePower" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Manufacturing Year' | T }}</mat-label>
+            <input matInput type="number" formControlName="manufacturingYear" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Registration Number' | T }}</mat-label>
+            <input matInput formControlName="registrationNumber" placeholder="AP 15 AS 1234" />
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <!-- PRICING -->
+
+      <mat-card>
+        <h3>{{ 'Pricing' | T }}</h3>
+
+        <div class="grid" formGroupName="pricing">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Price Per Hour' | T }}</mat-label>
+            <input matInput type="number" formControlName="pricePerHour" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Price Per Acre' | T }}</mat-label>
+            <input matInput type="number" formControlName="pricePerAcre" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Minimum Booking Hours' | T }}</mat-label>
+            <input matInput type="number" formControlName="minimumBookingHours" />
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <!-- OWNER DETAILS -->
+
+      <mat-card>
+        <h3>{{ 'Owner Details' | T }}</h3>
+
+        <div class="grid" formGroupName="ownerDetails">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Owner Name' | T }}</mat-label>
+            <input matInput formControlName="ownerName" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Mobile Number' | T }}</mat-label>
+            <input matInput formControlName="mobileNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Whatsapp Number' | T }}</mat-label>
+            <input matInput formControlName="whatsappNumber" />
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <!-- LOCATION -->
+
+      <mat-card>
+        <h3>{{ 'Location' | T }}</h3>
+
+        <div class="grid" formGroupName="location">
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Village' | T }}</mat-label>
+            <input matInput formControlName="village" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Mandal' | T }}</mat-label>
+            <input matInput formControlName="mandal" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'District' | T }}</mat-label>
+            <input matInput formControlName="district" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'State' | T }}</mat-label>
+            <input matInput formControlName="state" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'Pincode' | T }}</mat-label>
+            <input matInput formControlName="pincode" />
+          </mat-form-field>
+
+          <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
+            {{ 'show Maps' | T }} ({{ 'Select your location on the map to ensure accuracy' | T }})
+          </mat-checkbox>
+        </div>
+
+        @if (showMap) {
+          <div class="map-container">
+            <google-map
+              class="property-map"
+              [center]="center"
+              [zoom]="zoom"
+              width="100%"
+              height="450px"
+            >
+              <map-marker
+                *ngIf="selectedLocation"
+                [position]="selectedLocation"
+                [options]="{
+                  draggable: true,
+                }"
+                (mapDragend)="markerDragged($event)"
+              >
+              </map-marker>
+            </google-map>
+          </div>
+        }
+      </mat-card>
+
+      <!-- FEATURES -->
+
+      <mat-card>
+        <h3>{{ 'Available Features' | T }}</h3>
+
+        <div class="feature-grid" formGroupName="features">
+          <mat-checkbox formControlName="includesDriver">{{ 'Driver Included' | T }} </mat-checkbox>
+          <mat-checkbox formControlName="fuelIncluded">{{ 'Fuel Included' | T }} </mat-checkbox>
+          <mat-checkbox formControlName="rotavatorAvailable">{{ 'Rotavator Available' | T }}</mat-checkbox>
+          <mat-checkbox formControlName="cultivatorAvailable">{{ 'Cultivator Available' | T }}</mat-checkbox>
+          <mat-checkbox formControlName="trailerAvailable">{{ 'Trailer Available' | T }}</mat-checkbox>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <h3>{{ 'Description' | T }}</h3>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'Description' | T }}</mat-label>
+          <textarea rows="5" matInput formControlName="description"></textarea>
+        </mat-form-field>
+      </mat-card>
+
+      <mat-card>
+        <h3>{{ 'Upload Images' | T }}</h3>
+        <input type="file" multiple (change)="onImageSelect($event)" />
+      </mat-card>
+
+      <div class="actions">
+        <button mat-stroked-button color="warn" type="button" (click)="closePostService()">
+          {{ 'Cancel' | T }}
+        </button>
+
+        <button mat-raised-button color="primary" type="button" (click)="saveTractor()">
+          {{ 'Publish Tractor' | T }}
+        </button>
+      </div>
+    </form>
+  </div>
