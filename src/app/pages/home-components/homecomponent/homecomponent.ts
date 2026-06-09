@@ -49,6 +49,7 @@ export class Homecomponent implements OnInit {
   selectedBudget: string = '';
   searchControl = new FormControl('');
   searchEntered: boolean = false;
+  mobileFiltersOpen: boolean = false;
   authService = inject(AuthService);
   userId: string = '';
   cities = Object.values(Location);
@@ -169,6 +170,10 @@ export class Homecomponent implements OnInit {
         };
       this.getAllProperites(coords.lat, coords.lng);
     }
+  }
+
+  toggleMobileFilters() {
+    this.mobileFiltersOpen = !this.mobileFiltersOpen;
   }
 
   loadProperties(): void {
