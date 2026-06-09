@@ -7,7 +7,8 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
+import { WorkerApiServices } from '../../../../api-services/worker-api-services';
+import { mapTractor, mapWorker } from '../../../../constants/service-mappers';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -16,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ServicePostingsComponent implements OnInit {
   realtorApiSrv = inject(RealtorsServicesApiServices);
+  workerApiSrv = inject(WorkerApiServices);
   loaderSrv = inject(LoaderServices);
   toaster = inject(ToastrService);
   router = inject(Router);
@@ -23,6 +25,17 @@ export class ServicePostingsComponent implements OnInit {
   cdr = inject(ChangeDetectorRef);
 
   serviceGroups: any[] = [];
+
+  private statusApis:any = {
+    Tractor: {
+      service: this.realtorApiSrv,
+      url: API_CONSTANTS.tractorServices.statusUpdate,
+    },
+    Worker: {
+      service: this.workerApiSrv,
+      url: API_CONSTANTS.workerapiServices.statusUpdate,
+    },
+  };
 
   ngOnInit(): void {
     this.loadMyServices();
@@ -32,7 +45,7 @@ export class ServicePostingsComponent implements OnInit {
     this.loaderSrv.show();
     forkJoin({
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.mylist),
-      // cars: this.api.get('/cars'),
+      workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings),
       // harvesters: this.api.get('/harvesters'),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
@@ -41,13 +54,13 @@ export class ServicePostingsComponent implements OnInit {
           {
             category: 'Tractors',
             icon: '🚜',
-            items: res.tractors.data,
+            items: (res.tractors?.data || []).map((x: any) => mapTractor(x)),
           },
-          // {
-          //   category: 'Cars',
-          //   icon: '🚗',
-          //   items: res.cars.data,
-          // },
+          {
+            category: 'workers',
+            icon: '👷‍♂️',
+            items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
+          },
           // {
           //   category: 'Harvesters',
           //   icon: '🌾',
@@ -95,15 +108,21 @@ export class ServicePostingsComponent implements OnInit {
   }
 
   edit(elem: any) {
-    switch (elem.serviceType) {
+    switch (elem.category) {
       case 'Tractor':
         this.router.navigate(['/services/edit-tractor', elem.id]);
+        break;
     }
   }
 
   toggleStatus(elem: any) {
-    this.realtorApiSrv
-      .patch(API_CONSTANTS.tractorServices.statusUpdate, { id: elem.id })
+    const apiConfig = this.statusApis[elem.category];
+    if (!apiConfig) {
+      this.toaster.error('Status update not supported for this service', 'Error');
+      return;
+    }
+    apiConfig.service
+      .patch(apiConfig.url, { id: elem.id })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -118,21 +137,26 @@ export class ServicePostingsComponent implements OnInit {
             return;
           }
 
-          const updatedStatus =
-            res?.data?.status ??
-            res?.statusValue ??
-            res?.updatedStatus ??
-            (elem.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE');
+          const updatedStatus = res?.data?.status ?? (elem.isActive ? 'INACTIVE' : 'ACTIVE');
+          const isActive = updatedStatus === 'ACTIVE';
 
           this.serviceGroups = this.serviceGroups.map((group) => ({
             ...group,
-            items: group.items.map((item: any) =>
-              item.id === elem.id ? { ...item, status: updatedStatus } : item
+            items: group.items.map((x: any) =>
+              x.id === elem.id
+                ? {
+                    ...x,
+                    isActive,
+                    originalData: {
+                      ...x.originalData,
+                      status: updatedStatus,
+                    },
+                  }
+                : x,
             ),
           }));
 
           this.toaster.success('Status updated successfully', 'Success');
-          this.cdr.detectChanges();
         },
         error: () => {
           this.toaster.error('Something went wrong', 'Fail');

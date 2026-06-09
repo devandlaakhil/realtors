@@ -1,42 +1,33 @@
 <div class="service-groups mt-3">
-  <div *ngFor="let group of serviceGroups" class="category-section">
-    <div class="category-header">
-      <h2>
-        {{ group.icon }}
-        {{ group.category | T }}
-      </h2>
-
-      <span> {{ group.items.length }} {{'Services'|T}} </span>
-    </div>
+  <div *ngFor="let serviceGroup of serviceGroups" class="category-section">
+    <h2 class="category-title">{{ serviceGroup.icon }} {{ serviceGroup.category }}</h2>
 
     <div class="cards-grid">
-      <div class="service-card" *ngFor="let item of group.items">
-        <img [src]="item.images?.[0]?.url" />
+      <div class="service-card" *ngFor="let item of serviceGroup.items">
+        <img [src]="item.image" alt="" />
 
         <div class="card-body">
-          <h3>{{ item.ownerName }}</h3>
-
           <div class="owner">
-            {{ item.title}}
+            {{ item.title }}
+          </div>
+
+          <div class="location">
+            {{ item.location }}
           </div>
 
           <div class="price">
-            ₹{{ item.pricePerHour }}
-            <small>/{{'hour'|T}}</small>
-          </div>
-
-          <div class="status" [class.active]="item.status === 'ACTIVE'">
-            {{ item.status }}
+            ₹{{ item.price }}
+            <small *ngIf="item.unit">/{{ item.unit }}</small>
           </div>
 
           <div class="actions">
-            <button class="edit-btn" (click)="edit(item)">{{'Edit'|T}}</button>
+            <button class="edit-btn" (click)="edit(item)">Edit</button>
 
             <button class="inactive-btn" (click)="toggleStatus(item)">
-              {{ item.status === 'ACTIVE' ? ('Deactivate' | T) : ('Activate' | T) }}
+              {{ item.isActive ? 'Deactivate' : 'Activate' }}
             </button>
 
-            <button class="delete-btn" (click)="delete(item)">{{'Delete'|T}}</button>
+            <button class="delete-btn" (click)="delete(item)">{{ 'Delete' | T }}</button>
           </div>
         </div>
       </div>

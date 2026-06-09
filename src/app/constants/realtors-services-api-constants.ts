@@ -12,5 +12,7 @@ export const API_CONSTANTS = {
   workerapiServices: {
     save : 'worker-register',
     getAll : 'get-all-workers',
+    getMyPostings : 'get-my-worker-postings',
+    statusUpdate : 'update-worker-status',
   }
 };
