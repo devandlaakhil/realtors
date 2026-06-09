@@ -10,6 +10,7 @@ export const API_CONSTANTS = {
     statusUpdate:'update-tractor-status',
   },
   workerapiServices: {
-    save : 'worker-register'
+    save : 'worker-register',
+    getAll : 'get-all-workers',
   }
 };

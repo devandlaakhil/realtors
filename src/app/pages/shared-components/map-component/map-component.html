@@ -8,7 +8,7 @@
   >
     <!-- Selected Location -->
     <map-marker
-      *ngIf="selectedLocation"
+      *ngIf="selectedLocation && dragble"
       [position]="selectedLocation"
       [options]="{
         draggable: true
@@ -22,20 +22,20 @@
       *ngFor="let t of data"
       #marker="mapMarker"
       [position]="{
-        lat: t.lat,
-        lng: t.lng
+        lat: t.location.coordinates[1],
+        lng: t.location.coordinates[0]
       }"
       (mapClick)="openInfo(marker, t)"
     >
     </map-marker>
 
-    <map-info-window>
-      <div class="info-window">
-        <img [src]="selectedItem?.image" width="120" />
+    <map-info-window >
+      <div *ngIf="selectedItem" class="info-window">
+        <img [src]="selectedItem?.image ? selectedItem?.image[0]?.url : '/images/avatar.png' " width="120" />
 
         <h4>{{ selectedItem?.name }}</h4>
         <p>₹{{ selectedItem?.price }}/hour</p>
-        <p>{{ selectedItem?.distance }}</p>
+        <p>{{ selectedItem?.category  }}</p>
       </div>
     </map-info-window>
   </google-map>

@@ -8,14 +8,14 @@
       </div>
 
       <button class="post-btn" (click)="openPostWorker()">
-        <mat-icon>add</mat-icon>
+        <!-- <mat-icon>add</mat-icon> -->
         Post Worker
       </button>
     </div>
 
     <!-- Search -->
     <div class="search-bar">
-      <mat-icon>search</mat-icon>
+      <!-- <mat-icon>search</mat-icon> -->
 
       <input type="text" [(ngModel)]="searchText" placeholder="Search worker..." />
     </div>
@@ -35,23 +35,28 @@
     <div class="content-layout">
       <!-- Right Side Map -->
       <div class="map-wrapper">
-        <app-map-component></app-map-component>
+        <app-map-component [data]="workers" [dragble]="false"></app-map-component>
       </div>
       <!-- Left Side Workers -->
       <div class="worker-list">
         <ng-container *ngFor="let worker of filteredWorkers">
           <!-- Compact Card -->
           <div class="mini-card" *ngIf="expandedWorkerId !== worker.id">
-            <img src="assets/images/worker-placeholder.png" />
+            <img
+              [src]="
+                worker.image?.length ? worker.image[0].url : '/images/avatar.png'
+              "
+              alt="Worker"
+            />
 
             <div class="card-content">
               <h4>👤 {{ worker.name }}</h4>
 
               <h6>{{ worker.category }}</h6>
 
-              <p>₹{{ worker.price }}/day</p>
+              <p>₹{{ worker.price }}/{{ worker.unit }}</p>
 
-              <p>📍 {{ worker.distance }}</p>
+              <p>📍 {{ worker.distanceKm}} KM Away</p>
 
               <div class="card-actions">
                 <button class="mobile-btn" (click)="toggleDetails(worker.id)">View Details</button>
@@ -69,10 +74,11 @@
 
               <div class="price-badge">
                 ₹{{ worker.price }}
-                <small>/day</small>
+                <small>/{{ worker.unit }}</small>
               </div>
             </div>
 
+            <!-- Location -->
             <div class="location-row">
               <mat-icon>location_on</mat-icon>
 
@@ -82,50 +88,73 @@
               </span>
             </div>
 
+            <!-- Worker Info -->
             <div class="info-grid">
               <div class="info-item">
                 <mat-icon>call</mat-icon>
+
                 <div>
                   <span class="label">Contact</span>
-                  <span class="value">{{ worker.mobile }}</span>
+                  <span class="value">
+                    {{ worker.mobile }}
+                  </span>
                 </div>
               </div>
 
               <div class="info-item">
                 <mat-icon>work</mat-icon>
+
                 <div>
                   <span class="label">Experience</span>
-                  <span class="value">{{ worker.experience }}</span>
+                  <span class="value"> {{ worker.experience }} Years </span>
                 </div>
               </div>
 
               <div class="info-item">
                 <mat-icon>groups</mat-icon>
+
                 <div>
                   <span class="label">Team Size</span>
-                  <span class="value">{{ worker.teamSize }}</span>
+                  <span class="value">
+                    {{ worker.teamSize > 0 ? worker.teamSize : 'Individual' }}
+                  </span>
                 </div>
               </div>
 
               <div class="info-item">
                 <mat-icon>verified</mat-icon>
+
                 <div>
                   <span class="label">Status</span>
+
                   <span class="value">
                     {{ worker.verified ? 'Verified' : 'Not Verified' }}
                   </span>
                 </div>
               </div>
+
+              <div class="info-item">
+                <mat-icon>route</mat-icon>
+
+                <div>
+                  <span class="label">Distance</span>
+
+                  <span class="value"> {{ worker.distance | number: '1.1-1' }} KM </span>
+                </div>
+              </div>
             </div>
 
-            <div class="skills-container" *ngIf="worker.skills.length">
+            <!-- Skills -->
+            <div class="skills-container" *ngIf="worker.skills?.length">
               <span class="skill-chip" *ngFor="let skill of worker.skills">
                 {{ skill }}
               </span>
             </div>
 
+            <!-- Action Buttons -->
             <div class="expanded-actions">
               <button class="primary-btn" (click)="phoneCall.call(worker.mobile)">
+                <mat-icon>call</mat-icon>
                 Contact Worker
               </button>
 
@@ -193,7 +222,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Experience</mat-label>
-            <input matInput formControlName="experience" />
+            <input matInput type="number" formControlName="experience" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -255,7 +284,7 @@
           Cancel
         </button>
 
-        <button mat-raised-button color="primary" type="submit" (click)="saveWorker()">Publish Worker</button>
+        <button mat-raised-button color="primary" type="submit">Publish Worker</button>
       </div>
     </form>
   </div>

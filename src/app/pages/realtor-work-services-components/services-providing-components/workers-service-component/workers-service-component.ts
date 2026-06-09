@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
@@ -42,6 +42,7 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
     MatInput,
     MatButton,
     MatCheckbox,
+    MatIcon,
   ],
   templateUrl: './workers-service-component.html',
   styleUrl: './workers-service-component.css',
@@ -54,6 +55,7 @@ export class WorkersServiceComponent implements OnInit {
   destroy$ = new Subject<any>();
   route = inject(Router);
   loaderService = inject(LoaderServices);
+  cdr = inject(ChangeDetectorRef);
 
   showPostWorkerForm = false;
   activeCategory = 'All';
@@ -61,7 +63,7 @@ export class WorkersServiceComponent implements OnInit {
   searchText = '';
   selectedWorkerId = 1;
   sheetExpanded: boolean = false;
-  expandedWorkerId: number | null = null;
+  expandedWorkerId: string | null = null;
   workerType = Object.values(Worker_Type);
   showMap: boolean = false;
   selectedLocation: any = { lat: '', lng: '' };
@@ -70,6 +72,18 @@ export class WorkersServiceComponent implements OnInit {
   selectedImageFile!: File | null;
   availableSkills: string[] = [];
   selectedSkills: string[] = [];
+  workers: any[] = [];
+
+  categories = [
+    { name: 'All', label: 'All', icon: 'apps', count: 12 },
+    { name: 'Daily Wage', label: 'Daily wage', icon: 'groups', count: 18 },
+    { name: 'Plumber', label: 'Plumbers', icon: 'plumbing', count: 7 },
+    { name: 'Electrician', label: 'Electricians', icon: 'electrical_services', count: 9 },
+    { name: 'Carpenter', label: 'Carpenters', icon: 'carpenter', count: 6 },
+    { name: 'Centring', label: 'Centring', icon: 'construction', count: 5 },
+    { name: 'Construction', label: 'Construction', icon: 'engineering', count: 14 },
+  ];
+  availabilityOptions = ['All', 'Available today', 'Verified'];
 
   ngOnInit(): void {
     this.initForm();
@@ -85,148 +99,7 @@ export class WorkersServiceComponent implements OnInit {
     });
   }
 
-  categories = [
-    { name: 'All', label: 'All', icon: 'apps', count: 12 },
-    { name: 'Daily Wage', label: 'Daily wage', icon: 'groups', count: 18 },
-    { name: 'Plumber', label: 'Plumbers', icon: 'plumbing', count: 7 },
-    { name: 'Electrician', label: 'Electricians', icon: 'electrical_services', count: 9 },
-    { name: 'Carpenter', label: 'Carpenters', icon: 'carpenter', count: 6 },
-    { name: 'Centring', label: 'Centring', icon: 'construction', count: 5 },
-    { name: 'Construction', label: 'Construction', icon: 'engineering', count: 14 },
-  ];
-
-  availabilityOptions = ['All', 'Available today', 'Verified'];
-
-  workers = [
-    {
-      id: 1,
-      name: 'Ramesh Kumar',
-      category: 'Daily Wage',
-      role: 'Mason helper and material lifting',
-      mobile: '9876543210',
-      village: 'Madhapur',
-      district: 'Hyderabad',
-      price: 850,
-      unit: 'day',
-      rating: 4.8,
-      jobs: 126,
-      distance: '1.8 km',
-      experience: '7 years',
-      teamSize: '1-8 workers',
-      availableToday: true,
-      verified: true,
-      skills: ['Brick work', 'Concrete mixing', 'Loading', 'Site cleaning'],
-      initials: 'RK',
-      color: '#2563eb',
-    },
-    {
-      id: 2,
-      name: 'Shaik Basha',
-      category: 'Plumber',
-      role: 'Bathroom, bore line and water tank setup',
-      mobile: '9123456780',
-      village: 'Kukatpally',
-      district: 'Hyderabad',
-      price: 600,
-      unit: 'visit',
-      rating: 4.7,
-      jobs: 88,
-      distance: '3.2 km',
-      experience: '9 years',
-      teamSize: 'Solo',
-      availableToday: true,
-      verified: true,
-      skills: ['CPVC', 'PVC', 'Tank fitting', 'Leak repair'],
-      initials: 'SB',
-      color: '#0891b2',
-    },
-    {
-      id: 3,
-      name: 'Anil Reddy',
-      category: 'Electrician',
-      role: 'House wiring and commercial electrical works',
-      mobile: '9988776655',
-      village: 'Gachibowli',
-      district: 'Hyderabad',
-      price: 700,
-      unit: 'visit',
-      rating: 4.9,
-      jobs: 142,
-      distance: '4.1 km',
-      experience: '10 years',
-      teamSize: '1-3 workers',
-      availableToday: false,
-      verified: true,
-      skills: ['Wiring', 'DB setup', 'Lighting', 'Motor starter'],
-      initials: 'AR',
-      color: '#ca8a04',
-    },
-    {
-      id: 4,
-      name: 'Naveen Achari',
-      category: 'Carpenter',
-      role: 'Doors, cupboards, frames and shuttering support',
-      mobile: '9012345678',
-      village: 'Manikonda',
-      district: 'Hyderabad',
-      price: 950,
-      unit: 'day',
-      rating: 4.6,
-      jobs: 74,
-      distance: '5.7 km',
-      experience: '8 years',
-      teamSize: '1-2 workers',
-      availableToday: true,
-      verified: false,
-      skills: ['Door frames', 'Cupboards', 'Repair', 'Shuttering'],
-      initials: 'NA',
-      color: '#7c3aed',
-    },
-    {
-      id: 5,
-      name: 'Mallesh Yadav',
-      category: 'Centring',
-      role: 'Slab centring, columns and beam support team',
-      mobile: '9345678901',
-      village: 'Bachupally',
-      district: 'Hyderabad',
-      price: 1200,
-      unit: 'day',
-      rating: 4.7,
-      jobs: 96,
-      distance: '6.4 km',
-      experience: '12 years',
-      teamSize: '4-12 workers',
-      availableToday: false,
-      verified: true,
-      skills: ['Slab centring', 'Columns', 'Beams', 'Scaffolding'],
-      initials: 'MY',
-      color: '#16a34a',
-    },
-    {
-      id: 6,
-      name: 'Prasad Naik',
-      category: 'Construction',
-      role: 'Mason, concrete and finishing work contractor',
-      mobile: '9090909090',
-      village: 'Tellapur',
-      district: 'Hyderabad',
-      price: 1100,
-      unit: 'day',
-      rating: 4.8,
-      jobs: 119,
-      distance: '7.3 km',
-      experience: '11 years',
-      teamSize: '2-10 workers',
-      availableToday: true,
-      verified: true,
-      skills: ['Masonry', 'Plastering', 'Concrete', 'Tiles support'],
-      initials: 'PN',
-      color: '#dc2626',
-    },
-  ];
-
-  toggleDetails(workerId: number): void {
+  toggleDetails(workerId: string): void {
     this.expandedWorkerId = this.expandedWorkerId === workerId ? null : workerId;
   }
 
@@ -257,10 +130,15 @@ export class WorkersServiceComponent implements OnInit {
 
   getCurrentLocation(): void {
     navigator.geolocation.getCurrentPosition((position) => {
+      this.selectedLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
       this.workerForm.patchValue({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       });
+      this.getAllWorkers();
     });
   }
 
@@ -279,7 +157,8 @@ export class WorkersServiceComponent implements OnInit {
       price: ['', Validators.required],
       village: [''],
       district: [''],
-      experience: [''],
+      experience: [0],
+      isActive: [true],
       teamSize: [0],
       skills: [[]],
       role: [''],
@@ -296,7 +175,7 @@ export class WorkersServiceComponent implements OnInit {
   get filteredWorkers() {
     const query = this.searchText.trim().toLowerCase();
 
-    return this.workers.filter((worker) => {
+    return this.workers?.filter((worker: any) => {
       const matchesCategory =
         this.activeCategory === 'All' || worker.category === this.activeCategory;
       const matchesAvailability =
@@ -308,7 +187,7 @@ export class WorkersServiceComponent implements OnInit {
         worker.name.toLowerCase().includes(query) ||
         worker.category.toLowerCase().includes(query) ||
         worker.role.toLowerCase().includes(query) ||
-        worker.skills.some((skill) => skill.toLowerCase().includes(query));
+        worker.skills.some((skill: any) => skill.toLowerCase().includes(query));
 
       return matchesCategory && matchesAvailability && matchesSearch;
     });
@@ -316,7 +195,7 @@ export class WorkersServiceComponent implements OnInit {
 
   get selectedWorker() {
     return (
-      this.filteredWorkers.find((worker) => worker.id === this.selectedWorkerId) ??
+      this.filteredWorkers.find((worker: any) => worker.id === this.selectedWorkerId) ??
       this.filteredWorkers[0] ??
       null
     );
@@ -376,9 +255,27 @@ export class WorkersServiceComponent implements OnInit {
         },
         error: () => {
           this.loaderService.hide();
-          this.toastr.error('Successfully posted your service', 'Fail');
+          this.toastr.error('Something went wrong', 'Fail');
         },
       });
     this.closePostWorker();
+  }
+
+  getAllWorkers() {
+    this.loaderService.show();
+    this.workerApiSrv
+      .get(API_CONSTANTS.workerapiServices.getAll, this.selectedLocation)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.workers = res.data;
+          this.cdr.detectChanges();
+          this.loaderService.hide();
+        },
+        error: () => {
+          this.toastr.error('Something went wrong', 'Fail');
+          this.loaderService.hide();
+        },
+      });
   }
 }
