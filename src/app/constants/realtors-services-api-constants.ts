@@ -9,4 +9,7 @@ export const API_CONSTANTS = {
     getsingleitem : 'get-single-tractor',
     statusUpdate:'update-tractor-status',
   },
+  workerapiServices: {
+    save : 'worker-register'
+  }
 };

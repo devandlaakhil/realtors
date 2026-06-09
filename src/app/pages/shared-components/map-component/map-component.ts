@@ -7,6 +7,7 @@ import {
   Input,
   OnInit,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
@@ -30,7 +31,8 @@ export class MapComponent implements OnInit {
 
   @Output() locationSelected = new EventEmitter<{lat: number;lng: number;}>();
 
- 
+  @ViewChild(MapInfoWindow)
+  infoWindow!: MapInfoWindow;
 
   ngOnInit(): void {
     this.getCurrentLocation();

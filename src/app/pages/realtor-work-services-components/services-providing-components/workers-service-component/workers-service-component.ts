@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
@@ -22,6 +22,10 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { WORKER_CATEGORIES } from '../../../../constants/workers-category-skills';
+import { WorkerApiServices } from '../../../../api-services/worker-api-services';
+import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
+import { Subject, takeUntil } from 'rxjs';
+import { LoaderServices } from '../../../../shared-services/loader-services';
 @Component({
   selector: 'app-workers-service-component',
   imports: [
@@ -46,6 +50,10 @@ export class WorkersServiceComponent implements OnInit {
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
   phoneCall = inject(MobileDialpadService);
+  workerApiSrv = inject(WorkerApiServices);
+  destroy$ = new Subject<any>();
+  route = inject(Router);
+  loaderService = inject(LoaderServices);
 
   showPostWorkerForm = false;
   activeCategory = 'All';
@@ -223,19 +231,16 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   onSkillChange(skill: string, checked: boolean): void {
-  if (checked) {
-    this.selectedSkills.push(skill);
-  } else {
-    this.selectedSkills =
-      this.selectedSkills.filter(
-        (s) => s !== skill
-      );
-  }
+    if (checked) {
+      this.selectedSkills.push(skill);
+    } else {
+      this.selectedSkills = this.selectedSkills.filter((s) => s !== skill);
+    }
 
-  this.workerForm.patchValue({
-    skills: this.selectedSkills,
-  });
-}
+    this.workerForm.patchValue({
+      skills: this.selectedSkills,
+    });
+  }
 
   onMapsToggle(event: MatCheckboxChange): void {
     if (event.checked) {
@@ -270,12 +275,12 @@ export class WorkersServiceComponent implements OnInit {
     this.workerForm = this.fb.group({
       name: ['', Validators.required],
       category: ['', Validators.required],
-      mobile: ['', Validators.required],
+      mobile: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       price: ['', Validators.required],
       village: [''],
       district: [''],
       experience: [''],
-      teamSize: [''],
+      teamSize: [0],
       skills: [[]],
       role: [''],
 
@@ -351,18 +356,29 @@ export class WorkersServiceComponent implements OnInit {
       this.workerForm.markAllAsTouched();
       return;
     }
-
+    this.loaderService.show();
     const formData = new FormData();
 
-    Object.keys(this.workerForm.value).forEach((key) => {
-      formData.append(key, this.workerForm.value[key]);
-    });
+    formData.append('payload', JSON.stringify(this.workerForm.value));
 
-    console.log(this.workerForm.value);
-
-    // API Call
-    // this.workerService.saveWorker(formData).subscribe(...)
-
+    if (this.selectedImageFile) {
+      formData.append('images', this.selectedImageFile);
+    }
+    this.workerApiSrv
+      .post(API_CONSTANTS.workerapiServices.save, formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.workerForm.reset();
+          this.loaderService.hide();
+          this.route.navigate(['/services/home']);
+          this.toastr.success('Successfully posted your service', 'Success');
+        },
+        error: () => {
+          this.loaderService.hide();
+          this.toastr.error('Successfully posted your service', 'Fail');
+        },
+      });
     this.closePostWorker();
   }
 }

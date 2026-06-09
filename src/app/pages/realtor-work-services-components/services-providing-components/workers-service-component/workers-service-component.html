@@ -198,7 +198,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Team Size</mat-label>
-            <input matInput formControlName="teamSize" />
+            <input matInput type="number" formControlName="teamSize" />
           </mat-form-field>
         </div>
 
@@ -255,7 +255,7 @@
           Cancel
         </button>
 
-        <button mat-raised-button color="primary" type="submit">Publish Worker</button>
+        <button mat-raised-button color="primary" type="submit" (click)="saveWorker()">Publish Worker</button>
       </div>
     </form>
   </div>
