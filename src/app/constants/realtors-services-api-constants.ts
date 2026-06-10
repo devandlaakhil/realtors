@@ -14,5 +14,8 @@ export const API_CONSTANTS = {
     getAll : 'get-all-workers',
     getMyPostings : 'get-my-worker-postings',
     statusUpdate : 'update-worker-status',
+    getSingleItem : 'get-single-worker',
+    delete : 'delete-worker',
+    update : 'update-worker',
   }
 };

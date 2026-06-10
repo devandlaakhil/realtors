@@ -26,7 +26,7 @@ export class ServicePostingsComponent implements OnInit {
 
   serviceGroups: any[] = [];
 
-  private statusApis:any = {
+  private statusApis: any = {
     Tractor: {
       service: this.realtorApiSrv,
       url: API_CONSTANTS.tractorServices.statusUpdate,
@@ -34,6 +34,17 @@ export class ServicePostingsComponent implements OnInit {
     Worker: {
       service: this.workerApiSrv,
       url: API_CONSTANTS.workerapiServices.statusUpdate,
+    },
+  };
+
+  private deleteApis: any = {
+    Tractor: {
+      service: this.realtorApiSrv,
+      url: API_CONSTANTS.tractorServices.delete,
+    },
+    Worker: {
+      service: this.workerApiSrv,
+      url: API_CONSTANTS.workerapiServices.delete,
     },
   };
 
@@ -81,25 +92,32 @@ export class ServicePostingsComponent implements OnInit {
   }
 
   delete(elem: any) {
+    const apiConfig = this.deleteApis[elem.category];
+    if (!apiConfig) {
+      this.toaster.error('Delete not supported for this service', 'Error');
+      return;
+    }
     const confirmed = confirm('Are you sure you want to delete this Tractor?');
     if (!confirmed) {
       return;
     }
 
-    this.realtorApiSrv
-      .delete(API_CONSTANTS.tractorServices.delete, { id: elem.id })
+    apiConfig.service
+      .delete(apiConfig.url, { id: elem.id })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res) => {
-          this.serviceGroups = this.serviceGroups
-            .map((group) => ({
-              ...group,
-              items: group.items.filter((item: any) => item.id !== elem.id),
-            }))
-            .filter((group) => group.items.length > 0);
+        next: (res: any) => {
+          if (res) {
+            this.serviceGroups = this.serviceGroups
+              .map((group) => ({
+                ...group,
+                items: group.items.filter((item: any) => item.id !== elem.id),
+              }))
+              .filter((group) => group.items.length > 0);
 
-          this.toaster.success('Your tractor deleted sccessfully', 'Success');
-          this.cdr.detectChanges();
+            this.toaster.success('Your tractor deleted sccessfully', 'Success');
+            this.cdr.detectChanges();
+          }
         },
         error: () => {
           this.toaster.error('Something went wrong', 'Fail');
