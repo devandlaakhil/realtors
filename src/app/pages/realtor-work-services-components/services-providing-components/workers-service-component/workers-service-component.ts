@@ -58,6 +58,7 @@ export class WorkersServiceComponent implements OnInit {
   router = inject(ActivatedRoute);
   loaderService = inject(LoaderServices);
   cdr = inject(ChangeDetectorRef);
+  
 
   showPostWorkerForm = false;
   activeCategory = 'All';

@@ -56,7 +56,6 @@ export class MapComponent implements OnInit {
     });
 
     bounds.extend(this.selectedLocation);
-
     this.map.fitBounds(bounds);
   }
 

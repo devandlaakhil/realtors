@@ -1,69 +1,46 @@
 <div class="home-page">
-  <!-- HEADER -->
-  <!-- <header class="header">
-    <div class="logo">🚜 Gram Services</div>
-
-    <div class="search-box">
-      <input type="text" placeholder="Search tractors, harvesters, workers..." />
-    </div>
-
-    <div class="header-actions">
-      <div class="location">📍 Tirupati</div>
-
-      <button class="profile-btn">👤 Profile</button>
-    </div>
-  </header> -->
-
   <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <h1>{{'Find Constrctions Equipment & Local Services'|T}}</h1>
-      <p>{{'Tractors, Hardware, Workers, Transport & More Near You' | T}}</p>
-      <button class="hero-btn">{{'Explore Nearby Services' | T}}</button>
+      <h1>{{ 'Find Constrctions Equipment & Local Services' | T }}</h1>
+      <p>{{ 'Tractors, Hardware, Workers, Transport & More Near You' | T }}</p>
+      <button class="hero-btn">{{ 'Explore Nearby Services' | T }}</button>
     </div>
   </section>
 
   <!-- CATEGORIES -->
 
- <section class="categories">
-  <div
-    class="category-card"
-    *ngFor="let category of categories"
-    [routerLink]="['/services', category.navigation]"
-  >
-    <div class="icon"><img [src]="category.icon" alt="" width="50" height="50"></div>
-    <span>{{ category.name | T}}</span>
-  </div>
-</section>
+  <section class="categories">
+    <div
+      class="category-card"
+      *ngFor="let category of categories"
+      [routerLink]="['/services', category.navigation]"
+    >
+      <div class="icon"><img [src]="category.icon" alt="" width="50" height="50" /></div>
+      <span>{{ category.name | T }}</span>
+    </div>
+  </section>
 
   <!-- LIST + MAP -->
 
   <section class="listing-map">
     <!-- LISTINGS -->
-
     <div class="listing-section">
-      <h2>{{'Nearby Services'|T}}</h2>
-
+      <h2>{{ 'Nearby Services' | T }}</h2>
       <div class="service-card" *ngFor="let service of services">
         <img [src]="service.image" [alt]="service.name" />
-
         <div class="service-info">
           <h3>
             {{ service.name }}
           </h3>
-
-          <p>⭐ {{ service.rating }}</p>
-
-          <p>📍 {{ service.distance }}</p>
-
+          <p>{{ service.category }}</p>
+          <p>📍 {{ service.location }}</p>
           <p>👤 {{ service.owner }}</p>
-
-          <h4>₹{{ service.price }} / {{'hour'|T}}</h4>
-
+          <h4>₹{{ service.price }} / {{ service.unit | T }}</h4>
           <div class="actions">
-            <button>{{'View Details'|T}}</button>
-
-            <button class="call-btn">{{'Call Now'|T}}</button>
+            <button class="call-btn" (click)="phoneCall.call(service.mobile)">
+              {{ 'Call Now' | T }}
+            </button>
           </div>
         </div>
       </div>
@@ -72,15 +49,8 @@
     <!-- MAP -->
 
     <div class="map-section">
-      <h2>{{'Nearby Map'|T}}</h2>
-
-      <div class="map-placeholder mt-3">
-        <div class="marker marker1">🚜</div>
-        <div class="marker marker2">🌾</div>
-        <div class="marker marker3">🚚</div>
-
-        <!-- <span> Interactive Map </span> -->
-      </div>
+      <h2>{{ 'Nearby Map' | T }}</h2>
+      <app-map-component [data]="mapServices" [dragble]="false"></app-map-component>
     </div>
   </section>
 </div>
