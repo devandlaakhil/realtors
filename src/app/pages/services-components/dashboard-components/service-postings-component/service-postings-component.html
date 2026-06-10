@@ -7,14 +7,14 @@
         workers: serviceGroup.category.toLowerCase() === 'workers'
       }"
     >
-      <h2 class="category-title">{{ serviceGroup.icon }} {{ serviceGroup.category }}</h2>
+      <h2 class="category-title">{{ serviceGroup.icon }} {{ serviceGroup.category | T}}</h2>
 
       <div class="cards-grid">
       <div class="service-card" *ngFor="let item of serviceGroup.items">
         <div class="card-media">
           <img [src]="item.image" alt="{{ item.title }}" />
           <span class="status-badge" [class.active]="item.isActive">
-            {{ item.isActive ? 'Live' : 'Paused' }}
+            {{ item.isActive ? ( 'Live' | T ) : ( 'Paused' | T ) }}
           </span>
         </div>
 
@@ -29,14 +29,14 @@
           <div class="price-block">
             <div class="price">
               ₹{{ item.price }}
-              <span class="unit" *ngIf="item.unit">/{{ item.unit }}</span>
+              <span class="unit" *ngIf="item.unit">/ {{ item.unit | T }}</span>
             </div>
           </div>
 
           <div class="actions">
-            <button class="edit-btn" (click)="edit(item)">Edit</button>
+            <button class="edit-btn" (click)="edit(item)">{{ 'Edit' | T }}</button>
             <button class="inactive-btn" (click)="toggleStatus(item)">
-              {{ item.isActive ? 'Deactivate' : 'Activate' }}
+              {{ item.isActive ? ('Deactivate' | T) : ('Activate' | T) }}
             </button>
             <button class="delete-btn" (click)="delete(item)">{{ 'Delete' | T }}</button>
           </div>

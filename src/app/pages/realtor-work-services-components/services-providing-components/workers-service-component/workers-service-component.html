@@ -3,18 +3,18 @@
     <!-- Header -->
     <div class="service-header">
       <div>
-        <h2>👷 Workers Near You</h2>
-        <p>{{ filteredWorkers.length }} workers available</p>
+        <h2>👷 {{'Workers Near You'|T}}</h2>
+        <p>{{ filteredWorkers.length }} {{'workers available'|T}}</p>
       </div>
 
       <button class="post-btn" (click)="openPostWorker()">
-        Post Worker
+        {{  'Post Worker'|T }}
       </button>
     </div>
 
     <!-- Search -->
     <div class="search-bar">
-      <input type="text" [(ngModel)]="searchText" placeholder="Search worker..." />
+      <input type="text" [(ngModel)]="searchText" placeholder="{{'Search workers'|T}}..." />
     </div>
 
     <!-- Categories -->
@@ -24,13 +24,13 @@
         [class.active]="activeCategory === category.name"
         (click)="setCategory(category.name)"
       >
-        {{ category.label }}
+        {{ category.label | T}}
       </button>
     </div>
 
     <div class="content-layout">
       <div class="map-panel">
-        <div class="map-title">Workers Map</div>
+        <div class="map-title">{{ 'Workers Map' | T }}</div>
         <div class="map-wrapper">
           <app-map-component [data]="workers" [dragble]="false"></app-map-component>
         </div>
@@ -51,12 +51,12 @@
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
-                <h3>Worker Details</h3>
-                <p>{{ filteredWorkers.length }} workers ready</p>
+                <h3>{{ 'Worker Details' | T }}</h3>
+                <p>{{ filteredWorkers.length }} {{'workers ready' |T}}</p>
               </div>
 
               <button class="sheet-toggle" type="button" (click)="toggleSheet()">
-                {{ sheetExpanded ? 'Minimize' : 'Expand' }}
+                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
               </button>
             </div>
 
@@ -73,12 +73,12 @@
                   <div class="card-content">
                     <h4>👤 {{ worker.name }}</h4>
                     <h6>{{ worker.category }}</h6>
-                    <p>₹{{ worker.price }}/{{ worker.unit }}</p>
-                    <p>📍 {{ worker.distanceKm }} KM Away</p>
+                    <p>₹{{ worker.price }}/{{ worker.unit | T}}</p>
+                    <p>📍 {{ worker.distanceKm }} {{'KM Away'|T}}</p>
 
                     <div class="card-actions">
                       <button class="primary-btn" type="button" (click)="toggleDetails(worker.id)">
-                        View Details
+                        {{'View Details'|T}}
                       </button>
                     </div>
                   </div>
@@ -88,12 +88,12 @@
                   <div class="worker-header">
                     <div>
                       <h3>👤 {{ worker.name }}</h3>
-                      <span>{{ worker.category }}</span>
+                      <span>{{ worker.category  | T }}</span>
                     </div>
 
                     <div class="price-badge">
                       ₹{{ worker.price }}
-                      <small>/{{ worker.unit }}</small>
+                      <small>/{{ worker.unit | T}}</small>
                     </div>
                   </div>
 
@@ -109,7 +109,7 @@
                     <div class="info-item">
                       <mat-icon>call</mat-icon>
                       <div>
-                        <span class="label">Contact</span>
+                        <span class="label">{{'Contact' | T}}</span>
                         <span class="value">{{ worker.mobile }}</span>
                       </div>
                     </div>
@@ -117,15 +117,15 @@
                     <div class="info-item">
                       <mat-icon>work</mat-icon>
                       <div>
-                        <span class="label">Experience</span>
-                        <span class="value">{{ worker.experience }} Years</span>
+                        <span class="label">{{'Experience' | T}}</span>
+                        <span class="value">{{ worker.experience }} {{'years' | T}}</span>
                       </div>
                     </div>
 
                     <div class="info-item">
                       <mat-icon>groups</mat-icon>
                       <div>
-                        <span class="label">Team Size</span>
+                        <span class="label">{{'Team Size' | T}}</span>
                         <span class="value">
                           {{ worker.teamSize > 0 ? worker.teamSize : 'Individual' }}
                         </span>
@@ -135,9 +135,9 @@
                     <div class="info-item">
                       <mat-icon>verified</mat-icon>
                       <div>
-                        <span class="label">Status</span>
+                        <span class="label">{{'Status' | T}}  </span>
                         <span class="value">
-                          {{ worker.verified ? 'Verified' : 'Not Verified' }}
+                          {{ worker.verified ? ('Verified' | T) : ('Not Verified' | T) }}
                         </span>
                       </div>
                     </div>
@@ -145,25 +145,25 @@
                     <div class="info-item">
                       <mat-icon>route</mat-icon>
                       <div>
-                        <span class="label">Distance</span>
-                        <span class="value">{{ worker.distance | number: '1.1-1' }} KM</span>
+                        <span class="label">{{'Distance' | T}}</span>
+                        <span class="value">{{ worker.distance | number: '1.1-1' }} {{'KM' | T}}</span>
                       </div>
                     </div>
                   </div>
 
                   <div class="skills-container" *ngIf="worker.skills?.length">
                     <span class="skill-chip" *ngFor="let skill of worker.skills">
-                      {{ skill }}
+                      {{ skill | T}}
                     </span>
                   </div>
 
                   <div class="expanded-actions">
                     <button class="primary-btn" type="button" (click)="phoneCall.call(worker.mobile)">
                       <mat-icon>call</mat-icon>
-                      Contact Worker
+                      {{'Contact Worker' | T}}
                     </button>
                     <button class="secondary-btn" type="button" (click)="toggleDetails(worker.id)">
-                      Close Details
+                      {{'Close Details' | T}}
                     </button>
                   </div>
                 </div>
@@ -177,10 +177,10 @@
 } @else {
   <div class="post-worker-container">
     <div class="form-header">
-      <h2>👷 Post Worker Service</h2>
+      <h2>👷 {{'Post Worker Service' | T}}</h2>
 
       <button mat-stroked-button color="warn" type="button" (click)="closePostWorker()">
-        Cancel
+        {{'Cancel' | T}}
       </button>
     </div>
 
@@ -188,58 +188,58 @@
       <!-- BASIC DETAILS -->
 
       <mat-card>
-        <h3>Basic Details</h3>
+        <h3>{{'Basic Details' | T}}</h3>
         <div class="grid">
           <mat-form-field appearance="outline">
-            <mat-label>Name</mat-label>
+            <mat-label>{{'Name' | T}}</mat-label>
             <input matInput formControlName="name" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Category</mat-label>
+            <mat-label>{{'Category' | T}}</mat-label>
 
             <mat-select formControlName="category">
               @for (type of workerType; track type) {
                 <mat-option [value]="type">
-                  {{ type }}
+                  {{ type | T }}
                 </mat-option>
               }
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Mobile Number</mat-label>
+            <mat-label>{{'Mobile Number' | T}}</mat-label>
             <input matInput formControlName="mobile" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Daily Price</mat-label>
+            <mat-label>{{'Daily Price' | T}}</mat-label>
             <input matInput type="number" formControlName="price" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Village</mat-label>
+            <mat-label>{{'Village' | T}}</mat-label>
             <input matInput formControlName="village" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>District</mat-label>
+            <mat-label>{{'District' | T}}</mat-label>
             <input matInput formControlName="district" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Experience</mat-label>
+            <mat-label>{{'Experience' | T}}</mat-label>
             <input matInput type="number" formControlName="experience" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Team Size</mat-label>
+            <mat-label>{{'Team Size' | T}}</mat-label>
             <input matInput type="number" formControlName="teamSize" />
           </mat-form-field>
         </div>
 
         <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
-          Show Map (Select worker location)
+          {{'Show Map' | T}} {{'Select worker location' | T}}
         </mat-checkbox>
 
         @if (showMap) {
@@ -253,7 +253,7 @@
 
       <mat-card>
         <div *ngIf="availableSkills.length">
-          <h4>Select Skills</h4>
+          <h4>{{'Select Skills' | T}}</h4>
 
           <div class="skills-grid">
             <mat-checkbox
@@ -261,7 +261,7 @@
               (change)="onSkillChange(skill, $event.checked)"
               [checked]="isSkillSelected(skill)"
             >
-              {{ skill }}
+              {{ skill | T}}
             </mat-checkbox>
           </div>
         </div>
@@ -270,10 +270,10 @@
       <!-- ROLE -->
 
       <mat-card>
-        <h3>Work Details</h3>
+        <h3>{{'Work Details' | T}}</h3>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Role Description</mat-label>
+          <mat-label>{{'Role Description' | T}}</mat-label>
 
           <textarea matInput rows="4" formControlName="role"></textarea>
         </mat-form-field>
@@ -289,10 +289,10 @@
 
       <div class="actions">
         <button mat-stroked-button color="warn" type="button" (click)="closePostWorker()">
-          Cancel
+          {{ 'Cancel' | T }}
         </button>
 
-        <button mat-raised-button color="primary" type="submit">Publish Worker</button>
+        <button mat-raised-button color="primary" type="submit">{{'Publish Worker' | T}}</button>
       </div>
     </form>
   </div>

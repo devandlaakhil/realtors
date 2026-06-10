@@ -43,6 +43,7 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
     MatButton,
     MatCheckbox,
     MatIcon,
+    TranslatePipe,
   ],
   templateUrl: './workers-service-component.html',
   styleUrl: './workers-service-component.css',
@@ -88,6 +89,7 @@ export class WorkersServiceComponent implements OnInit {
     { name: 'Electrician', label: 'Electricians', icon: 'electrical_services', count: 9 },
     { name: 'Carpenter', label: 'Carpenters', icon: 'carpenter', count: 6 },
     { name: 'Centring', label: 'Centring', icon: 'construction', count: 5 },
+    { name: 'Painter', label: 'Painter', icon: 'construction', count: 5 },
     { name: 'Construction', label: 'Construction', icon: 'engineering', count: 14 },
   ];
   availabilityOptions = ['All', 'Available today', 'Verified'];
