@@ -353,29 +353,52 @@ export class WorkersServiceComponent implements OnInit {
       this.workerForm.markAllAsTouched();
       return;
     }
-    this.loaderService.show();
     const formData = new FormData();
-
-    formData.append('payload', JSON.stringify(this.workerForm.value));
-
-    if (this.selectedImageFile) {
-      formData.append('images', this.selectedImageFile);
+    if (!this.isEditMode) {
+      this.loaderService.show();
+      formData.append('payload', JSON.stringify(this.workerForm.value));
+      if (this.selectedImageFile) {
+        formData.append('images', this.selectedImageFile);
+      }
+      this.workerApiSrv
+        .post(API_CONSTANTS.workerapiServices.save, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.workerForm.reset();
+            this.loaderService.hide();
+            this.route.navigate(['/services/home']);
+            this.toastr.success('Successfully posted your service', 'Success');
+          },
+          error: () => {
+            this.loaderService.hide();
+            this.toastr.error('Something went wrong', 'Fail');
+          },
+        });
+    }else{
+      this.loaderService.show();
+      formData.append('id', this.propertyId);
+      formData.append('payload', JSON.stringify(this.workerForm.value));
+      if (this.selectedImageFile) {
+        formData.append('images', this.selectedImageFile);
+      }
+      this.workerApiSrv
+        .put(API_CONSTANTS.workerapiServices.update, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.workerForm.reset();
+            this.loaderService.hide();
+            this.route.navigate(['/services/home']);
+            this.toastr.success('Successfully updated your service', 'Success');
+          },
+          error: () => {
+            this.loaderService.hide();
+            this.toastr.error('Something went wrong', 'Fail');
+          },
+        });
     }
-    this.workerApiSrv
-      .post(API_CONSTANTS.workerapiServices.save, formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          this.workerForm.reset();
-          this.loaderService.hide();
-          this.route.navigate(['/services/home']);
-          this.toastr.success('Successfully posted your service', 'Success');
-        },
-        error: () => {
-          this.loaderService.hide();
-          this.toastr.error('Something went wrong', 'Fail');
-        },
-      });
+
     this.closePostWorker();
   }
 

@@ -19,6 +19,7 @@ export class ImageUploadComponent {
   ngOnInit(): void {
     if (this.imageUrl) {
       this.preview = this.imageUrl;
+      this.cdr.detectChanges();
     }
   }
 
