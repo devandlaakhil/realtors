@@ -19,12 +19,13 @@
 
     <!-- Service Markers -->
     <map-marker
-      *ngFor="let t of data"
+      *ngFor="let t of markers"
       #marker="mapMarker"
       [position]="{
         lat: +(t.location?.coordinates?.[1] ?? t.lat),
         lng: +(t.location?.coordinates?.[0] ?? t.lng),
       }"
+       [options]="t.markerOptions"
       (mapClick)="openInfo(marker, t)"
     >
     </map-marker>
@@ -42,8 +43,9 @@
         />
 
         <h4>{{ selectedItem?.name }}</h4>
-        <p>₹{{ selectedItem?.price }}/hour</p>
+        <p>₹{{ selectedItem?.price }}/{{ selectedItem?.unit }}</p>
         <p>{{ selectedItem?.category }}</p>
+        <p>{{ selectedItem?.mobile }}</p>
       </div>
     </map-info-window>
   </google-map>

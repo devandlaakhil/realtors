@@ -61,6 +61,12 @@ export class MapComponent implements OnInit {
           ...item,
           lat: Number(lat),
           lng: Number(lng),
+          markerOptions: {
+            icon: {
+              url: this.getMarkerIcon(item.category),
+              scaledSize: new google.maps.Size(40, 40),
+            },
+          },
         };
       })
       .filter(Boolean);
@@ -135,5 +141,16 @@ export class MapComponent implements OnInit {
   openInfo(marker: MapMarker, worker: any): void {
     this.selectedItem = worker;
     this.infoWindow.open(marker);
+  }
+
+  getMarkerIcon(category: string): string {
+    const icons: Record<string, string> = {
+      Tractors: '/images/tractor.png',
+      workers: '/images/worker.png',
+      // Harvester: '/images/markers/harvester.png',
+      // Cultivator: '/images/markers/cultivator.png',
+    };
+
+    return icons[category] || '/images/markers/default-marker.png';
   }
 }

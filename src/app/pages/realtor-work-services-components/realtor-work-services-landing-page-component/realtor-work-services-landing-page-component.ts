@@ -133,6 +133,7 @@ export class RealtorWorkServicesLandingPageComponent {
             image: item.image,
             price: item.price,
             unit: item.unit,
+            mobile: item.mobile,
             category: group.category,
             lat: coordinates?.[1],
             lng: coordinates?.[0],
