@@ -8,7 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
@@ -54,6 +54,7 @@ export class WorkersServiceComponent implements OnInit {
   workerApiSrv = inject(WorkerApiServices);
   destroy$ = new Subject<any>();
   route = inject(Router);
+  router = inject(ActivatedRoute);
   loaderService = inject(LoaderServices);
   cdr = inject(ChangeDetectorRef);
 
@@ -77,6 +78,8 @@ export class WorkersServiceComponent implements OnInit {
   private isDragging = false;
   private dragStartY = 0;
   private dragStartHeight = 60;
+  isEditMode: boolean = false;
+  propertyId: string = '';
 
   categories = [
     { name: 'All', label: 'All', icon: 'apps', count: 12 },
@@ -90,6 +93,15 @@ export class WorkersServiceComponent implements OnInit {
   availabilityOptions = ['All', 'Available today', 'Verified'];
 
   ngOnInit(): void {
+    this.router.paramMap.subscribe((params) => {
+      const id = params.get('id');
+
+      if (id) {
+        this.isEditMode = true;
+        this.propertyId = id;
+        this.loadProperty(id);
+      }
+    });
     this.initForm();
     this.getCurrentLocation();
     this.workerForm.get('category')?.valueChanges.subscribe((category) => {
@@ -103,6 +115,50 @@ export class WorkersServiceComponent implements OnInit {
     });
   }
 
+  loadProperty(id: string) {
+    this.isEditMode = true;
+    this.loaderService.show();
+    this.workerApiSrv
+      .get(API_CONSTANTS.workerapiServices.getSingleItem, { id })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          const worker = res.data;
+          this.workerForm.patchValue({
+            name: res.data.name,
+            category: res.data.category,
+            mobile: res.data.mobile,
+            price: res.data.price,
+            village: res.data.village,
+            district: res.data.district,
+            experience: res.data.experience,
+            isActive: res.data.isActive,
+            teamSize: res.data.teamSize,
+            skills: res.data.skills || [],
+            role: res.data.role,
+
+            // Image
+            image: res.data.image?.length ? res.data.image[0].url : null,
+
+            // Coordinates
+            latitude: res.data.location?.coordinates?.[1] || null,
+            longitude: res.data.location?.coordinates?.[0] || null,
+          });
+          this.zoom = 15;
+          this.showMap = true;
+          this.cdr.detectChanges();
+          this.loaderService.hide();
+        },
+        error: () => {
+          this.toastr.error('Something went wrong', 'Fail');
+          this.loaderService.hide();
+        },
+      });
+  }
+
+  isSkillSelected(skill: string): boolean {
+    return this.workerForm.get('skills')?.value?.includes(skill);
+  }
   toggleDetails(workerId: string): void {
     this.expandedWorkerId = this.expandedWorkerId === workerId ? null : workerId;
   }
@@ -127,7 +183,7 @@ export class WorkersServiceComponent implements OnInit {
     }
 
     const currentY = this.getClientY(event);
-    const delta = (this.dragStartY - currentY) / window.innerHeight * 100;
+    const delta = ((this.dragStartY - currentY) / window.innerHeight) * 100;
     const nextHeight = Math.min(Math.max(this.dragStartHeight + delta, 60), 100);
     this.sheetHeight = `${nextHeight}vh`;
     this.sheetExpanded = nextHeight >= 85;
@@ -159,14 +215,21 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   onSkillChange(skill: string, checked: boolean): void {
+    const skills = [...(this.workerForm.get('skills')?.value || [])];
+
     if (checked) {
-      this.selectedSkills.push(skill);
+      if (!skills.includes(skill)) {
+        skills.push(skill);
+      }
     } else {
-      this.selectedSkills = this.selectedSkills.filter((s) => s !== skill);
+      const index = skills.indexOf(skill);
+      if (index > -1) {
+        skills.splice(index, 1);
+      }
     }
 
     this.workerForm.patchValue({
-      skills: this.selectedSkills,
+      skills,
     });
   }
 

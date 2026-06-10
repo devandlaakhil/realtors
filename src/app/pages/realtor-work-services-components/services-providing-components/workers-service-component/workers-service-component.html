@@ -1,4 +1,4 @@
-@if (!showPostWorkerForm) {
+@if (!showPostWorkerForm && !isEditMode) {
   <div class="services-container">
     <!-- Header -->
     <div class="service-header">
@@ -259,6 +259,7 @@
             <mat-checkbox
               *ngFor="let skill of availableSkills"
               (change)="onSkillChange(skill, $event.checked)"
+              [checked]="isSkillSelected(skill)"
             >
               {{ skill }}
             </mat-checkbox>
@@ -281,7 +282,7 @@
       <mat-card>
         <!-- IMAGE -->
 
-        <app-image-upload-component
+        <app-image-upload-component [imageUrl]="workerForm.get('image')?.value"
           (fileSelected)="onWorkerImageSelected($event)"
         ></app-image-upload-component>
       </mat-card>
