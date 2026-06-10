@@ -102,7 +102,7 @@ export class ServicePostingsComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.toaster.error('Soething went wrong', 'Fail');
+          this.toaster.error('Something went wrong', 'Fail');
         },
       });
   }

@@ -11,12 +11,14 @@ import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 })
 export class RealtorWorkServicesLandingPageComponent {
   categories = [
-  { icon: '🚜', name: 'Tractors', navigation: 'tractor' },
-  { icon: '🌾', name: 'Hardware', navigation: 'harvesters' },
-  { icon: '🚚', name: 'Transport', navigation: 'transport' },
-  { icon: '👷', name: 'Workers', navigation: 'workers' },
-  { icon: '💧', name: 'Borewell', navigation: 'borewell' },
-  { icon: '🏗️', name: 'JCB', navigation: 'jcb' }
+  { icon: '/images/tractor.png', name: 'Tractors', navigation: 'tractor' },
+  { icon: '/images/hardware.png', name: 'Hardware', navigation: 'harvesters' },
+  { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
+  { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
+  { icon: '/images/borewell.png', name: 'Borewell', navigation: 'borewell' },
+  { icon: '/images/jcb.png', name: 'JCB', navigation: 'jcb' },
+  { icon: '/images/centring.png', name: 'Centring', navigation: 'centring' },
+  { icon: '/images/digger.png', name: 'Soil Digger', navigation: 'digger' }
 ];
 
    services = [

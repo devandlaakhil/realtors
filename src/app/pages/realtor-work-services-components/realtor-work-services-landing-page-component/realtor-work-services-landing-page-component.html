@@ -31,7 +31,7 @@
     *ngFor="let category of categories"
     [routerLink]="['/services', category.navigation]"
   >
-    <div class="icon">{{ category.icon }}</div>
+    <div class="icon"><img [src]="category.icon" alt="" width="50" height="50"></div>
     <span>{{ category.name | T}}</span>
   </div>
 </section>
