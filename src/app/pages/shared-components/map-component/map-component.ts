@@ -7,6 +7,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
@@ -24,6 +25,7 @@ export class MapComponent implements OnInit {
   onDataChange = Output();
   cdr = inject(ChangeDetectorRef);
   selectedItem: any = null;
+  markers: any[] = [];
 
   @Input() data: any[] = [];
   @Input() center: any;
@@ -43,20 +45,25 @@ export class MapComponent implements OnInit {
     this.getCurrentLocation();
   }
 
-  ngOnChanges() {
-    if (!this.data?.length || !this.map) return;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['data']?.currentValue) return;
 
-    const bounds = new google.maps.LatLngBounds();
+    this.markers = this.data
+      .map((item: any) => {
+        const lat = item?.location?.coordinates?.[1] ?? item?.lat;
+        const lng = item?.location?.coordinates?.[0] ?? item?.lng;
 
-    this.data.forEach((worker) => {
-      bounds.extend({
-        lat: worker.location.coordinates[1],
-        lng: worker.location.coordinates[0],
-      });
-    });
+        if (lat == null || lng == null) {
+          return null;
+        }
 
-    bounds.extend(this.selectedLocation);
-    this.map.fitBounds(bounds);
+        return {
+          ...item,
+          lat: Number(lat),
+          lng: Number(lng),
+        };
+      })
+      .filter(Boolean);
   }
 
   getCurrentLocation(): void {
