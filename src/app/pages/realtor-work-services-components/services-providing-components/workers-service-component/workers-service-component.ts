@@ -26,6 +26,7 @@ import { WorkerApiServices } from '../../../../api-services/worker-api-services'
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { Subject, takeUntil } from 'rxjs';
 import { LoaderServices } from '../../../../shared-services/loader-services';
+import { mapToServiceCard,mapCardItems } from '../supporting-files/mapCardMapper';
 @Component({
   selector: 'app-workers-service-component',
   imports: [
@@ -58,6 +59,7 @@ export class WorkersServiceComponent implements OnInit {
   router = inject(ActivatedRoute);
   loaderService = inject(LoaderServices);
   cdr = inject(ChangeDetectorRef);
+  mapCardItems = mapCardItems;
   
 
   showPostWorkerForm = false;
@@ -94,6 +96,7 @@ export class WorkersServiceComponent implements OnInit {
     { name: 'Construction', label: 'Construction', icon: 'engineering', count: 14 },
   ];
   availabilityOptions = ['All', 'Available today', 'Verified'];
+
 
   ngOnInit(): void {
     this.router.paramMap.subscribe((params) => {
@@ -413,6 +416,7 @@ export class WorkersServiceComponent implements OnInit {
       .subscribe({
         next: (res: any) => {
           this.workers = res.data;
+           this.mapCardItems =this.workers.map((item: any) => mapToServiceCard(item, 'workers'));
           this.cdr.detectChanges();
           this.loaderService.hide();
         },
@@ -422,4 +426,6 @@ export class WorkersServiceComponent implements OnInit {
         },
       });
   }
+
+
 }
