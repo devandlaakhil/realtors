@@ -29,3 +29,18 @@ export function mapWorker(item: any): ServiceItem {
     isActive: item.isActive,
   };
 }
+
+export function mapVehicle(item:any): ServiceItem {
+  return {
+    id: item.id,
+    title: item.name,
+    image: item.images[0]?.url || '/assets/images/avatar.png',
+    location: `${item.village || ''}, ${item.district || ''}`,
+    price: item.price,
+    unit: item.pricingType || 'day',
+    category: 'Vehicles',
+    mobile: item.mobile,
+    originalData: item,
+    isActive: item.isActive,
+  };
+}

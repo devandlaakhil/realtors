@@ -7,10 +7,11 @@ import { forkJoin } from 'rxjs';
 import { RealtorsServicesApiServices } from '../../../api-services/realtors-services-api-services';
 import { WorkerApiServices } from '../../../api-services/worker-api-services';
 import { API_CONSTANTS } from '../../../constants/realtors-services-api-constants';
-import { mapTractor, mapWorker } from '../../../constants/service-mappers';
+import { mapTractor, mapVehicle, mapWorker } from '../../../constants/service-mappers';
 import { MapComponent } from '../../shared-components/map-component/map-component';
 import { mapToServiceCard } from './homeScreen-mapper';
 import { MobileDialpadService } from '../../../shared-services/mobile-dialpad-service';
+import { TransportApiService } from '../../../api-services/transport-api-service';
 
 @Component({
   selector: 'app-realtor-work-services-landing-page-component',
@@ -22,6 +23,8 @@ export class RealtorWorkServicesLandingPageComponent {
   loaderSrv = inject(LoaderServices);
   realtorApiSrv = inject(RealtorsServicesApiServices);
   workerApiSrv = inject(WorkerApiServices);
+  vehiclesApiSrv = inject(TransportApiService);
+  
   serviceGroups: any[] = [];
   selectedLocation: any = { lat: '', lng: '' };
   phoneCall = inject(MobileDialpadService);
@@ -73,7 +76,7 @@ export class RealtorWorkServicesLandingPageComponent {
         API_CONSTANTS.workerapiServices.getMyPostings,
         this.selectedLocation,
       ),
-      // harvesters: this.api.get('/harvesters'),
+      vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles,this.selectedLocation),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
       next: (res: any) => {
@@ -88,11 +91,11 @@ export class RealtorWorkServicesLandingPageComponent {
             icon: '👷‍♂️',
             items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
           },
-          // {
-          //   category: 'Harvesters',
-          //   icon: '🌾',
-          //   items: res.harvesters.data,
-          // },
+          {
+            category: 'Vehicles',
+            icon: '🚛',
+            items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x) ),
+          },
           // {
           //   category: 'Cultivators',
           //   icon: '🛠️',
