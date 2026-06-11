@@ -23,6 +23,7 @@ export const API_CONSTANTS = {
     getNearByVehicles : "getnearvechicles",
     getMyVehiclePosts : "get-my-vehicles",
     updateVehicleStatus : "update-my-status",
-    delete : 'delete-vehicle'
+    delete : 'delete-vehicle',
+    getSingleVehicle : 'get-singal-vehicle'
   }
 };

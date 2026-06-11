@@ -34,6 +34,11 @@ export const WORK_SERVICE_ROUTES: Routes = [
         {
           path:'transport',
           loadComponent:() => import('./services-providing-components/transportation-service-component/transportation-service-component').then(n => n.TransportationServiceComponent)
+        },
+        {
+          path:'edit-vehicle/:id',
+          canActivate:[authGuard],
+          loadComponent:() => import('./services-providing-components/transportation-service-component/transportation-service-component').then(n => n.TransportationServiceComponent)
         }
     ] 
   },

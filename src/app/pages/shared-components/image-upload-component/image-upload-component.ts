@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-image-upload-component',
-  imports: [CommonModule,MatButton],
+  imports: [CommonModule, MatButton],
   templateUrl: './image-upload-component.html',
   styleUrl: './image-upload-component.css',
 })
@@ -21,6 +21,10 @@ export class ImageUploadComponent {
       this.preview = this.imageUrl;
       this.cdr.detectChanges();
     }
+  }
+
+  ngOnChanges() {
+    this.preview = this.imageUrl;
   }
 
   onImageSelected(event: Event): void {

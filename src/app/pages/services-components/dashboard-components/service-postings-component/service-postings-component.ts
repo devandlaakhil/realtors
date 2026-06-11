@@ -144,6 +144,8 @@ export class ServicePostingsComponent implements OnInit {
       case 'Worker':
         this.router.navigate(['/services/edit-worker', elem.id]);
         break;
+      case 'Vehicles':
+        this.router.navigate(['/services/edit-vehicle', elem.id])
     }
   }
 

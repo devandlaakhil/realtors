@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { mapCardItems,mapToServiceCard } from '../supporting-files/mapCardMapper';
-import { RouterModule } from '@angular/router';
+import { mapCardItems, mapToServiceCard } from '../supporting-files/mapCardMapper';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
@@ -64,16 +64,19 @@ export class TransportationServiceComponent implements OnInit {
   selectedImages: any = [];
   selectedMaterials: string[] = [];
   selectedFacilityOptions: string[] = [];
-  selectedLocation: any = {lng: '',lat: '' };
+  selectedLocation: any = { lng: '', lat: '' };
   showMap: boolean = false;
   zoom: number = 0;
   destroy$ = new Subject<any>();
+  propertyId: string = '';
+  imageUrl = '';
 
   phoneCall = inject(MobileDialpadService);
   toastSrv = inject(ToastrService);
   loaderSrv = inject(LoaderServices);
   transportApiSrv = inject(TransportApiService);
   cdr = inject(ChangeDetectorRef);
+  router = inject(ActivatedRoute);
 
   vehicleTypes = [
     'Mini Truck',
@@ -122,8 +125,58 @@ export class TransportationServiceComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.router.paramMap.subscribe((params) => {
+      const id = params.get('id');
+
+      if (id) {
+        this.isEditMode = true;
+        this.propertyId = id;
+        this.loadProperty(id);
+      }
+    });
     this.transportForminit();
     this.getCurrentLocation();
+  }
+
+  loadProperty(id: string) {
+    this.loaderSrv.show();
+    this.transportApiSrv
+      .get(API_CONSTANTS.transportApiService.getSingleVehicle, { id })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.transportForm.patchValue({
+            name: res.data.name,
+            mobile: res.data.mobile,
+            vehicleType: res.data.vehicleType,
+            vehicleNumber: res.data.vehicleNumber,
+            capacity: res.data.capacity,
+            capacityUnit: res.data.capacityUnit,
+            materialTypes: res.data.materialTypes || [],
+            price: res.data.price,
+            pricingType: res.data.pricingType,
+            availability: res.data.availability,
+            village: res.data.village,
+            district: res.data.district,
+            state: res.data.state,
+            pincode: res.data.pincode,
+            facilities: res.data.facilities || [],
+            description: res.data.description,
+            verified: res.data.verified,
+            active: res.data.active,
+            images : res.data.images?.[0]?.url || '',
+            location: {
+              type: res.data.location?.type || 'Point',
+              coordinates: res.data.location?.coordinates || [0, 0],
+            },
+          });
+          this.cdr.detectChanges();
+          this.loaderSrv.hide();
+        },
+        error: () => {
+          this.toastSrv.error('Something went wrong', 'Fail');
+        },
+      });
   }
 
   transportForminit() {
@@ -183,7 +236,7 @@ export class TransportationServiceComponent implements OnInit {
     this.transportForm.patchValue({
       location: {
         type: 'Point',
-        coordinates: [location.lng,location.lat], // [lat, lng]
+        coordinates: [location.lng, location.lat], // [lat, lng]
       },
     });
   }
@@ -232,22 +285,23 @@ export class TransportationServiceComponent implements OnInit {
     });
   }
 
-  getNearByVehicles(){
-    this.loaderSrv.show()
-    this.transportApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles,this.selectedLocation)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next : (res:any) => {
-        this.vehicles = res.data
-         this.mapCardItems = res.data.map((item: any) => mapToServiceCard(item, 'Vehicles'));
-         this.cdr.detectChanges();
-         this.loaderSrv.hide();
-      },
-      error :() => {
-        this.toastSrv.error("Something went wrong",'Fail');
-        this.loaderSrv.hide();
-      }
-    })
+  getNearByVehicles() {
+    this.loaderSrv.show();
+    this.transportApiSrv
+      .get(API_CONSTANTS.transportApiService.getNearByVehicles, this.selectedLocation)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.vehicles = res.data;
+          this.mapCardItems = res.data.map((item: any) => mapToServiceCard(item, 'Vehicles'));
+          this.cdr.detectChanges();
+          this.loaderSrv.hide();
+        },
+        error: () => {
+          this.toastSrv.error('Something went wrong', 'Fail');
+          this.loaderSrv.hide();
+        },
+      });
   }
 
   onMaterialChange(item: string, isChecked: boolean) {
@@ -281,7 +335,7 @@ export class TransportationServiceComponent implements OnInit {
       this.transportForm.patchValue({
         location: {
           type: 'Point',
-          coordinates: [position.coords.longitude,position.coords.latitude], // [lat, lng]
+          coordinates: [position.coords.longitude, position.coords.latitude], // [lat, lng]
         },
       });
       this.getNearByVehicles();

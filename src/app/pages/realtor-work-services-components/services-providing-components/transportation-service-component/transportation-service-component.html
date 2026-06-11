@@ -334,7 +334,7 @@
         <!-- IMAGE -->
 
         <app-image-upload-component
-          (fileSelected)="onVechileImageSelected($event)"
+          (fileSelected)="onVechileImageSelected($event)" [imageUrl]="transportForm.get('images')?.value"
         ></app-image-upload-component>
       </mat-card>
 
