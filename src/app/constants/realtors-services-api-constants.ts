@@ -21,6 +21,8 @@ export const API_CONSTANTS = {
   transportApiService : {
     save : 'vechile-regitration',
     getNearByVehicles : "getnearvechicles",
-    getMyVehiclePosts : "get-my-vehicles"
+    getMyVehiclePosts : "get-my-vehicles",
+    updateVehicleStatus : "update-my-status",
+    delete : 'delete-vehicle'
   }
 };

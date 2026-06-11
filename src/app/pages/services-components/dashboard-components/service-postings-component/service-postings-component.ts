@@ -38,10 +38,10 @@ export class ServicePostingsComponent implements OnInit {
       service: this.workerApiSrv,
       url: API_CONSTANTS.workerapiServices.statusUpdate,
     },
-    // Vehicles : {
-    //   service : this.transportApiSrv,
-    //   url : API_CONSTANTS.transportApiService.getMyVehiclePosts,
-    // }
+    Vehicles : {
+      service : this.transportApiSrv,
+      url : API_CONSTANTS.transportApiService.updateVehicleStatus,
+    }
   };
 
   private deleteApis: any = {
@@ -53,6 +53,10 @@ export class ServicePostingsComponent implements OnInit {
       service: this.workerApiSrv,
       url: API_CONSTANTS.workerapiServices.delete,
     },
+    Vehicles: {
+      service : this.transportApiSrv,
+      url : API_CONSTANTS.transportApiService.delete,
+    }
   };
 
   ngOnInit(): void {
