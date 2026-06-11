@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { mapCardItems,mapToServiceCard } from '../supporting-files/mapCardMapper';
@@ -73,6 +73,7 @@ export class TransportationServiceComponent implements OnInit {
   toastSrv = inject(ToastrService);
   loaderSrv = inject(LoaderServices);
   transportApiSrv = inject(TransportApiService);
+  cdr = inject(ChangeDetectorRef);
 
   vehicleTypes = [
     'Mini Truck',
@@ -239,6 +240,7 @@ export class TransportationServiceComponent implements OnInit {
       next : (res:any) => {
         this.vehicles = res.data
          this.mapCardItems = res.data.map((item: any) => mapToServiceCard(item, 'Vehicles'));
+         this.cdr.detectChanges();
          this.loaderSrv.hide();
       },
       error :() => {

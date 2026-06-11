@@ -41,6 +41,6 @@ export function mapVehicle(item:any): ServiceItem {
     category: 'Vehicles',
     mobile: item.mobile,
     originalData: item,
-    isActive: item.isActive,
+    isActive: item.active,
   };
 }

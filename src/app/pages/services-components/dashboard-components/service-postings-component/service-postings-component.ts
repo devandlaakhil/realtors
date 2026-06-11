@@ -8,7 +8,8 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { WorkerApiServices } from '../../../../api-services/worker-api-services';
-import { mapTractor, mapWorker } from '../../../../constants/service-mappers';
+import { mapTractor, mapWorker,mapVehicle } from '../../../../constants/service-mappers';
+import { TransportApiService } from '../../../../api-services/transport-api-service';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -18,6 +19,8 @@ import { mapTractor, mapWorker } from '../../../../constants/service-mappers';
 export class ServicePostingsComponent implements OnInit {
   realtorApiSrv = inject(RealtorsServicesApiServices);
   workerApiSrv = inject(WorkerApiServices);
+  transportApiSrv = inject(TransportApiService);
+
   loaderSrv = inject(LoaderServices);
   toaster = inject(ToastrService);
   router = inject(Router);
@@ -35,6 +38,10 @@ export class ServicePostingsComponent implements OnInit {
       service: this.workerApiSrv,
       url: API_CONSTANTS.workerapiServices.statusUpdate,
     },
+    // Vehicles : {
+    //   service : this.transportApiSrv,
+    //   url : API_CONSTANTS.transportApiService.getMyVehiclePosts,
+    // }
   };
 
   private deleteApis: any = {
@@ -57,7 +64,7 @@ export class ServicePostingsComponent implements OnInit {
     forkJoin({
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.mylist),
       workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings),
-      // harvesters: this.api.get('/harvesters'),
+      vehicles : this.transportApiSrv.get(API_CONSTANTS.transportApiService.getMyVehiclePosts),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
       next: (res: any) => {
@@ -72,11 +79,11 @@ export class ServicePostingsComponent implements OnInit {
             icon: '👷‍♂️',
             items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
           },
-          // {
-          //   category: 'Harvesters',
-          //   icon: '🌾',
-          //   items: res.harvesters.data,
-          // },
+          {
+            category: 'Vehicles',
+            icon: '🚛',
+            items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x)),
+          },
           // {
           //   category: 'Cultivators',
           //   icon: '🛠️',
