@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { mapCardItems } from '../supporting-files/mapCardMapper';
+import { mapCardItems,mapToServiceCard } from '../supporting-files/mapCardMapper';
 import { RouterModule } from '@angular/router';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
@@ -18,6 +18,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { TransportApiService } from '../../../../api-services/transport-api-service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-transportation-service-component',
@@ -63,9 +64,10 @@ export class TransportationServiceComponent implements OnInit {
   selectedImages: any = [];
   selectedMaterials: string[] = [];
   selectedFacilityOptions: string[] = [];
-  selectedLocation: any = { lat: '', lng: '' };
+  selectedLocation: any = {lng: '',lat: '' };
   showMap: boolean = false;
   zoom: number = 0;
+  destroy$ = new Subject<any>();
 
   phoneCall = inject(MobileDialpadService);
   toastSrv = inject(ToastrService);
@@ -180,7 +182,7 @@ export class TransportationServiceComponent implements OnInit {
     this.transportForm.patchValue({
       location: {
         type: 'Point',
-        coordinates: [location.lat, location.lng], // [lat, lng]
+        coordinates: [location.lng,location.lat], // [lat, lng]
       },
     });
   }
@@ -229,6 +231,23 @@ export class TransportationServiceComponent implements OnInit {
     });
   }
 
+  getNearByVehicles(){
+    this.loaderSrv.show()
+    this.transportApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles,this.selectedLocation)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next : (res:any) => {
+        this.vehicles = res.data
+         this.mapCardItems = res.data.map((item: any) => mapToServiceCard(item, 'Vehicles'));
+         this.loaderSrv.hide();
+      },
+      error :() => {
+        this.toastSrv.error("Something went wrong",'Fail');
+        this.loaderSrv.hide();
+      }
+    })
+  }
+
   onMaterialChange(item: string, isChecked: boolean) {
     if (isChecked) {
       this.selectedMaterials.push(item);
@@ -260,10 +279,10 @@ export class TransportationServiceComponent implements OnInit {
       this.transportForm.patchValue({
         location: {
           type: 'Point',
-          coordinates: [position.coords.latitude, position.coords.longitude], // [lat, lng]
+          coordinates: [position.coords.longitude,position.coords.latitude], // [lat, lng]
         },
       });
-      //this.getAllWorkers();
+      this.getNearByVehicles();
     });
   }
 

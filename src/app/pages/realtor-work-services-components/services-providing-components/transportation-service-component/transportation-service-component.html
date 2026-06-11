@@ -60,14 +60,14 @@
               <ng-container *ngFor="let v of vehicles">
                 <div class="mini-card" *ngIf="expandedVechileId !== v.id">
                   <img
-                    [src]="v.image?.length ? v.image[0].url : '/images/avatar.png'"
+                    [src]="v.images?.length ? v.images[0].url : '/images/avatar.png'"
                     alt="Worker"
                   />
 
                   <div class="card-content">
                     <h4>👤 {{ v.name }}</h4>
-                    <h6>{{ v.category }}</h6>
-                    <p>₹{{ v.price }}/{{ v.unit | T }}</p>
+                    <h6>{{ v.vehicleType }}</h6>
+                    <p>₹{{ v.price }}/{{ v.pricingType | T }}</p>
                     <p>📍 {{ v.distanceKm }} {{ 'KM Away' | T }}</p>
 
                     <div class="card-actions">
@@ -82,12 +82,12 @@
                   <div class="worker-header">
                     <div>
                       <h3>👤 {{ v.name }}</h3>
-                      <span>{{ v.category | T }}</span>
+                      <span>{{ v.vehicleType | T }}</span>
                     </div>
 
                     <div class="price-badge">
                       ₹{{ v.price }}
-                      <small>/{{ v.unit | T }}</small>
+                      <small>/{{ v.pricingType | T }}</small>
                     </div>
                   </div>
 
@@ -111,18 +111,18 @@
                     <div class="info-item">
                       <mat-icon>work</mat-icon>
                       <div>
-                        <span class="label">{{ 'Experience' | T }}</span>
-                        <span class="value">{{ v.experience }} {{ 'years' | T }}</span>
+                        <span class="label">{{ 'Availability' | T }}</span>
+                        <span class="value">{{ v.availability }} </span>
                       </div>
                     </div>
 
-                    <div class="info-item">
+                    
                       <div class="info-item">
                         <mat-icon>verified</mat-icon>
                         <div>
-                          <span class="label">{{ 'Status' | T }} </span>
+                          <span class="label">{{ 'Vehicle Number' | T }} </span>
                           <span class="value">
-                            {{ v.verified ? ('Verified' | T) : ('Not Verified' | T) }}
+                            {{ v.vehicleNumber }}
                           </span>
                         </div>
                       </div>
@@ -132,18 +132,18 @@
                         <div>
                           <span class="label">{{ 'Distance' | T }}</span>
                           <span class="value"
-                            >{{ v.distance | number: '1.1-1' }} {{ 'KM' | T }}</span
+                            >{{ v.distanceKm | number: '1.1-1' }} {{ 'KM' | T }}</span
                           >
                         </div>
                       </div>
-                    </div>
+                    
                   </div>
 
-                  <!-- <div class="skills-container" *ngIf="worker.skills?.length">
-                    <span class="skill-chip" *ngFor="let skill of worker.skills">
+                  <div class="skills-container" *ngIf="v.facilities?.length">
+                    <span class="skill-chip" *ngFor="let skill of v.facilities">
                       {{ skill | T}}
                     </span>
-                  </div> -->
+                  </div>
 
                   <div class="expanded-actions">
                     <button class="primary-btn" type="button" (click)="phoneCall.call(v.mobile)">

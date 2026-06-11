@@ -147,8 +147,8 @@ export class MapComponent implements OnInit {
     const icons: Record<string, string> = {
       Tractors: '/images/tractor.png',
       workers: '/images/worker.png',
-      // Harvester: '/images/markers/harvester.png',
-      // Cultivator: '/images/markers/cultivator.png',
+      Vehicles: '/images/transport.png',
+      // Cultivator: '/images/cultivator.png',
     };
 
     return icons[category] || '/images/markers/default-marker.png';
