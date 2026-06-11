@@ -17,5 +17,8 @@ export const API_CONSTANTS = {
     getSingleItem : 'get-single-worker',
     delete : 'delete-worker',
     update : 'update-worker',
+  },
+  transportApiService : {
+    save : 'vechile-regitration',
   }
 };

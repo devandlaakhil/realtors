@@ -1,0 +1,347 @@
+@if (!showPostVechileForm && !isEditMode) {
+  <div class="services-container">
+    <!-- Header -->
+    <div class="service-header">
+      <div>
+        <h2>🚚 {{ 'vehicles Near You' | T }}</h2>
+        <p>{{ vehicles.length }} {{ 'vehicles available' | T }}</p>
+      </div>
+
+      <button class="post-btn" (click)="openPostvehicle()">
+        {{ 'Post vehicle' | T }}
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchText" placeholder="{{ 'Search vehicles' | T }}..." />
+    </div>
+
+    <!-- Categories -->
+    <div class="category-chips">
+      <button
+        *ngFor="let category of categories"
+        [class.active]="activeCategory === category.name"
+        (click)="setCategory(category.name)"
+      >
+        {{ category.label | T }}
+      </button>
+    </div>
+
+    <div class="content-layout">
+      <div class="map-panel">
+        <div class="map-title">{{ 'vehicles Map' | T }}</div>
+        <div class="map-wrapper">
+          <app-map-component [data]="mapCardItems" [dragble]="false"></app-map-component>
+        </div>
+      </div>
+
+      <div class="sheet-container">
+        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
+          <div
+            class="drag-line"
+            (pointerdown)="onDragStart($event)"
+            (touchstart)="onDragStart($event)"
+          ></div>
+
+          <div class="sheet-content">
+            <div class="sheet-title">
+              <div>
+                <h3>{{ 'vehicles Details' | T }}</h3>
+                <p>{{ vehicles.length }} {{ 'vehicles ready' | T }}</p>
+              </div>
+
+              <button class="sheet-toggle" type="button" (click)="toggleSheet()">
+                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
+              </button>
+            </div>
+
+            <div class="worker-list">
+              <ng-container *ngFor="let v of vehicles">
+                <div class="mini-card" *ngIf="expandedVechileId !== v.id">
+                  <img
+                    [src]="v.image?.length ? v.image[0].url : '/images/avatar.png'"
+                    alt="Worker"
+                  />
+
+                  <div class="card-content">
+                    <h4>👤 {{ v.name }}</h4>
+                    <h6>{{ v.category }}</h6>
+                    <p>₹{{ v.price }}/{{ v.unit | T }}</p>
+                    <p>📍 {{ v.distanceKm }} {{ 'KM Away' | T }}</p>
+
+                    <div class="card-actions">
+                      <button class="primary-btn" type="button" (click)="toggleDetails(v.id)">
+                        {{ 'View Details' | T }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="worker-details-card" *ngIf="expandedVechileId === v.id">
+                  <div class="worker-header">
+                    <div>
+                      <h3>👤 {{ v.name }}</h3>
+                      <span>{{ v.category | T }}</span>
+                    </div>
+
+                    <div class="price-badge">
+                      ₹{{ v.price }}
+                      <small>/{{ v.unit | T }}</small>
+                    </div>
+                  </div>
+
+                  <div class="location-row">
+                    <mat-icon>location_on</mat-icon>
+                    <span>
+                      {{ v.village }},
+                      {{ v.district }}
+                    </span>
+                  </div>
+
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <mat-icon>call</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Contact' | T }}</span>
+                        <span class="value">{{ v.mobile }}</span>
+                      </div>
+                    </div>
+
+                    <div class="info-item">
+                      <mat-icon>work</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Experience' | T }}</span>
+                        <span class="value">{{ v.experience }} {{ 'years' | T }}</span>
+                      </div>
+                    </div>
+
+                    <div class="info-item">
+                      <div class="info-item">
+                        <mat-icon>verified</mat-icon>
+                        <div>
+                          <span class="label">{{ 'Status' | T }} </span>
+                          <span class="value">
+                            {{ v.verified ? ('Verified' | T) : ('Not Verified' | T) }}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>route</mat-icon>
+                        <div>
+                          <span class="label">{{ 'Distance' | T }}</span>
+                          <span class="value"
+                            >{{ v.distance | number: '1.1-1' }} {{ 'KM' | T }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="skills-container" *ngIf="worker.skills?.length">
+                    <span class="skill-chip" *ngFor="let skill of worker.skills">
+                      {{ skill | T}}
+                    </span>
+                  </div> -->
+
+                  <div class="expanded-actions">
+                    <button class="primary-btn" type="button" (click)="phoneCall.call(v.mobile)">
+                      <mat-icon>call</mat-icon>
+                      {{ 'Contact Vechile' | T }}
+                    </button>
+                    <button class="secondary-btn" type="button" (click)="toggleDetails(v.id)">
+                      {{ 'Close Details' | T }}
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="post-worker-container">
+    <div class="form-header">
+      <h2>🚚 {{ 'Post Vechile Service' | T }}</h2>
+
+      <button mat-stroked-button color="warn" type="button" (click)="closeVechile()">
+        {{ 'Cancel' | T }}
+      </button>
+    </div>
+
+    <form [formGroup]="transportForm" (ngSubmit)="saveTransport()">
+      <!-- Basic Details -->
+      <mat-card>
+        <h3>{{ 'Basic Details' | T }}</h3>
+        <div class="grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mobile Number</mat-label>
+            <input matInput type="tel" formControlName="mobile" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Vehicle Type</mat-label>
+            <mat-select
+              formControlName="vehicleType"
+              (selectionChange)="onVehicleChange($event.value)"
+            >
+              <mat-option *ngFor="let vehicle of vehicleTypes" [value]="vehicle">
+                {{ vehicle }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Vechile Number</mat-label>
+            <input matInput formControlName="vehicleNumber" />
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <h3>Vehicle Capacity</h3>
+
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Capacity</mat-label>
+            <input matInput type="number" formControlName="capacity" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Unit</mat-label>
+            <mat-select
+              formControlName="capacityUnit"
+              (selectionChange)="onUnitChange($event.value)"
+            >
+              <mat-option value="Tons">Tons</mat-option>
+              <mat-option value="Kg">Kg</mat-option>
+              <mat-option value="Cubic Meter">Cubic Meter</mat-option>
+              <mat-option value="Cubic Feet">Cubic Feet</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <h3>Supported Materials</h3>
+        <div class="grid">
+          <mat-checkbox
+            *ngFor="let item of materialTypeOptions"
+            (change)="onMaterialChange(item, $event.checked)"
+          >
+            {{ item }}
+          </mat-checkbox>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Price</mat-label>
+            <input matInput type="number" formControlName="price" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Pricing Type</mat-label>
+            <mat-select formControlName="pricingType">
+              <mat-option value="Per Trip">Per Trip</mat-option>
+              <mat-option value="Per KM">Per KM</mat-option>
+              <mat-option value="Per Hour">Per Hour</mat-option>
+              <mat-option value="Per Day">Per Day</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Availability</mat-label>
+            <mat-select formControlName="availability">
+              <mat-option value="Available Now">Available Now</mat-option>
+              <mat-option value="Morning Only">Morning Only</mat-option>
+              <mat-option value="Afternoon Only">Afternoon Only</mat-option>
+              <mat-option value="Evening Only">Evening Only</mat-option>
+              <mat-option value="24 Hours">24 Hours</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </mat-card>
+
+      <mat-card>
+        <h3>Location</h3>
+        <div class="grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Village</mat-label>
+            <input matInput formControlName="village" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>District</mat-label>
+            <input matInput formControlName="district" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>State</mat-label>
+            <input matInput formControlName="state" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Pin Code</mat-label>
+            <input matInput type="number" formControlName="pincode" />
+          </mat-form-field>
+        </div>
+        <div>
+            <mat-checkbox (change)="onMapsToggle($event)" [checked]="showMap">
+            {{ 'Show Map' | T }} {{ 'Select worker location' | T }}
+          </mat-checkbox>
+
+          @if (showMap) {
+            <div class="map-wrapper">
+              <app-map-component (locationSelected)="onLocationSelected($event)">
+              </app-map-component>
+            </div>
+          }
+        </div>
+      </mat-card>
+
+      <!-- Facilities -->
+      <mat-card>
+        <h4>Facilities</h4>
+        <div class="grid">
+          <mat-checkbox
+            *ngFor="let facility of facilityOptions"
+            (change)="onFacilityChange(facility, $event.checked)"
+          >
+            {{ facility }}
+          </mat-checkbox>
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="5" formControlName="description"></textarea>
+        </mat-form-field>
+        <!-- <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Experience (Years)</mat-label>
+          <input matInput type="number" formControlName="experience" />
+        </mat-form-field> -->
+      </mat-card>
+
+      <mat-card>
+        <!-- IMAGE -->
+
+        <app-image-upload-component
+          (fileSelected)="onVechileImageSelected($event)"
+        ></app-image-upload-component>
+      </mat-card>
+
+      <!-- Submit -->
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit">Post Transportation Service</button>
+      </div>
+    </form>
+  </div>
+}
