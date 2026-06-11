@@ -24,6 +24,7 @@ export const API_CONSTANTS = {
     getMyVehiclePosts : "get-my-vehicles",
     updateVehicleStatus : "update-my-status",
     delete : 'delete-vehicle',
-    getSingleVehicle : 'get-singal-vehicle'
+    getSingleVehicle : 'get-singal-vehicle',
+    updateVehicle : 'updateVehicle'
   }
 };

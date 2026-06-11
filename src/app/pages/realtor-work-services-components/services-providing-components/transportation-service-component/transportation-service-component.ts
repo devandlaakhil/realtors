@@ -164,12 +164,13 @@ export class TransportationServiceComponent implements OnInit {
             description: res.data.description,
             verified: res.data.verified,
             active: res.data.active,
-            images : res.data.images?.[0]?.url || '',
+            images: res.data.images?.[0]?.url || '',
             location: {
               type: res.data.location?.type || 'Point',
               coordinates: res.data.location?.coordinates || [0, 0],
             },
           });
+          this.showMap = true;
           this.cdr.detectChanges();
           this.loaderSrv.hide();
         },
@@ -261,28 +262,48 @@ export class TransportationServiceComponent implements OnInit {
     const payload = { ...this.transportForm.value };
     delete payload.images;
     this.loaderSrv.show();
-    this.transportApiSrv.post(API_CONSTANTS.transportApiService.save, formData).subscribe({
-      next: (res: any) => {
-        this.loaderSrv.hide();
-        this.toastSrv.success('Transportation service posted successfully');
-        this.transportForm.reset();
-        this.transportForm.patchValue({
-          capacityUnit: 'Tons',
-          pricingType: 'Per Trip',
-          availability: 'Available Now',
-          location: {
-            type: 'Point',
-            coordinates: [0, 0],
+    if (!this.isEditMode) {
+      this.transportApiSrv.post(API_CONSTANTS.transportApiService.save, formData).subscribe({
+        next: (res: any) => {
+          this.afterSuccessRes('posted')
+        },
+        error: (err) => {
+          this.loaderSrv.hide();
+          this.toastSrv.error('Failed to post service');
+        },
+      });
+    } else {
+      formData.append('id', this.propertyId);
+      this.transportApiSrv
+        .put(API_CONSTANTS.transportApiService.updateVehicle, formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res) => {
+            this.afterSuccessRes('updated');
           },
+          error: (err) => {
+          this.loaderSrv.hide();
+          this.toastSrv.error('Failed to update service');
+        },
         });
-        this.selectedImages = [];
-        this.closeVechile();
-      },
-      error: (err) => {
-        this.loaderSrv.hide();
-        this.toastSrv.error(err?.error?.message || 'Failed to post service');
+    }
+  }
+
+  afterSuccessRes(postType:string) {
+    this.loaderSrv.hide();
+    this.toastSrv.success(`Transportation service ${postType} successfully`,'Success');
+    this.transportForm.reset();
+    this.transportForm.patchValue({
+      capacityUnit: 'Tons',
+      pricingType: 'Per Trip',
+      availability: 'Available Now',
+      location: {
+        type: 'Point',
+        coordinates: [0, 0],
       },
     });
+    this.selectedImages = [];
+    this.closeVechile();
   }
 
   getNearByVehicles() {
@@ -305,6 +326,7 @@ export class TransportationServiceComponent implements OnInit {
   }
 
   onMaterialChange(item: string, isChecked: boolean) {
+    const materials = [...(this.transportForm.get('materialTypes')?.value || [])];
     if (isChecked) {
       this.selectedMaterials.push(item);
     } else {
@@ -313,9 +335,13 @@ export class TransportationServiceComponent implements OnInit {
     this.transportForm.patchValue({
       materialTypes: this.selectedMaterials,
     });
+    this.transportForm.patchValue({
+      materialTypes: [...new Set(materials)],
+    });
   }
 
   onFacilityChange(item: string, isChecked: boolean) {
+    const facilities = [...(this.transportForm.get('facilities')?.value || [])];
     if (isChecked) {
       this.selectedFacilityOptions.push(item);
     } else {
@@ -323,6 +349,9 @@ export class TransportationServiceComponent implements OnInit {
     }
     this.transportForm.patchValue({
       facilities: this.selectedFacilityOptions,
+    });
+    this.transportForm.patchValue({
+      facilities: [...new Set(facilities)],
     });
   }
 

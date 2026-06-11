@@ -235,6 +235,7 @@
         <div class="grid">
           <mat-checkbox
             *ngFor="let item of materialTypeOptions"
+            [checked]="transportForm.get('materialTypes')?.value?.includes(item)"
             (change)="onMaterialChange(item, $event.checked)"
           >
             {{ item }}
@@ -315,6 +316,7 @@
         <div class="grid">
           <mat-checkbox
             *ngFor="let facility of facilityOptions"
+            [checked]="transportForm.get('facilities')?.value?.includes(facility)"
             (change)="onFacilityChange(facility, $event.checked)"
           >
             {{ facility }}
