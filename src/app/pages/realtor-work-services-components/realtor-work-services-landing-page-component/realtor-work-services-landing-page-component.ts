@@ -32,7 +32,7 @@ export class RealtorWorkServicesLandingPageComponent {
 
   categories = [
     { icon: '/images/tractor.png', name: 'Tractors', navigation: 'tractor' },
-    { icon: '/images/hardware.png', name: 'Hardware', navigation: 'harvesters' },
+    { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
     { icon: '/images/borewell.png', name: 'Borewell', navigation: 'borewell' },
