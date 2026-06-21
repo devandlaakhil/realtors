@@ -3,7 +3,7 @@
     <div class="hero-content">
       <span class="eyebrow">{{ 'Local service finder' | T }}</span>
       <h1>{{ 'Find equipment and services near you' | T }}</h1>
-      <p>{{ 'Large buttons, clear labels, and a simple layout help anyone browse quickly.' | T }}</p>
+      <!-- <p>{{ 'Large buttons, clear labels, and a simple layout help anyone browse quickly.' | T }}</p> -->
       <button class="hero-btn" [routerLink]="['/services/home']">{{ 'Explore nearby services' | T }}</button>
     </div>
   </section>
@@ -13,7 +13,7 @@
       <div class="section-head compact">
         <div>
           <span class="section-kicker">{{ 'Nearby services' | T }}</span>
-          <h2>{{ 'Cards that are easy to read' | T }}</h2>
+          <!-- <h2>{{ 'Cards that are easy to read' | T }}</h2> -->
         </div>
       </div>
 
@@ -40,7 +40,7 @@
               <p class="service-meta">👤 {{ service.owner }}</p>
 
               <button class="call-btn" type="button" (click)="phoneCall.call(service.mobile)">
-                {{ 'Call now' | T }}
+                {{ 'Call Now' | T }}
               </button>
             </div>
           </article>
