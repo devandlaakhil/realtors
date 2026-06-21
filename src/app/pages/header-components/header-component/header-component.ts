@@ -118,6 +118,10 @@ export class HeaderComponent {
     this.router.navigate(['/profile']);
   }
 
+  navToSubscription(){
+    this.router.navigate(['/subscription']);
+  }
+
   backToHome() {
     this.router.navigate(['/']);
   }

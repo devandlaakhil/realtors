@@ -91,6 +91,11 @@ export const routes: Routes = [
       ),
   },
   {
+    path : 'subscription',
+    canActivate: [authGuard],
+    loadComponent:() => import('../app/pages/subscription-components/subscription-screen-component/subscription-screen-component').then(m => m.SubscriptionScreenComponent)
+  },
+  {
     path: 'dashboard',
     component: DashboardComponent,
     children: [

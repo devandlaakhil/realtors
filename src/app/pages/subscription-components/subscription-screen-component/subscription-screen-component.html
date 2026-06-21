@@ -1,0 +1,98 @@
+<div class="subscription-container">
+  <div class="page-header">
+    <h2>Choose Your Plan</h2>
+    <p>Upgrade your account and grow your business</p>
+  </div>
+
+  <div class="current-plan">
+    <div class="title">Current Plan</div>
+    <div class="value">{{ currentPlan }}</div>
+  </div>
+
+  <!-- Property Pro -->
+  <div
+    class="plan-card"
+    [class.selected]="selectedPlan === 'PROPERTY_PRO'"
+    (click)="selectPlan('PROPERTY_PRO')"
+  >
+    <div class="radio">
+      <div class="dot" *ngIf="selectedPlan === 'PROPERTY_PRO'"></div>
+    </div>
+
+    <h3>Property Pro</h3>
+
+    <div class="price">
+      ₹1
+      <span>/year</span>
+    </div>
+
+    <ul>
+      <li>Unlimited Property Listings</li>
+      <li>Priority Search Ranking</li>
+      <li>Premium Badge</li>
+    </ul>
+  </div>
+
+  <!-- Service Pro -->
+  <div
+    class="plan-card"
+    [class.selected]="selectedPlan === 'SERVICE_PRO'"
+    (click)="selectPlan('SERVICE_PRO')"
+  >
+    <div class="radio">
+      <div class="dot" *ngIf="selectedPlan === 'SERVICE_PRO'"></div>
+    </div>
+
+    <h3>Service Pro</h3>
+
+    <div class="price">
+      ₹2
+      <span>/year</span>
+    </div>
+
+    <ul>
+      <li>Unlimited Service Posts</li>
+      <li>Premium Badge</li>
+      <li>Higher Visibility</li>
+    </ul>
+  </div>
+
+  <!-- Business Pro -->
+  <div
+    class="plan-card business"
+    [class.selected]="selectedPlan === 'BUSINESS_PRO'"
+    (click)="selectPlan('BUSINESS_PRO')"
+  >
+    <div class="popular">MOST POPULAR</div>
+
+    <div class="radio">
+      <div class="dot" *ngIf="selectedPlan === 'BUSINESS_PRO'"></div>
+    </div>
+
+    <h3>Business Pro</h3>
+
+    <div class="price">
+      ₹5
+      <span>/year</span>
+    </div>
+
+    <ul>
+      <li>Unlimited Properties</li>
+      <li>Unlimited Services</li>
+      <li>Featured Profile</li>
+      <li>Top Search Ranking</li>
+      <li>Priority Support</li>
+    </ul>
+  </div>
+
+  <div class="bottom-section">
+    <div class="selected-plan">
+      Selected :
+      <strong>{{ selectedPlanName }}</strong>
+    </div>
+
+    <button class="continue-btn" [disabled]="!selectedPlan" (click)="buyPlan()">
+      Continue Payment
+    </button>
+  </div>
+</div>
