@@ -12,6 +12,7 @@ import { MapComponent } from '../../shared-components/map-component/map-componen
 import { mapToServiceCard } from './homeScreen-mapper';
 import { MobileDialpadService } from '../../../shared-services/mobile-dialpad-service';
 import { TransportApiService } from '../../../api-services/transport-api-service';
+import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 
 @Component({
   selector: 'app-realtor-work-services-landing-page-component',
@@ -26,46 +27,45 @@ export class RealtorWorkServicesLandingPageComponent {
   vehiclesApiSrv = inject(TransportApiService);
   
   serviceGroups: any[] = [];
-  selectedLocation: any = { lat: '', lng: '' };
+  selectedLocation: any = { ...CITY_COORDINATES['Hyderabad'] };
   phoneCall = inject(MobileDialpadService);
   mapServices: any[] = [];
 
   categories = [
     { icon: '/images/tractor.png', name: 'Tractors', navigation: 'tractor' },
-    { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
-    { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
-    { icon: '/images/borewell.png', name: 'Borewell', navigation: 'borewell' },
-    { icon: '/images/jcb.png', name: 'JCB', navigation: 'jcb' },
+    { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
     { icon: '/images/centring.png', name: 'Centring', navigation: 'centring' },
-    { icon: '/images/digger.png', name: 'Soil Digger', navigation: 'digger' },
+    { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
+    { icon: '/images/realtors.png', name: 'All Services', navigation: 'home' },
   ];
-  services = [
-    {
-      name: '',
-      category: '',
-      distance: '',
-      owner: '',
-      price: 0,
-      image: '',
-      unit: '',
-      location: '',
-      mobile: '',
-    },
-  ];
+  footerServices = this.categories;
+  services: any[] = [];
 
   ngOnInit(): void {
     this.getCurrentLocation();
   }
 
   getCurrentLocation(): void {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.selectedLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
+    if (!navigator.geolocation) {
       this.loadAllServices();
-    });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.selectedLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        this.loadAllServices();
+      },
+      () => {
+        this.selectedLocation = { ...CITY_COORDINATES['Hyderabad'] };
+        this.loadAllServices();
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
+    );
   }
 
   loadAllServices() {

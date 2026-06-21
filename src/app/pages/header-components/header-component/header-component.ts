@@ -46,7 +46,7 @@ export class HeaderComponent {
   userApiSrc = inject(UserApiServices);
   commonSrv = inject(CommonServices);
   languageSrv = inject(LanguageServices);
-  selectedLang = 'en';
+  selectedLang = this.languageSrv.currentLanguage;
 
   ngOnInit(): void {
     this.dashBoardService.loginStatus$.subscribe((status) => {

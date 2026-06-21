@@ -53,8 +53,15 @@ export class Homecomponent implements OnInit {
   userId: string = '';
   cities = Object.values(Location);
   loaderService = inject(LoaderServices);
-  center: any;
-  zoom: number = 0;
+  center: google.maps.LatLngLiteral = CITY_COORDINATES['Hyderabad'];
+  zoom: number = 12;
+  showFilters: boolean = false;
+  quickLinks = [
+    { label: 'Services', icon: 'handyman', route: '/services/home' },
+    { label: 'Profile', icon: 'person', route: '/profile' },
+    { label: 'Post Property', icon: 'add_home', route: '/ad-post' },
+    { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts' },
+  ];
 
   selectedProperty: any;
   @ViewChild(MapInfoWindow)
@@ -86,7 +93,8 @@ export class Homecomponent implements OnInit {
           this.cdr.detectChanges();
           this.loaderService.hide();
         },
-        error: () => {
+        error: (err) => {
+          console.error('API ERROR', err);
           this.toastr.error('Something went wrong', 'Fail');
           this.loaderService.hide();
         },
@@ -160,9 +168,11 @@ export class Homecomponent implements OnInit {
   onLocationChange(city: string): void {
     if (city == '') {
       this.getAllProperites();
-      this.zoom = 5;
+      this.center = CITY_COORDINATES['Hyderabad'];
+      this.zoom = 12;
     } else {
       let coords = CITY_COORDINATES[city];
+      if (!coords) return;
       this.center = {
           lat: coords.lat,
           lng: coords.lng
@@ -193,6 +203,8 @@ export class Homecomponent implements OnInit {
       (error) => {
         console.error('Location Error:', error);
         // If user denies permission or location fails
+        this.center = CITY_COORDINATES['Hyderabad'];
+        this.zoom = 12;
         this.getAllProperites();
       },
       {
@@ -206,5 +218,16 @@ export class Homecomponent implements OnInit {
   openInfo(marker: MapMarker, property: any) {
     this.selectedProperty = property;
     this.infoWindow.open(marker);
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
+
+  hasMapCoordinates(property: any): boolean {
+    return (
+      property?.location?.geoLocation?.coordinates?.[1] != null &&
+      property?.location?.geoLocation?.coordinates?.[0] != null
+    );
   }
 }

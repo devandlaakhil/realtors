@@ -1,20 +1,20 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
   providedIn: 'root',
 })
 export class LanguageServices {
 
-  currentLanguage = 'en';
+  currentLanguage = localStorage.getItem('lang') || 'en';
   translations: any = {};
+  languageChange$ = new BehaviorSubject<string>(this.currentLanguage);
 
   http = inject(HttpClient);
 
   constructor() {
-    this.loadLanguage(
-      localStorage.getItem('lang') || 'en'
-    );
+    this.loadLanguage(this.currentLanguage);
   }
 
   loadLanguage(lang: string) {
@@ -24,6 +24,7 @@ export class LanguageServices {
       .get(`assets/lang/${lang}.json`)
       .subscribe((data:any) => {
         this.translations = data;
+        this.languageChange$.next(lang);
       });
   }
 

@@ -1,204 +1,230 @@
 <div class="property-page">
-  <!-- FILTER BAR -->
-  <div class="map-container">
-    <google-map
-      class="property-map"
-      height="100%"
-      width="100%"
-      [center]="center"
-      [zoom]="zoom"
-      [options]="mapOptions"
-    >
-      <map-marker
-        *ngFor="let property of filteredProperties"
-        [position]="{
-          lat: property.location.geoLocation.coordinates[1],
-          lng: property.location.geoLocation.coordinates[0],
-        }"
-        (mapClick)="openInfo(marker, property)"
-        #marker="mapMarker"
-      >
-      </map-marker>
+  <section class="hero-panel">
+    <div class="hero-copy">
+      <span class="section-kicker">{{ 'Live property feed' | T }}</span>
+      <h1>{{ 'Find properties near you' | T }}</h1>
+      <p>
+        {{ 'A mobile-first browsing layout built for quick swipes, tap actions, and compact decision making.' | T }}
+      </p>
+    </div>
 
-      <map-info-window>
-        <div class="marker-preview" *ngIf="selectedProperty">
-          <img [src]="selectedProperty.images?.[0]?.url" alt="property" />
+    <div class="hero-metrics">
+      <div class="metric-chip">
+        <strong>{{ filteredProperties.length }}</strong>
+        <span>{{ 'Listings' | T }}</span>
+      </div>
 
-          <div class="marker-content">
-            <h4>₹{{ selectedProperty.price | number }}</h4>
-            <p>
-              {{ selectedProperty.title }}
-            </p>
-            <p>
-              {{ selectedProperty.location.area }}
-            </p>
-          </div>
-        </div>
-      </map-info-window>
-    </google-map>
-
-    <div class="filter-overlay">
-      <div class="filter-bar">
-        <!-- Search -->
-        <mat-form-field appearance="outline" class="search-field">
-          <mat-label>{{ 'Search properties' | T }}</mat-label>
-
-          <input
-            matInput
-            type="text"
-            placeholder="Search properties..."
-            [formControl]="searchControl"
-          />
-
-          <mat-icon matPrefix>search</mat-icon>
-        </mat-form-field>
-
-        <!-- Property Type -->
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>{{ 'Property Type' | T }}</mat-label>
-
-          <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
-            <mat-option value="">
-              {{ 'All Properties' | T }}
-            </mat-option>
-            <mat-option value="apartment">
-              {{ 'Apartment' | T }}
-            </mat-option>
-            <mat-option value="villa">
-              {{ 'Villa' | T }}
-            </mat-option>
-            <mat-option value="house">
-              {{ 'House' | T }}
-            </mat-option>
-            <mat-option value="plot">
-              {{ 'Plot/Land' | T }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Budget -->
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>{{ 'Budget' | T }}</mat-label>
-
-          <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
-            <mat-option value="">
-              {{ 'Any Budget' | T }}
-            </mat-option>
-            <mat-option value="10-50"> ₹10{{ 'L' | T }} - ₹50{{ 'L' | T }} </mat-option>
-            <mat-option value="50-100"> ₹50{{ 'L' | T }} - ₹1{{ 'Cr' | T }} </mat-option>
-            <mat-option value="100+"> ₹1{{ 'Cr' | T }}+ </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <!-- Location -->
-        <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>{{ 'Location' | T }}</mat-label>
-
-          <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
-            <mat-option value="">
-              {{ 'All Locations' | T }}
-            </mat-option>
-
-            <mat-option *ngFor="let city of cities" [value]="city">
-              {{ city | T }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+      <div class="metric-chip">
+        <strong>{{ cities.length }}</strong>
+        <span>{{ 'Cities' | T }}</span>
       </div>
     </div>
-  </div>
 
-  <!-- PROPERTY GRID -->
-  <div class="property-grid">
-    @for (property of filteredProperties; track property.id) {
-      <div class="property-card">
-        <!-- IMAGE -->
-        <div class="image-container">
-          <img
-            *ngIf="getMainImage(property.images)"
-            [src]="getMainImage(property.images)"
-            alt="property"
-          />
+    <button class="filter-toggle" type="button" (click)="toggleFilters()">
+      <mat-icon>filter_list</mat-icon>
+      <span>{{ 'Filters' | T }}</span>
+    </button>
+  </section>
 
-          <!-- NO IMAGE -->
-          <div class="no-image" *ngIf="!getMainImage(property.images)">No Image</div>
-
-          <span class="badge">
-            {{ property.status | T }}
-          </span>
-
-          <button class="wishlist">❤</button>
-        </div>
-
-        <!-- CONTENT -->
-        <div class="card-content">
-          @if (property.isOffer) {
-            <div class="offer-banner">
-              <marquee scrollamount="2" direction="left">
-                <span class="blink-star">★</span>
-                {{ property.offerdetails }}
-                <span class="blink-star">★</span>
-              </marquee>
-            </div>
-            <!-- <marquee behavior="" direction="left">
-              <small>{{ property.offerdetails }}</small>
-            </marquee> -->
-          }
-          <div class="top-section">
-            <h3>
-              {{ property.title }}
-            </h3>
-
-            <h2 class="price">₹ {{ property.price | number }}</h2>
-          </div>
-
-          <!-- LOCATION -->
-          <p class="location">
-            📍
-            {{ property.location.area }},
-            {{ property.location.city }}
-          </p>
-
-          <!-- DETAILS -->
-          <div class="details">
-            <div>🛏 {{ property.details.bedrooms }}</div>
-            <div>🛁 {{ property.details.bathrooms }}</div>
-            <div>📐 {{ property.details.area }} sqft</div>
-          </div>
-
-          <!-- EXTRA -->
-          <div class="extra-details">
-            <span>
-              {{ property.propertyType }}
-            </span>
-
-            <!-- <span>
-            {{ property.details.furnishing }}
-          </span> -->
-          </div>
-
-          <!-- FOOTER -->
-          <div class="footer">
-            <div class="owner">
-              <h4>
-                {{ property.contact.name }}
-              </h4>
-
-              <p>
-                {{ property.contact.phone }}
-              </p>
-            </div>
-            @if (userId != property.clientid) {
-              <button class="view-btn1" [routerLink]="['/query', property.id]">
-                {{ 'Send Query' | T }}
-              </button>
-            }
-            <button class="view-btn" [routerLink]="['/property', property.id]">
-              {{ 'View' | T }}
-            </button>
-          </div>
-        </div>
+  <section class="surface-panel map-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">{{ 'Map preview' | T }}</span>
+        <h2>{{ 'Nearby properties' | T }}</h2>
       </div>
+
+      <span class="panel-chip">{{ filteredProperties.length }} {{ 'live' | T }}</span>
+    </div>
+
+    <div class="map-container">
+      <google-map
+        class="property-map"
+         height="500px"
+         width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        [options]="mapOptions"
+      >
+        @for (property of filteredProperties; track property.id) {
+          @if (hasMapCoordinates(property)) {
+          <map-marker
+            [position]="{
+              lat: property.location.geoLocation.coordinates[1],
+              lng: property.location.geoLocation.coordinates[0],
+            }"
+            (mapClick)="openInfo(marker, property)"
+            #marker="mapMarker"
+          ></map-marker>
+          }
+        }
+
+        <map-info-window>
+          @if (selectedProperty) {
+            <div class="marker-preview">
+              <img [src]="selectedProperty.images?.[0]?.url" alt="property" />
+
+              <div class="marker-content">
+                <h4>₹{{ selectedProperty.price | number }}</h4>
+                <p>{{ selectedProperty.title }}</p>
+                <p>{{ selectedProperty.location.area }}</p>
+              </div>
+            </div>
+          }
+        </map-info-window>
+      </google-map>
+    </div>
+  </section>
+
+  @if (showFilters) {
+  <section class="surface-panel filter-panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">{{ 'Browse filters' | T }}</span>
+        <h2>{{ 'Refine the feed' | T }}</h2>
+      </div>
+    </div>
+
+    <div class="filter-grid">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>{{ 'Search properties' | T }}</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Search properties..."
+          [formControl]="searchControl"
+        />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ 'Property Type' | T }}</mat-label>
+        <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
+          <mat-option value="">{{ 'All Properties' | T }}</mat-option>
+          <mat-option value="apartment">{{ 'Apartment' | T }}</mat-option>
+          <mat-option value="villa">{{ 'Villa' | T }}</mat-option>
+          <mat-option value="house">{{ 'House' | T }}</mat-option>
+          <mat-option value="plot">{{ 'Plot/Land' | T }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ 'Budget' | T }}</mat-label>
+        <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
+          <mat-option value="">{{ 'Any Budget' | T }}</mat-option>
+          <mat-option value="10-50"> ₹10{{ 'L' | T }} - ₹50{{ 'L' | T }} </mat-option>
+          <mat-option value="50-100"> ₹50{{ 'L' | T }} - ₹1{{ 'Cr' | T }} </mat-option>
+          <mat-option value="100+"> ₹1{{ 'Cr' | T }}+ </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>{{ 'Location' | T }}</mat-label>
+        <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
+          <mat-option value="">{{ 'All Locations' | T }}</mat-option>
+
+          @for (city of cities; track city) {
+            <mat-option [value]="city">{{ city | T }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </section>
+  }
+
+  <section class="feed-heading">
+    <div>
+      <span class="panel-kicker">{{ 'Listings' | T }}</span>
+      <h2>{{ 'Available properties' | T }}</h2>
+      <p>{{ 'Stacked cards are easier to scan on mobile and feel closer to a native app feed.' | T }}</p>
+    </div>
+  </section>
+
+  @if (filteredProperties.length === 0) {
+    <section class="empty-state surface-panel">
+      <h3>{{ 'No listings found' | T }}</h3>
+      <p>{{ 'Try a different filter or clear your search to see more results.' | T }}</p>
+    </section>
+  } @else {
+    <div class="property-feed">
+      @for (property of filteredProperties; track property.id) {
+        <article class="property-card">
+          <div class="image-container">
+            @if (getMainImage(property.images)) {
+              <img [src]="getMainImage(property.images)" alt="property" />
+            } @else {
+              <div class="no-image">{{ 'No Image' | T }}</div>
+            }
+
+            <span class="badge">{{ property.status | T }}</span>
+
+            <button class="wishlist" type="button">❤</button>
+          </div>
+
+          <div class="card-content">
+            @if (property.isOffer) {
+              <div class="offer-banner">
+                <marquee scrollamount="2" direction="left">
+                  <span class="blink-star">★</span>
+                  {{ property.offerdetails }}
+                  <span class="blink-star">★</span>
+                </marquee>
+              </div>
+            }
+
+            <div class="card-head">
+              <div class="title-block">
+                <h3>{{ property.title }}</h3>
+                <p class="location">
+                  📍 {{ property.location.area }}, {{ property.location.city }}
+                </p>
+              </div>
+
+              <div class="price-block">
+                <span>{{ 'Price' | T }}</span>
+                <h2 class="price">₹ {{ property.price | number }}</h2>
+              </div>
+            </div>
+
+            <div class="detail-chips">
+              <span>🛏 {{ property.details.bedrooms }}</span>
+              <span>🛁 {{ property.details.bathrooms }}</span>
+              <span>📐 {{ property.details.area }} sqft</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-pill">{{ property.propertyType }}</span>
+              <span class="meta-pill muted">{{ property.contact.name }}</span>
+            </div>
+
+            <div class="footer-actions">
+              <div class="owner">
+                <p>{{ property.contact.phone }}</p>
+              </div>
+
+              <div class="action-row">
+                @if (userId != property.clientid) {
+                  <button class="view-btn1" [routerLink]="['/query', property.id]">
+                    {{ 'Send Query' | T }}
+                  </button>
+                }
+
+                <button class="view-btn" [routerLink]="['/property', property.id]">
+                  {{ 'View' | T }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <footer class="home-quick-footer surface-panel">
+    @for (link of quickLinks; track link.route) {
+      <a class="quick-link-box" [routerLink]="link.route">
+        <mat-icon>{{ link.icon }}</mat-icon>
+        <span>{{ link.label | T }}</span>
+      </a>
     }
-  </div>
+  </footer>
 </div>

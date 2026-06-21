@@ -1,70 +1,72 @@
-<div class="property-grid">
-  <div
-    class="property-card"
-    *ngFor="let property of properties"
-    [class.sold-out-card]="property.availability === 'sold-out'"
-  >
-    <!-- Image Section -->
-    <div class="image-wrapper">
-      <img
-        [src]="property.images?.[0]?.url || 'images/realtors.png'"
-        alt="property"
-        class="property-image"
-      />
-      <div class="sold-overlay" *ngIf="property.availability === 'sold-out'">
-        <img src="images/soldout.jpg" alt="Sold Out" />
-      </div>
-      <span class="status-badge sale">
-        {{ property.status | T}}
-      </span>
-      <span
-        class="active-badge"
-        [ngClass]="{
-          active: property.isActive,
-          inactive: !property.isActive,
-        }"
-      >
-        {{ property.isActive ? 'Active' : 'Inactive' }}
-      </span>
-    </div>
-    <!-- Content -->
-    <div class="property-content">
-      <div class="title-section">
-        <h3>{{ property.title }}</h3>
-        <p>{{ property.propertyType }}</p>
-      </div>
-      <!-- Price -->
-      <div class="price">₹ {{ property.price | number }}</div>
-      <!-- Location -->
-      <div class="location">
-        📍 {{ property.location?.city }},
-        {{ property.location?.address }}
-      </div>
-      <!-- Description -->
-      <p class="description">
-        {{ property.description }}
-      </p>
-      <!-- Details -->
-      <div class="details">
-        <div class="detail-item">🛏 {{ property.details?.bedrooms }} Beds</div>
-        <div class="detail-item">🚿 {{ property.details?.bathrooms }} Baths</div>
-        <div class="detail-item">📐 {{ property.details?.area }} sqft</div>
-      </div>
+<div class="my-postings-page">
+  <section class="page-hero">
+    <span class="eyebrow">{{ 'My postings' | T }}</span>
+    <h2>{{ 'A compact management feed for mobile' | T }}</h2>
+    <p>{{ 'Each post is shown as a tap-friendly row with the essential status, price, and action buttons up front.' | T }}</p>
+  </section>
 
-      <!-- Actions -->
-      <div class="actions">
-        <button
-          class="btn edit-btn"
-          (click)="edit(property)"
-          [disabled]="property.availability === 'sold-out'"
-        >
-          {{'Edit'|T}}
-        </button>
-        <button class="btn sold-btn" (click)="availability(property.id)">
-          {{ property.availability | T}}
-        </button>
-        <button class="btn delete-btn" (click)="delete(property.id)">{{'Delete'|T}}</button>
-      </div>
-    </div>
+  <div class="property-list">
+    @for (property of properties; track property.id) {
+      <article class="property-card" [class.sold-out-card]="property.availability === 'sold-out'">
+        <div class="image-wrapper">
+          <img
+            [src]="property.images?.[0]?.url || 'images/realtors.png'"
+            alt="property"
+            class="property-image"
+          />
+
+          @if (property.availability === 'sold-out') {
+            <div class="sold-overlay">
+              <img src="images/soldout.jpg" alt="Sold Out" />
+            </div>
+          }
+
+          <span class="status-badge sale">{{ property.status | T}}</span>
+
+          <span
+            class="active-badge"
+            [class.active]="property.isActive"
+            [class.inactive]="!property.isActive"
+          >
+            {{ property.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <div class="property-content">
+          <div class="title-section">
+            <h3>{{ property.title }}</h3>
+            <p>{{ property.propertyType }}</p>
+          </div>
+
+          <div class="price">₹ {{ property.price | number }}</div>
+
+          <div class="location">📍 {{ property.location?.city }}, {{ property.location?.address }}</div>
+
+          <p class="description">{{ property.description }}</p>
+
+          <div class="details">
+            <div class="detail-item">🛏 {{ property.details?.bedrooms }} Beds</div>
+            <div class="detail-item">🚿 {{ property.details?.bathrooms }} Baths</div>
+            <div class="detail-item">📐 {{ property.details?.area }} sqft</div>
+          </div>
+
+          <div class="actions">
+            <button
+              class="btn edit-btn"
+              (click)="edit(property)"
+              [disabled]="property.availability === 'sold-out'"
+            >
+              {{'Edit'|T}}
+            </button>
+
+            <button class="btn sold-btn" (click)="availability(property.id)">
+              {{ property.availability | T}}
+            </button>
+
+            <button class="btn delete-btn" (click)="delete(property.id)">{{'Delete'|T}}</button>
+          </div>
+        </div>
+      </article>
+    }
   </div>
 </div>

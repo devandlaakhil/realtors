@@ -1,0 +1,16 @@
+:host {
+	display: block;
+	min-height: 100dvh;
+}
+
+.app-shell {
+	position: relative;
+	min-height: 100dvh;
+}
+
+.app-content-shell {
+	position: relative;
+	width: min(100%, 1120px);
+	margin: 0 auto;
+	padding: 0;
+}

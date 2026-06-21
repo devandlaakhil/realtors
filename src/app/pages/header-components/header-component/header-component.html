@@ -54,7 +54,7 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-dropdown" *ngIf="isMobileMenuOpen">
-  <div class="lang-toggle" [class.telugu]="selectedLang === 'te'" (click)="toggleLanguage()">
+  <div class="lang-toggle" [class.telugu]="selectedLang === 'te'" (click)="$event.stopPropagation(); toggleLanguage()">
     <div class="slider"></div>
     <span class="label left">ENG</span>
     <span class="label right">తెలుగు</span>
@@ -100,7 +100,7 @@
 
   <mat-divider></mat-divider>
 
-  <div class="lang-toggle" [class.telugu]="selectedLang === 'te'" (click)="toggleLanguage()">
+  <div class="lang-toggle" [class.telugu]="selectedLang === 'te'" (click)="$event.stopPropagation(); toggleLanguage()">
     <div class="slider"></div>
     <span class="label left">ENG</span>
     <span class="label right">తెలుగు</span>

@@ -12,6 +12,8 @@ import {
 } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
+import { PermissionsServices } from '../../../shared-services/permissions.services';
+import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 
 @Component({
   selector: 'app-map-component',
@@ -20,15 +22,16 @@ import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
   styleUrl: './map-component.css',
 })
 export class MapComponent implements OnInit {
-  selectedLocation: any = { lat: '', lng: '' };
-  zoom: number = 0;
+  selectedLocation: google.maps.LatLngLiteral | null = null;
+  defaultCenter: google.maps.LatLngLiteral = CITY_COORDINATES['Hyderabad'];
+  zoom: number = 13;
   onDataChange = Output();
   cdr = inject(ChangeDetectorRef);
   selectedItem: any = null;
   markers: any[] = [];
 
   @Input() data: any[] = [];
-  @Input() center: any;
+  @Input() center?: google.maps.LatLngLiteral;
   // @Input() selectedItem: any;
   @Input() dragble: boolean = true;
   @Input() showMap: boolean = false;
@@ -41,7 +44,10 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap)
   map!: GoogleMap;
 
+  private permissionSrv = inject(PermissionsServices);
+
   ngOnInit(): void {
+    this.permissionSrv.requestLocationPermission();
     this.getCurrentLocation();
   }
 
@@ -83,6 +89,7 @@ export class MapComponent implements OnInit {
         const lng = position.coords.longitude;
 
         this.center = { lat, lng };
+        this.zoom = 15;
 
         this.selectedLocation = {
           lat,

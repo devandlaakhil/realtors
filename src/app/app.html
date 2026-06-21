@@ -1,5 +1,11 @@
-<app-header-component></app-header-component>
-<main class="main-content-wrapper">
-    <app-loader-component></app-loader-component>
-    <router-outlet></router-outlet>
-</main>
+<div class="app-shell">
+    <app-header-component></app-header-component>
+
+    <main class="main-content-wrapper">
+        <app-loader-component></app-loader-component>
+
+        <section class="app-content-shell">
+            <router-outlet></router-outlet>
+        </section>
+    </main>
+</div>
