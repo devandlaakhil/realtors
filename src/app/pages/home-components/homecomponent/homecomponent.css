@@ -439,8 +439,8 @@
     z-index: 1001;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 10px;
-    padding: 10px;
+    gap: 5px;
+    padding: 5px;
 }
 
 .quick-link-box {
