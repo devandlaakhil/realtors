@@ -61,6 +61,7 @@ export class Homecomponent implements OnInit {
     { label: 'Profile', icon: 'person', route: '/profile' },
     { label: 'Post Property', icon: 'add_home', route: '/ad-post' },
     { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts' },
+     { label: 'Filters', icon: 'filter_list', action: 'filters' },
   ];
 
   selectedProperty: any;
@@ -79,6 +80,10 @@ export class Homecomponent implements OnInit {
     mapTypeControl: false,
     fullscreenControl: false,
   };
+
+  closeFilters() {
+  this.showFilters = false;
+}
 
   getAllProperites(lat?: number, lng?: number): void {
     this.loaderService.show();

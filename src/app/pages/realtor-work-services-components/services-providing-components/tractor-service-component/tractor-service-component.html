@@ -21,7 +21,7 @@
 
     <div class="content-layout">
       <div class="map-panel">
-        <div class="map-title">Nearby Tractors</div>
+        <div class="map-title" *ngIf="!sheetExpanded">Nearby Tractors</div>
         <google-map [center]="center" [zoom]="15" width="100%" height="100%">
           <map-marker
             *ngFor="let tractor of tractors"

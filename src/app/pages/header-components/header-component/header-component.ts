@@ -60,7 +60,7 @@ export class HeaderComponent {
 
   toggleLanguage() {
     this.selectedLang = this.selectedLang === 'en' ? 'te' : 'en';
-    this.languageSrv.loadLanguage(this.selectedLang)
+    this.languageSrv.loadLanguage(this.selectedLang);
   }
 
   getuser() {

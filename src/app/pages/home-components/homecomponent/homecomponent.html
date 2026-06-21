@@ -4,7 +4,10 @@
       <span class="section-kicker">{{ 'Live property feed' | T }}</span>
       <h1>{{ 'Find properties near you' | T }}</h1>
       <p>
-        {{ 'A mobile-first browsing layout built for quick swipes, tap actions, and compact decision making.' | T }}
+        {{
+          'A mobile-first browsing layout built for quick swipes, tap actions, and compact decision making.'
+            | T
+        }}
       </p>
     </div>
 
@@ -20,11 +23,102 @@
       </div>
     </div>
 
-    <button class="filter-toggle" type="button" (click)="toggleFilters()">
+    <!-- <button class="filter-toggle" type="button" (click)="toggleFilters()">
       <mat-icon>filter_list</mat-icon>
       <span>{{ 'Filters' | T }}</span>
-    </button>
+    </button> -->
   </section>
+
+  @if (showFilters) {
+    <div class="filter-overlay" (click)="closeFilters()">
+      <section class="surface-panel filter-sheet" (click)="$event.stopPropagation()">
+        <div class="sheet-header">
+          <h3>{{ 'Filters' | T }}</h3>
+
+          <button mat-icon-button type="button" (click)="closeFilters()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="panel-heading">
+          <div>
+            <span class="panel-kicker">{{ 'Browse filters' | T }}</span>
+            <h2>{{ 'Refine the feed' | T }}</h2>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>{{ 'Search properties' | T }}</mat-label>
+            <input
+              matInput
+              type="text"
+              placeholder="Search properties..."
+              [formControl]="searchControl"
+            />
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>{{ 'Property Type' | T }}</mat-label>
+            <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
+              <mat-option value="">
+                {{ 'All Properties' | T }}
+              </mat-option>
+              <mat-option value="apartment">
+                {{ 'Apartment' | T }}
+              </mat-option>
+              <mat-option value="villa">
+                {{ 'Villa' | T }}
+              </mat-option>
+              <mat-option value="house">
+                {{ 'House' | T }}
+              </mat-option>
+              <mat-option value="plot">
+                {{ 'Plot/Land' | T }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>{{ 'Budget' | T }}</mat-label>
+            <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
+              <mat-option value="">
+                {{ 'Any Budget' | T }}
+              </mat-option>
+              <mat-option value="10-50"> ₹10L - ₹50L </mat-option>
+              <mat-option value="50-100"> ₹50L - ₹1Cr </mat-option>
+              <mat-option value="100+"> ₹1Cr+ </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>{{ 'Location' | T }}</mat-label>
+            <mat-select
+              (selectionChange)="onLocationChange($event.value)"
+              [disabled]="searchEntered"
+            >
+              <mat-option value="">
+                {{ 'All Locations' | T }}
+              </mat-option>
+
+              @for (city of cities; track city) {
+                <mat-option [value]="city">
+                  {{ city | T }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="sheet-actions">
+          <button mat-stroked-button (click)="closeFilters()">Cancel</button>
+
+          <!-- <button mat-raised-button color="primary">Apply Filters</button> -->
+        </div>
+      </section>
+    </div>
+  }
 
   <section class="surface-panel map-panel">
     <div class="panel-heading">
@@ -39,22 +133,22 @@
     <div class="map-container">
       <google-map
         class="property-map"
-         height="500px"
-         width="100%"
+        height="500px"
+        width="100%"
         [center]="center"
         [zoom]="zoom"
         [options]="mapOptions"
       >
         @for (property of filteredProperties; track property.id) {
           @if (hasMapCoordinates(property)) {
-          <map-marker
-            [position]="{
-              lat: property.location.geoLocation.coordinates[1],
-              lng: property.location.geoLocation.coordinates[0],
-            }"
-            (mapClick)="openInfo(marker, property)"
-            #marker="mapMarker"
-          ></map-marker>
+            <map-marker
+              [position]="{
+                lat: property.location.geoLocation.coordinates[1],
+                lng: property.location.geoLocation.coordinates[0],
+              }"
+              (mapClick)="openInfo(marker, property)"
+              #marker="mapMarker"
+            ></map-marker>
           }
         }
 
@@ -75,67 +169,13 @@
     </div>
   </section>
 
-  @if (showFilters) {
-  <section class="surface-panel filter-panel">
-    <div class="panel-heading">
-      <div>
-        <span class="panel-kicker">{{ 'Browse filters' | T }}</span>
-        <h2>{{ 'Refine the feed' | T }}</h2>
-      </div>
-    </div>
-
-    <div class="filter-grid">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>{{ 'Search properties' | T }}</mat-label>
-        <input
-          matInput
-          type="text"
-          placeholder="Search properties..."
-          [formControl]="searchControl"
-        />
-        <mat-icon matPrefix>search</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>{{ 'Property Type' | T }}</mat-label>
-        <mat-select (selectionChange)="onTypeChange($event.value)" [disabled]="searchEntered">
-          <mat-option value="">{{ 'All Properties' | T }}</mat-option>
-          <mat-option value="apartment">{{ 'Apartment' | T }}</mat-option>
-          <mat-option value="villa">{{ 'Villa' | T }}</mat-option>
-          <mat-option value="house">{{ 'House' | T }}</mat-option>
-          <mat-option value="plot">{{ 'Plot/Land' | T }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>{{ 'Budget' | T }}</mat-label>
-        <mat-select (selectionChange)="onBudgetChange($event.value)" [disabled]="searchEntered">
-          <mat-option value="">{{ 'Any Budget' | T }}</mat-option>
-          <mat-option value="10-50"> ₹10{{ 'L' | T }} - ₹50{{ 'L' | T }} </mat-option>
-          <mat-option value="50-100"> ₹50{{ 'L' | T }} - ₹1{{ 'Cr' | T }} </mat-option>
-          <mat-option value="100+"> ₹1{{ 'Cr' | T }}+ </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>{{ 'Location' | T }}</mat-label>
-        <mat-select (selectionChange)="onLocationChange($event.value)" [disabled]="searchEntered">
-          <mat-option value="">{{ 'All Locations' | T }}</mat-option>
-
-          @for (city of cities; track city) {
-            <mat-option [value]="city">{{ city | T }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-  </section>
-  }
-
   <section class="feed-heading">
     <div>
       <span class="panel-kicker">{{ 'Listings' | T }}</span>
       <h2>{{ 'Available properties' | T }}</h2>
-      <p>{{ 'Stacked cards are easier to scan on mobile and feel closer to a native app feed.' | T }}</p>
+      <p>
+        {{ 'Stacked cards are easier to scan on mobile and feel closer to a native app feed.' | T }}
+      </p>
     </div>
   </section>
 
@@ -220,11 +260,18 @@
   }
 
   <footer class="home-quick-footer surface-panel">
-    @for (link of quickLinks; track link.route) {
-      <a class="quick-link-box" [routerLink]="link.route">
-        <mat-icon>{{ link.icon }}</mat-icon>
-        <span>{{ link.label | T }}</span>
-      </a>
+    @for (link of quickLinks; track link.label) {
+      @if (link.action === 'filters') {
+        <button class="quick-link-box" type="button" (click)="toggleFilters()">
+          <mat-icon>{{ link.icon }}</mat-icon>
+          <span>{{ link.label | T }}</span>
+        </button>
+      } @else {
+        <a class="quick-link-box" [routerLink]="link.route">
+          <mat-icon>{{ link.icon }}</mat-icon>
+          <span>{{ link.label | T }}</span>
+        </a>
+      }
     }
   </footer>
 </div>
