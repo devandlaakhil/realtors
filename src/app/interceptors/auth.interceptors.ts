@@ -4,11 +4,13 @@ import { throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { AuthService } from '../auth-services/auth-services';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
   const router = inject(Router);
+  const toastr = inject(ToastrService);
 
   let clonedReq = req;
 
@@ -26,6 +28,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         authService.logout();
         router.navigate(['/login']);
         // optionally redirect
+      }else if(error.status === 403){
+        toastr.warning("Please upgrade your plan to post your services");
+        router.navigate(['/subscription']);
       }
       return throwError(() => error);
     })

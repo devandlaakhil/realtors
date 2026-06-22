@@ -14,7 +14,7 @@ declare var Razorpay: any;
   templateUrl: './subscription-screen-component.html',
   styleUrl: './subscription-screen-component.css',
 })
-export class SubscriptionScreenComponent implements OnInit,OnDestroy {
+export class SubscriptionScreenComponent implements OnInit, OnDestroy {
   currentPlan = 'FREE';
   selectedPlan = '';
   selectedPlanName = 'No Plan Selected';
@@ -29,17 +29,17 @@ export class SubscriptionScreenComponent implements OnInit,OnDestroy {
   };
 
   ngOnInit(): void {
-     this.userApiSrv
-          .getUser()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (res) => {
-              this.user = res;
-            },
-            error: () => {
-              this.toastr.error('Something went wrong', 'Fail');
-            },
-          });
+    this.userApiSrv
+      .getUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.user = res;
+        },
+        error: () => {
+          this.toastr.error('Something went wrong', 'Fail');
+        },
+      });
   }
 
   selectPlan(plan: string): void {
@@ -65,8 +65,7 @@ export class SubscriptionScreenComponent implements OnInit,OnDestroy {
 
   buyPlan(): void {
     if (!this.selectedPlan) {
-      // alert('Please select a plan');
-      this.toastr.warning('Please select a plan','Warning');
+      this.toastr.warning('Please select a plan', 'Warning');
       return;
     }
 
@@ -77,57 +76,76 @@ export class SubscriptionScreenComponent implements OnInit,OnDestroy {
         next: (res: any) => {
           const options = {
             key: 'rzp_live_T4Ir9tXg8h5845',
+
             amount: res.order.amount,
+
             currency: res.order.currency,
+
             order_id: res.order.id,
+
             name: 'Realtor App',
+
             description: this.selectedPlan,
+
             prefill: {
-              name: this.user.name,
-              email: this.user.email,
-              contact: this.user.mobile,
+              name: this.user?.name || '',
+              email: this.user?.email || '',
+              contact: this.user?.mobile || '',
             },
+
             theme: {
               color: '#2563eb',
             },
+
+            modal: {
+              ondismiss: () => {
+                this.toastr.info('Payment cancelled');
+              },
+            },
+
             handler: (paymentResponse: any) => {
               const payload = {
                 razorpay_order_id: paymentResponse.razorpay_order_id,
+
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,
+
                 razorpay_signature: paymentResponse.razorpay_signature,
-                plan: this.selectedPlan,
               };
+
               this.subscriptionApiSrv
                 .verifyPayment(payload)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
-                  next: (res: any) => {
-                    //console.log(res);
-                    //alert('Subscription Activated Successfully');
-                    this.toastr.success('Subscription Activated Successfully')
+                  next: () => {
+                    this.toastr.success('Subscription Activated Successfully');
+
+                    // refresh subscription info if needed
                   },
+
                   error: (err) => {
                     console.error(err);
-                    //alert('Payment Verification Failed');
-                    this.toastr.error('Payment Verification Failed')
+
+                    this.toastr.error('Payment Verification Failed');
                   },
                 });
             },
           };
+
           const rzp = new Razorpay(options);
+
           rzp.on('payment.failed', (response: any) => {
-            // console.error('PAYMENT FAILED');
-            // console.error(response);
-            //alert('Payment Failed. Please try again.');
-            this.toastr.error('Payment Failed. Please try again.');
+            console.error('Payment Failed', response);
+
+            this.toastr.error(response.error?.description || 'Payment Failed');
           });
+
           rzp.open();
         },
+
         error: (err) => {
-          //console.error('Create Order Error');
           console.error(err);
-          //alert('Unable to create payment order.');
-          this.toastr.error('Unable to create payment order.')
+
+          this.toastr.error('Unable to create payment order');
         },
       });
   }

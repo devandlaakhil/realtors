@@ -378,7 +378,7 @@ export class WorkersServiceComponent implements OnInit {
           },
           error: () => {
             this.loaderService.hide();
-            this.toastr.error('Something went wrong', 'Fail');
+            //this.toastr.error('Something went wrong', 'Fail');
           },
         });
     }else{

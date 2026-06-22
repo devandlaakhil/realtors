@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserApiServices } from '../../../api-services/user-api-services';
@@ -9,7 +9,7 @@ import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 
 @Component({
   selector: 'app-user-profile-component',
-  imports: [CommonModule, FormsModule,TranslatePipe],
+  imports: [CommonModule, FormsModule,TranslatePipe,DatePipe],
   templateUrl: './user-profile-component.html',
   styleUrl: './user-profile-component.css',
 })
@@ -27,6 +27,7 @@ export class UserProfileComponent implements OnInit {
     name: '',
     email: '',
     mobile: '',
+    subscription : {plan:'',startDate:'',endDate:''},
     about: ''
   };
 

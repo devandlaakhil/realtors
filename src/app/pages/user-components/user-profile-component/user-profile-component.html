@@ -12,7 +12,7 @@
 
       <h2>{{this.user.name}}</h2>
 
-      <span class="profile-badge"> Premium Agent </span>
+      <span class="profile-badge"> {{user.subscription.plan}} </span>
 
       <!-- <p>Senior Property Consultant</p> -->
     </div>
@@ -162,9 +162,9 @@
     </div>
 
     <div class="subscription-box">
-      <h2>Premium Plan</h2>
+      <h2>{{user.subscription.plan}}</h2>
 
-      <p>Active until Dec 31, 2027</p>
+      <p>Active until {{user.subscription.endDate | date}}</p>
     </div>
   </div>
 </div>

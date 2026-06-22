@@ -396,7 +396,7 @@ export class TractorServiceComponent implements OnInit {
           },
           error: () => {
             this.loaderService.hide();
-            this.toastr.error('Failed to post your service');
+            //this.toastr.error('Failed to post your service');
           },
         });
     } else {

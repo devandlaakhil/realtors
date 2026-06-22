@@ -269,7 +269,7 @@ export class TransportationServiceComponent implements OnInit {
         },
         error: (err) => {
           this.loaderSrv.hide();
-          this.toastSrv.error('Failed to post service');
+          //this.toastSrv.error('Failed to post service');
         },
       });
     } else {
