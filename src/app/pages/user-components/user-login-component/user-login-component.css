@@ -1,54 +1,174 @@
-.login-box {
-  min-height: calc(100vh - var(--app-header-height));
-  display: flex;
-  align-items: center;
-  padding: 24px 16px;
-  background: var(--md-surface);
+.auth-page {
+  min-height: calc(100dvh - var(--app-header-height) - 40px);
+  display: grid;
+  place-items: center;
+  padding: 24px 12px;
+  background:
+    linear-gradient(135deg, rgba(26, 115, 232, 0.08), rgba(1, 135, 134, 0.08)),
+    var(--md-surface);
 }
 
-.login-box .card {
-  overflow: hidden;
+.auth-shell {
+  width: min(100%, 920px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(340px, 1fr);
+  background: #ffffff;
   border: 1px solid var(--md-outline-variant);
-  border-radius: var(--app-radius-md);
-  box-shadow: var(--elevation-2) !important;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(32, 33, 36, 0.12);
 }
 
-.login-box .card-header,
-.login-card-header {
-  background: var(--md-primary) !important;
-  color: var(--md-on-primary);
-  font-size: 1.375rem;
-  font-weight: 500;
+.auth-visual {
+  min-height: 520px;
+  padding: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background:
+    linear-gradient(180deg, rgba(4, 30, 73, 0.08), rgba(4, 30, 73, 0.82)),
+    url('/images/banner.png') center/cover;
+  color: #ffffff;
 }
 
-.login-box .card-body {
-  padding: 24px 20px 12px;
-  background: var(--md-surface-container);
+.auth-visual img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  margin-bottom: auto;
 }
 
-.login-box button[mat-flat-button] {
-  width: 100%;
-  border-radius: 20px;
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-  min-height: var(--touch-target);
-  font-weight: 500;
-  box-shadow: var(--elevation-1);
+.auth-visual h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.08;
 }
 
-.login-box a {
+.auth-visual p {
+  margin: 0;
+  max-width: 360px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+}
+
+.auth-panel {
+  padding: 48px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-header {
+  margin-bottom: 28px;
+}
+
+.auth-header span {
+  display: block;
+  margin-bottom: 8px;
   color: var(--md-primary);
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.auth-header h2 {
+  margin: 0;
+  color: var(--md-on-surface);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: block;
+}
+
+:host ::ng-deep .mat-mdc-form-field-icon-prefix {
+  padding-right: 10px;
+  color: var(--md-on-surface-variant);
+}
+
+.visibility-btn {
+  color: var(--md-on-surface-variant);
+}
+
+.submit-btn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+  background: var(--md-primary) !important;
+  color: var(--md-on-primary) !important;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.auth-switch {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+  color: var(--md-on-surface-variant);
+  font-size: 14px;
+}
+
+.auth-switch a {
+  color: var(--md-primary);
+  font-weight: 800;
   text-decoration: none;
 }
 
-@media (max-width: 576px) {
-  .login-box {
-    align-items: flex-start;
-    padding-top: 16px;
+@media (max-width: 820px) {
+  .auth-page {
+    align-items: start;
+    padding: 8px 0 18px;
   }
 
-  .login-box .card {
-    border-radius: var(--app-radius-md);
+  .auth-shell {
+    grid-template-columns: 1fr;
+    border-radius: 18px;
+  }
+
+  .auth-visual {
+    min-height: 190px;
+    padding: 24px;
+  }
+
+  .auth-visual img {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 40px;
+  }
+
+  .auth-visual h1 {
+    font-size: 26px;
+  }
+
+  .auth-panel {
+    padding: 28px 20px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-shell {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .auth-switch {
+    flex-direction: column;
+    align-items: center;
   }
 }

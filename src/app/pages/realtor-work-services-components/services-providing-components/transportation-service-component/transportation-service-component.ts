@@ -408,7 +408,7 @@ export class TransportationServiceComponent implements OnInit {
 
     const height = parseFloat(this.sheetHeight) || 60;
     if (height >= 85) {
-      this.sheetHeight = '100vh';
+      this.sheetHeight = '100%';
       this.sheetExpanded = true;
     } else {
       this.sheetHeight = '60vh';
@@ -418,7 +418,7 @@ export class TransportationServiceComponent implements OnInit {
 
   toggleSheet(): void {
     this.sheetExpanded = !this.sheetExpanded;
-    this.sheetHeight = this.sheetExpanded ? '100vh' : '60vh';
+    this.sheetHeight = this.sheetExpanded ? '100%' : '60vh';
   }
 
   private getClientY(event: any): number {

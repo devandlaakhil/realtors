@@ -21,6 +21,13 @@
 .left-section {
   display: flex;
   align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.back-btn {
+  color: var(--md-on-primary);
+  flex: 0 0 auto;
 }
 
 .logo {
@@ -182,6 +189,10 @@
 
   .brand {
     font-size: 18px;
+  }
+
+  .left-section {
+    max-width: calc(100% - 56px);
   }
 
   .logo img {

@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDivider } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../auth-services/auth-services';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
 import { UserApiServices } from '../../../api-services/user-api-services';
@@ -13,6 +13,7 @@ import { CommonServices } from '../../../shared-services/common-services';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageServices } from '../../../shared-services/language-services';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-header-component',
@@ -33,6 +34,7 @@ import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 export class HeaderComponent {
   username = signal<string>('');
   router = inject(Router);
+  location = inject(Location);
   authService = inject(AuthService);
   userId = signal<string>('');
   isLoggedIn: boolean = false;
@@ -47,8 +49,15 @@ export class HeaderComponent {
   commonSrv = inject(CommonServices);
   languageSrv = inject(LanguageServices);
   selectedLang = this.languageSrv.currentLanguage;
+  showBackButton = false;
 
   ngOnInit(): void {
+    this.showBackButton = this.router.url !== '/';
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+      this.showBackButton = this.router.url !== '/';
+      this.closeMobileMenu();
+    });
+
     this.dashBoardService.loginStatus$.subscribe((status) => {
       this.isLoggedIn = status;
       if (status) {
@@ -123,6 +132,15 @@ export class HeaderComponent {
   }
 
   backToHome() {
+    this.router.navigate(['/']);
+  }
+
+  goBack() {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
     this.router.navigate(['/']);
   }
 }

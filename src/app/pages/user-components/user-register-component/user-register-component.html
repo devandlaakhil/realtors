@@ -1,44 +1,98 @@
-<div class="registration-page">
-    <div class="register-card">
-        <div class="card-header-premium">{{'Register'|T}}</div>
-        
-        <div class="card-body">
-            <form [formGroup]="registerForm" class="form-container">
-                
-                <mat-form-field appearance="outline">
-                    <mat-label>{{'Username'|T}}</mat-label>
-                    <input matInput formControlName="name">
-                    <mat-error>
-                        @if(registerForm.controls.name.errors?.required){ <span>{{'Required'|T}}</span> }
-                        @if(registerForm.controls.name.errors?.pattern){ <span>{{'No special characters'|T}}</span> }
-                    </mat-error>
-                </mat-form-field>
+<section class="auth-page">
+  <div class="auth-shell">
+    <aside class="auth-visual">
+      <img src="/images/realtors.png" alt="Realtors" />
+      <h1>{{ 'Create your account' | T }}</h1>
+      <p>{{ 'Post properties, manage services, and connect with nearby customers faster.' | T }}</p>
+    </aside>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>{{'Email'|T}}</mat-label>
-                    <input matInput formControlName="email">
-                    <mat-error>
-                        @if(registerForm.controls.email.errors?.required){ <span>{{'Required'|T}}</span> }
-                        @if(registerForm.controls.email.errors?.email){ <span>{{'Invalid Email'|T}}</span> }
-                    </mat-error>
-                </mat-form-field>
+    <div class="auth-panel">
+      <div class="auth-header">
+        <span>{{ 'Join Realtors' | T }}</span>
+        <h2>{{ 'Register' | T }}</h2>
+      </div>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>{{'Mobile'|T}}</mat-label>
-                    <input matInput formControlName="mobile">
-                    <mat-error><span>{{'Mobile is required'|T}}</span></mat-error>
-                </mat-form-field>
+      <form [formGroup]="registerForm" class="auth-form" (ngSubmit)="onRegister()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Username' | T }}</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="name" autocomplete="name" />
+          <mat-error>
+            @if (registerForm.controls.name.touched && registerForm.controls.name.errors?.required) {
+              <span>{{ 'Name is required' | T }}</span>
+            }
+            @if (registerForm.controls.name.touched && registerForm.controls.name.errors?.pattern) {
+              <span>{{ 'Use letters, numbers, and spaces only' | T }}</span>
+            }
+          </mat-error>
+        </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>{{'Password'|T}}</mat-label>
-                    <input matInput type="password" formControlName="password">
-                    <mat-error><span>{{'Password is required'|T}}</span></mat-error>
-                </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Email' | T }}</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input matInput formControlName="email" autocomplete="email" />
+          <mat-error>
+            @if (registerForm.controls.email.touched && registerForm.controls.email.errors?.required) {
+              <span>{{ 'Email is required' | T }}</span>
+            }
+            @if (registerForm.controls.email.touched && registerForm.controls.email.errors?.email) {
+              <span>{{ 'Enter a valid email address' | T }}</span>
+            }
+          </mat-error>
+        </mat-form-field>
 
-                <button mat-flat-button class="submit-btn" (click)="onRegister()">
-                    {{'REGISTER'|T}}
-                </button>
-            </form>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Mobile' | T }}</mat-label>
+          <mat-icon matPrefix>call</mat-icon>
+          <input matInput formControlName="mobile" inputmode="numeric" autocomplete="tel" />
+          <mat-error>
+            @if (registerForm.controls.mobile.touched && registerForm.controls.mobile.errors?.required) {
+              <span>{{ 'Mobile number is required' | T }}</span>
+            }
+            @if (registerForm.controls.mobile.touched && registerForm.controls.mobile.errors?.pattern) {
+              <span>{{ 'Enter a valid 10 digit mobile number' | T }}</span>
+            }
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Password' | T }}</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="new-password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            class="visibility-btn"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+          >
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+          </button>
+          <mat-error>
+            @if (registerForm.controls.password.touched && registerForm.controls.password.errors?.required) {
+              <span>{{ 'Password is required' | T }}</span>
+            }
+            @if (registerForm.controls.password.touched && registerForm.controls.password.errors?.minlength) {
+              <span>{{ 'Password must be at least 5 characters' | T }}</span>
+            }
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-flat-button class="submit-btn" type="submit">
+          {{ 'Create account' | T }}
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        <span>{{ 'Already have an account?' | T }}</span>
+        <a routerLink="/login">{{ 'Login' | T }}</a>
+      </div>
     </div>
-</div>
+  </div>
+</section>

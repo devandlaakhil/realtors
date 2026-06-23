@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -17,6 +18,7 @@ import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
     RouterLink,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatButtonModule,
     ReactiveFormsModule,
     TranslatePipe],
@@ -32,6 +34,7 @@ export class UserLoginComponent implements OnInit {
   router = inject(Router);
   authService = inject(AuthService);
   dashboardService = inject(DashboardServices);
+  hidePassword = true;
 
    ngOnInit(): void {
     this.loginForm = this.formBuiler.group({
@@ -41,7 +44,11 @@ export class UserLoginComponent implements OnInit {
   }
 
    loginUser() {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.showToast('Please enter your email and password to continue.', 'Sign in needs attention', 'warning');
+      return;
+    }
 
     const formData = this.loginForm.value;
 
@@ -54,18 +61,23 @@ export class UserLoginComponent implements OnInit {
             email: res.data.user.email,
           });
           this.authService.logIn(res.data.token);
-          this.tostrService.success('Login Successful', 'Success');
+          this.showToast('Welcome back. Taking you to your dashboard.', 'Signed in', 'success');
           this.dashboardService.logIn();
           this.router.navigate(['/dashboard']);
         }
       },
       error: (err) => {
-        this.tostrService.error(err?.error?.message || 'Login failed', 'Fail');
+        this.showToast(err?.error?.message || 'We could not sign you in. Please check your details.', 'Sign in failed', 'error');
         this.loginForm.reset();
       },
     });
   }
   register() {
     this.router.navigate(['/register']);
+  }
+
+  private showToast(message: string, title: string, type: 'success' | 'error' | 'warning') {
+    this.tostrService.clear();
+    this.tostrService[type](message, title);
   }
 }

@@ -429,13 +429,15 @@ export class TractorServiceComponent implements OnInit {
     this.infoWindow.open(marker);
   }
 
-  toggleDetails(tractorId: number | string | null) {
+  toggleDetails(tractorId: number | string | null, event?: Event) {
+    event?.stopPropagation();
     this.expandedTractorId = this.expandedTractorId === tractorId ? null : tractorId;
   }
 
-  toggleSheet(): void {
+  toggleSheet(event?: Event): void {
+    event?.stopPropagation();
     this.sheetExpanded = !this.sheetExpanded;
-    this.sheetHeight = this.sheetExpanded ? '100vh' : '60vh';
+    this.sheetHeight = this.sheetExpanded ? '100%' : '60vh';
   }
 
   onDragStart(event: any): void {
@@ -469,7 +471,7 @@ export class TractorServiceComponent implements OnInit {
     this.isDragging = false;
     const height = parseFloat(this.sheetHeight) || 60;
     if (height >= 85) {
-      this.sheetHeight = '100vh';
+      this.sheetHeight = '100%';
       this.sheetExpanded = true;
     } else {
       this.sheetHeight = '60vh';

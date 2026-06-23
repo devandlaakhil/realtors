@@ -20,7 +20,14 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withHashLocation()),
-    provideToastr(),
+    provideToastr({
+      maxOpened: 1,
+      autoDismiss: true,
+      preventDuplicates: true,
+      closeButton: true,
+      progressBar: true,
+      timeOut: 3500,
+    }),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideTranslateService({
       loader: provideTranslateHttpLoader({

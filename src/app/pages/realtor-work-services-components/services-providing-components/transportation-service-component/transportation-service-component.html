@@ -172,7 +172,7 @@
       </button>
     </div>
 
-    <form [formGroup]="transportForm" (ngSubmit)="saveTransport()">
+    <form [formGroup]="transportForm" class="worker-form" (ngSubmit)="saveTransport()">
       <!-- Basic Details -->
       <mat-card>
         <h3>{{ 'Basic Details' | T }}</h3>
@@ -342,6 +342,10 @@
 
       <!-- Submit -->
       <div class="actions">
+        <button mat-stroked-button color="warn" type="button" (click)="closeVechile()">
+          {{ 'Cancel' | T }}
+        </button>
+
         <button mat-raised-button color="primary" type="submit">Post Transportation Service</button>
       </div>
     </form>

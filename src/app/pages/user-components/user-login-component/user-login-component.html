@@ -1,69 +1,68 @@
-<div class="container-fluid login-box">
-  <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 mx-auto px-2">
-    <div class="card p-0 login-card">
-      <div class="card-header login-card-header">
-        {{'Login'|T}}
+<section class="auth-page">
+  <div class="auth-shell">
+    <aside class="auth-visual">
+      <img src="/images/realtors.png" alt="Realtors" />
+      <h1>{{ 'Welcome back' | T }}</h1>
+      <p>{{ 'Manage properties, services, and nearby requests from one place.' | T }}</p>
+    </aside>
+
+    <div class="auth-panel">
+      <div class="auth-header">
+        <span>{{ 'Realtors account' | T }}</span>
+        <h2>{{ 'Login' | T }}</h2>
       </div>
-      <div class="card-body">
-        <form [formGroup]="loginForm">
-          <p>
-            <mat-form-field appearance="outline" style="width: 100%">
-              <mat-label>{{'Email'|T}} </mat-label>
-              <input matInput formControlName="email" />
-              <mat-error>
-                @if (loginForm.controls.email.touched &&
-                loginForm.controls.email.invalid) {
-                  @if (loginForm.controls.email.errors?.required) {
-                    <span>{{'Email is required'|T}}</span>
-                  }
-                }
-              </mat-error>
-            </mat-form-field>
-          </p>
 
-          <p>
-            <mat-form-field appearance="outline" style="width: 100%">
-              <mat-label>{{'Password'|T}} </mat-label>
+      <form [formGroup]="loginForm" class="auth-form" (ngSubmit)="loginUser()">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Email' | T }}</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input matInput formControlName="email" autocomplete="email" />
+          <mat-error>
+            @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+              @if (loginForm.controls.email.errors?.required) {
+                <span>{{ 'Email is required' | T }}</span>
+              }
+            }
+          </mat-error>
+        </mat-form-field>
 
-              <input
-                matInput
-                type="password"
-                formControlName="password"
-              />
-
-              <mat-error>
-                @if (loginForm.controls.password.touched &&
-                loginForm.controls.password.invalid) {
-
-                  @if (loginForm.controls.password.errors?.required) {
-                    <span>{{'Password is required'|T}}</span>
-                  }
-                }
-              </mat-error>
-            </mat-form-field>
-          </p>
-        </form>
-      </div>
-      <div class="row align-items-center px-2 pb-2">
-        <div class="col-12 col-md-4 text-center text-md-start mb-2">
-          <a
-            style="margin-left: 10px"
-            routerLink="/register"
-          >
-           {{'Register Here'|T}}
-          </a>
-        </div>
-
-        <div class="col-12 col-md-4 text-center mb-2">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'Password' | T }}</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            autocomplete="current-password"
+          />
           <button
-            mat-flat-button
-            (click)="loginUser()"
+            mat-icon-button
+            matSuffix
+            type="button"
+            class="visibility-btn"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
           >
-            {{'Login'|T}}
+            <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
           </button>
-        </div>
-        <div class="col-md-4 d-none d-md-block"></div>
+          <mat-error>
+            @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+              @if (loginForm.controls.password.errors?.required) {
+                <span>{{ 'Password is required' | T }}</span>
+              }
+            }
+          </mat-error>
+        </mat-form-field>
+
+        <button mat-flat-button class="submit-btn" type="submit">
+          {{ 'Login' | T }}
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        <span>{{ 'New to Realtors?' | T }}</span>
+        <a routerLink="/register">{{ 'Register Here' | T }}</a>
       </div>
     </div>
   </div>
-</div>
+</section>

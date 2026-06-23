@@ -1,70 +1,174 @@
-.registration-page {
-  padding: 24px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--md-surface);
-  min-height: calc(100vh - var(--app-header-height));
+.auth-page {
+  min-height: calc(100dvh - var(--app-header-height) - 40px);
+  display: grid;
+  place-items: center;
+  padding: 24px 12px;
+  background:
+    linear-gradient(135deg, rgba(26, 115, 232, 0.08), rgba(1, 135, 134, 0.08)),
+    var(--md-surface);
 }
 
-.register-card {
-  width: min(100%, 440px);
-  background: var(--md-surface-container);
-  border-radius: var(--app-radius-md);
-  box-shadow: var(--elevation-2);
+.auth-shell {
+  width: min(100%, 960px);
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(360px, 1fr);
+  background: #ffffff;
   border: 1px solid var(--md-outline-variant);
+  border-radius: 24px;
   overflow: hidden;
-  max-height: calc(100dvh - 96px);
-  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(32, 33, 36, 0.12);
 }
 
-.card-header-premium {
-  background: var(--md-primary);
-  color: var(--md-on-primary);
-  text-align: center;
-  padding: 20px 16px;
-  font-size: 1.375rem;
-  font-weight: 500;
-}
-
-.form-container {
+.auth-visual {
+  min-height: 560px;
+  padding: 42px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px;
+  justify-content: flex-end;
+  background:
+    linear-gradient(180deg, rgba(4, 30, 73, 0.08), rgba(4, 30, 73, 0.82)),
+    url('/images/banner.png') center/cover;
+  color: #ffffff;
+}
+
+.auth-visual img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  margin-bottom: auto;
+}
+
+.auth-visual h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.auth-visual p {
+  margin: 0;
+  max-width: 360px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 15px;
+}
+
+.auth-panel {
+  padding: 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-header {
+  margin-bottom: 24px;
+}
+
+.auth-header span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--md-primary);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.auth-header h2 {
+  margin: 0;
+  color: var(--md-on-surface);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.auth-form {
+  display: grid;
+  gap: 14px;
 }
 
 mat-form-field {
   width: 100%;
 }
 
-.submit-btn {
-  background: var(--md-primary) !important;
-  color: var(--md-on-primary) !important;
-  height: var(--touch-target);
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-top: 8px;
-  border-radius: 20px;
-  box-shadow: var(--elevation-1);
+:host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: block;
 }
 
-::v-deep .mat-mdc-form-field-subscript-wrapper {
-  font-size: 11px;
+:host ::ng-deep .mat-mdc-form-field-icon-prefix {
+  padding-right: 10px;
+  color: var(--md-on-surface-variant);
+}
+
+.visibility-btn {
+  color: var(--md-on-surface-variant);
+}
+
+.submit-btn {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 16px;
+  background: var(--md-primary) !important;
+  color: var(--md-on-primary) !important;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.auth-switch {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  color: var(--md-on-surface-variant);
+  font-size: 14px;
+}
+
+.auth-switch a {
+  color: var(--md-primary);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+@media (max-width: 860px) {
+  .auth-page {
+    align-items: start;
+    padding: 8px 0 18px;
+  }
+
+  .auth-shell {
+    grid-template-columns: 1fr;
+    border-radius: 18px;
+  }
+
+  .auth-visual {
+    min-height: 180px;
+    padding: 24px;
+  }
+
+  .auth-visual img {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 34px;
+  }
+
+  .auth-visual h1 {
+    font-size: 26px;
+  }
+
+  .auth-panel {
+    padding: 26px 20px 24px;
+  }
 }
 
 @media (max-width: 480px) {
-  .registration-page {
-    align-items: flex-start;
-    padding: 14px 12px 24px;
+  .auth-shell {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
   }
 
-  .register-card {
-    max-height: none;
-  }
-
-  .form-container {
-    gap: 10px;
-    padding: 16px;
+  .auth-switch {
+    flex-direction: column;
+    align-items: center;
   }
 }

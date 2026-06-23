@@ -50,8 +50,8 @@
                 <h3>Tractor Details</h3>
                 <p>{{ totalAvailTractors }} {{ 'services ready' | T }}</p>
               </div>
-              <button class="sheet-toggle" type="button" (click)="toggleSheet()">
-                {{ sheetExpanded ? 'Minimize' : 'Expand' }}
+              <button class="sheet-toggle" type="button" (click)="toggleSheet($event)">
+                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
               </button>
             </div>
 
@@ -65,7 +65,7 @@
                     <p>₹{{ tractor.price }}/hour</p>
                     <p>📍 {{ tractor.distance }}</p>
                     <div class="card-actions">
-                      <button class="primary-btn" type="button" (click)="toggleDetails(tractor.id)">{{ 'View Details' | T }}</button>
+                      <button class="primary-btn" type="button" (click)="toggleDetails(tractor.id, $event)">{{ 'View Details' | T }}</button>
                     </div>
                   </div>
                 </div>
@@ -120,7 +120,7 @@
 
                   <div class="expanded-actions">
                     <button class="primary-btn" type="button" (click)="phoneCall.call(tractor.mobile)">{{ 'Call Owner' | T }}</button>
-                    <button class="secondary-btn" type="button" (click)="toggleDetails(null)">{{ 'Close Details' | T }}</button>
+                    <button class="secondary-btn" type="button" (click)="toggleDetails(null, $event)">{{ 'Close Details' | T }}</button>
                   </div>
                 </div>
               </ng-container>

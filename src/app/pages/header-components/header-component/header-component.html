@@ -1,6 +1,12 @@
 <mat-toolbar class="app-header">
   <!-- LEFT -->
   <div class="left-section">
+    @if (showBackButton) {
+      <button mat-icon-button class="back-btn" type="button" (click)="goBack()" aria-label="Go back">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
+
     <div class="logo" (click)="backToHome()">
       <img src="images/realtors.png" alt="logo" />
       <span class="brand">Realtors</span>
