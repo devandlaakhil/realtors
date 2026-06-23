@@ -28,7 +28,10 @@ export class UserProfileComponent implements OnInit {
     email: '',
     mobile: '',
     subscription : {plan:'',startDate:'',endDate:''},
-    about: ''
+    about: '',
+    propertiesCount : 0,
+    servicesCount : 0,
+    lastChangedDays : 0,
   };
 
   passwordData = {

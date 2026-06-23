@@ -61,9 +61,9 @@ export class UserLoginComponent implements OnInit {
             email: res.data.user.email,
           });
           this.authService.logIn(res.data.token);
-          this.showToast('Welcome back. Taking you to your dashboard.', 'Signed in', 'success');
+          this.showToast('Welcome back. Taking you to your home.', 'Signed in', 'success');
           this.dashboardService.logIn();
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/']);
         }
       },
       error: (err) => {

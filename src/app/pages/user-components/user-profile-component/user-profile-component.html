@@ -12,7 +12,7 @@
 
       <h2>{{this.user.name}}</h2>
 
-      <span class="profile-badge"> {{user.subscription.plan}} </span>
+      <!-- <span class="profile-badge"> {{user.subscription.plan}} </span> -->
 
       <!-- <p>Senior Property Consultant</p> -->
     </div>
@@ -21,18 +21,18 @@
   <!-- STATS -->
   <div class="stats-grid">
     <div class="stat-card">
-      <h3>58</h3>
-      <p>Properties</p>
+      <h3>Properties Posted</h3>
+      <p class="profile-badge">{{user.propertiesCount}}</p>
     </div>
 
     <div class="stat-card">
-      <h3>124</h3>
-      <p>Leads</p>
+      <h3>Services Posted</h3>
+      <p class="profile-badge">{{user.servicesCount}}</p>
     </div>
 
     <div class="stat-card">
-      <h3>1.2K</h3>
-      <p>Profile Views</p>
+      <h3>Subscription Type</h3>
+      <p class="profile-badge">{{user.subscription.plan}}</p>
     </div>
   </div>
 
@@ -123,7 +123,7 @@
 
         <div>
           <h4>{{'Password Protected'|T}}</h4>
-          <p>Last changed 45 days ago</p>
+          <p>`Last changed {{user.lastChangedDays}} days ago`</p>
         </div>
       </div>
     </div>

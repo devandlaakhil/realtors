@@ -18,13 +18,20 @@ export class LanguageServices {
   }
 
   loadLanguage(lang: string) {
-    this.currentLanguage = lang;
-    localStorage.setItem('lang', lang);
     this.http
       .get(`assets/lang/${lang}.json`)
       .subscribe((data:any) => {
+        this.currentLanguage = lang;
+        localStorage.setItem('lang', lang);
         this.translations = data;
         this.languageChange$.next(lang);
+      }, () => {
+        if (lang === 'en') {
+          this.currentLanguage = 'en';
+          localStorage.setItem('lang', 'en');
+          this.translations = {};
+          this.languageChange$.next('en');
+        }
       });
   }
 

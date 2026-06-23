@@ -14,6 +14,7 @@ import { RealEstateApiService } from '../../../api-services/realestate-api-servi
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { CommonServices } from '../../../shared-services/common-services';
+import { LoaderServices } from '../../../shared-services/loader-services';
 import { take } from 'rxjs/operators';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
@@ -75,6 +76,7 @@ export class AdPostingServicesComponent implements OnInit {
   existingVideos: any[] = [];
   isPlotOrLand: boolean = false;
   commonSrv = inject(CommonServices);
+  loaderSrv = inject(LoaderServices);
   showOfferField: boolean = false;
   showMap: boolean = false;
   selectedLocation: any = { lat: '', lng: '' };
@@ -306,15 +308,18 @@ export class AdPostingServicesComponent implements OnInit {
 
     // EDIT MODE
     if (this.isEditMode) {
+      this.loaderSrv.show();
       this.realestateApiSrv
         .updatePosting(this.propertyId, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
+            this.loaderSrv.hide();
             this.toastr.success('Property updated successfully', 'Success');
             this.router.navigate(['/dashboard']);
           },
           error: () => {
+            this.loaderSrv.hide();
             this.toastr.error('Something went wrong', 'Fail');
           },
         });
@@ -323,16 +328,19 @@ export class AdPostingServicesComponent implements OnInit {
     }
 
     // CREATE MODE
+    this.loaderSrv.show();
     this.realestateApiSrv
       .savePosting(formData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
+          this.loaderSrv.hide();
           this.propertyForm.reset();
           this.toastr.success('Property posted successfully', 'Success');
           this.router.navigate(['/']);
         },
         error: (err) => {
+          this.loaderSrv.hide();
           console.log(err);
           this.toastr.error('Something went wrong', 'Fail');
         },

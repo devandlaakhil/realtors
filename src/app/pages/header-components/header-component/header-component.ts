@@ -57,6 +57,10 @@ export class HeaderComponent {
       this.showBackButton = this.router.url !== '/';
       this.closeMobileMenu();
     });
+    this.languageSrv.languageChange$.subscribe((lang) => {
+      this.selectedLang = lang;
+      this.cdr.detectChanges();
+    });
 
     this.dashBoardService.loginStatus$.subscribe((status) => {
       this.isLoggedIn = status;

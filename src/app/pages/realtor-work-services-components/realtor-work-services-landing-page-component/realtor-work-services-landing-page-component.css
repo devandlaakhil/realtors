@@ -11,6 +11,7 @@
   background: var(--md-surface-container);
   border: 1px solid var(--md-outline-variant);
   box-shadow: var(--elevation-1);
+  margin: 10px;
 }
 
 .hero-shell {
@@ -72,6 +73,7 @@
   gap: 12px;
   align-items: center;
   margin-bottom: 12px;
+  margin: 10px;
 }
 
 .section-head h2 {
@@ -102,6 +104,7 @@
   background: var(--md-surface-container);
   border: 1px solid var(--md-outline-variant);
   box-shadow: var(--elevation-1);
+  margin: 10px;
 }
 
 .service-card img {
@@ -189,6 +192,7 @@
 
 .footer-links {
   display: grid;
+  margin: 10px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
@@ -239,6 +243,7 @@
   .footer-links,
   .service-card {
     grid-template-columns: 1fr;
+    margin: 10px;
   }
 
   .footer-links {
