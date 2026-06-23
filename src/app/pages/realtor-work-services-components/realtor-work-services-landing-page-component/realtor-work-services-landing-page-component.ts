@@ -74,7 +74,7 @@ export class RealtorWorkServicesLandingPageComponent {
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.list, this.selectedLocation),
       workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getAll,this.selectedLocation),
       vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles,this.selectedLocation),
-      // cultivators: this.api.get('/cultivators'),
+
     }).subscribe({
       next: (res: any) => {
         this.serviceGroups = [
@@ -93,11 +93,11 @@ export class RealtorWorkServicesLandingPageComponent {
             icon: '🚛',
             items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x) ),
           },
-          // {
-          //   category: 'Cultivators',
-          //   icon: '🛠️',
-          //   items: res.cultivators.data,
-          // },
+
+
+
+
+
         ].filter((group) => group.items?.length);
         this.services = this.serviceGroups.flatMap((group) =>
           group.items.map((item: any) => mapToServiceCard(item, group.category)),
@@ -143,3 +143,4 @@ export class RealtorWorkServicesLandingPageComponent {
       .filter((x) => x.lat && x.lng);
   }
 }
+

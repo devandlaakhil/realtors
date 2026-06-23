@@ -2,10 +2,10 @@
 .about-wrapper {
   position: relative;
   overflow: hidden;
-  padding: 72px 24px;
-  background: #f8fafc; /* Clean, crisp slate-white background */
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  color: #334155; /* Soft dark text for high legibility */
+  padding: 24px 16px;
+  background: var(--md-surface);
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  color: var(--md-on-surface);
   min-height: 100vh;
 }
 

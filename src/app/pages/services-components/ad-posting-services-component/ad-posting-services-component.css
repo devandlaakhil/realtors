@@ -2,45 +2,16 @@
 
 .property-page {
   min-height: 100vh;
-  padding: 30px;
+  padding: 16px;
   position: relative;
-  background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.1) 0%, transparent 32%),
-    radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.1) 0%, transparent 30%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2ff 48%, #f8fafc 100%);
+  background: var(--md-surface);
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-.property-page::before {
-  content: '';
-
-  position: fixed;
-
-  width: 500px;
-  height: 500px;
-
-  top: -100px;
-  right: -100px;
-
-  border-radius: 50%;
-
-  background: rgba(37, 99, 235, 0.12);
-  filter: blur(120px);
-  z-index: 0;
-}
-
+.property-page::before,
 .property-page::after {
-  content: '';
-  position: fixed;
-  width: 400px;
-  height: 400px;
-  bottom: -100px;
-  left: -100px;
-  border-radius: 50%;
-  background: rgba(20, 184, 166, 0.12);
-  filter: blur(120px);
-  z-index: 0;
+  display: none;
 }
 
 .premium-form {
@@ -59,20 +30,19 @@
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 20px;
-  padding: 30px;
-  margin-bottom: 28px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
-  transition: 0.3s ease;
+  background: var(--md-surface-container);
+  border-radius: var(--app-radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid var(--md-outline-variant);
+  box-shadow: var(--elevation-1);
+  transition: box-shadow 0.15s ease;
   position: relative;
   overflow: hidden;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--elevation-2);
 }
 
 .card h2 {

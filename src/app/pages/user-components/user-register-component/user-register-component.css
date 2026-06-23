@@ -1,75 +1,70 @@
-/* Fix the header overlap and center the card */
 .registration-page {
-    padding: 24px 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background:
-        linear-gradient(135deg, rgba(54, 26, 116, 0.08), rgba(22, 163, 74, 0.08)),
-        #f4f7fe;
-    min-height: calc(100vh - 64px);
+  padding: 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--md-surface);
+  min-height: calc(100vh - var(--app-header-height));
 }
 
 .register-card {
-    width: min(100%, 440px);
-    background: white;
-    border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-    max-height: calc(100dvh - 96px);
-    overflow-y: auto;
+  width: min(100%, 440px);
+  background: var(--md-surface-container);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--elevation-2);
+  border: 1px solid var(--md-outline-variant);
+  overflow: hidden;
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
 }
 
 .card-header-premium {
-    background: linear-gradient(135deg, #361a74, #155e75);
-    color: white;
-    text-align: center;
-    padding: 16px;
-    font-size: 22px;
-    font-weight: 600;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  text-align: center;
+  padding: 20px 16px;
+  font-size: 1.375rem;
+  font-weight: 500;
 }
 
-/* The Secret Sauce: Flex gap ensures fields never overlap */
 .form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px; /* Uniform spacing */
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
 }
 
-/* Ensure Material fields take full width */
 mat-form-field {
-    width: 100%;
+  width: 100%;
 }
 
 .submit-btn {
-    background: linear-gradient(135deg, #361a74, #155e75) !important;
-    color: white !important;
-    height: 50px;
-    font-size: 16px;
-    font-weight: 500;
-    margin-top: 10px;
-    border-radius: 8px;
+  background: var(--md-primary) !important;
+  color: var(--md-on-primary) !important;
+  height: var(--touch-target);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 8px;
+  border-radius: 20px;
+  box-shadow: var(--elevation-1);
 }
 
-/* Fix for Material Error alignment */
 ::v-deep .mat-mdc-form-field-subscript-wrapper {
-    font-size: 11px;
+  font-size: 11px;
 }
 
 @media (max-width: 480px) {
-    .registration-page {
-        align-items: flex-start;
-        padding: 14px 10px 24px;
-    }
+  .registration-page {
+    align-items: flex-start;
+    padding: 14px 12px 24px;
+  }
 
-    .register-card {
-        max-height: none;
-        border-radius: 16px;
-    }
+  .register-card {
+    max-height: none;
+  }
 
-    .form-container {
-        gap: 10px;
-        padding: 16px;
-    }
+  .form-container {
+    gap: 10px;
+    padding: 16px;
+  }
 }

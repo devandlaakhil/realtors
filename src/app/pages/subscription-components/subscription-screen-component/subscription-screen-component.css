@@ -1,5 +1,5 @@
 .subscription-container {
-  background: #f5f7fb;
+  background: var(--md-surface);
   min-height: 100vh;
   padding: 16px;
   padding-bottom: 120px;
@@ -22,11 +22,12 @@
 }
 
 .current-plan {
-  background: white;
-  border-radius: 16px;
+  background: var(--md-surface-container);
+  border-radius: var(--app-radius-md);
   padding: 16px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  box-shadow: var(--elevation-1);
+  border: 1px solid var(--md-outline-variant);
 }
 
 .current-plan .title {
@@ -43,18 +44,18 @@
 
 .plan-card {
   position: relative;
-  background: white;
-  border-radius: 20px;
+  background: var(--md-surface-container);
+  border-radius: var(--app-radius-md);
   padding: 20px;
   margin-bottom: 16px;
   border: 2px solid transparent;
-  box-shadow: 0 4px 18px rgba(0,0,0,.08);
-  transition: all .25s ease;
+  box-shadow: var(--elevation-1);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .plan-card.selected {
-  border-color: #2563eb;
-  transform: scale(1.02);
+  border-color: var(--md-primary);
+  box-shadow: var(--elevation-2);
 }
 
 .plan-card h3 {

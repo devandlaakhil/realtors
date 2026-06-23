@@ -19,10 +19,8 @@ body {
 .details-page {
   width: 100%;
   min-height: 100vh;
-  padding: 22px;
-  background:
-    linear-gradient(180deg, #eef6ff 0, #f4f7fb 280px),
-    #f4f7fb;
+  padding: 16px;
+  background: var(--md-surface);
   overflow-x: hidden;
 }
 
