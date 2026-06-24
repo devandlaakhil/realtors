@@ -20,6 +20,7 @@
   gap: 16px;
   padding: 16px;
   background: var(--md-surface-container);
+  margin: 10px;
 }
 
 .section-kicker,
