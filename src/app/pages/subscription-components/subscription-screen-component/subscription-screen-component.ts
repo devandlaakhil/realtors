@@ -87,6 +87,34 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
 
             description: this.selectedPlan,
 
+            method: {
+              upi: true,
+              card: true,
+              netbanking: true,
+              wallet: true,
+              paylater: true,
+            },
+
+            config: {
+              display: {
+                blocks: {
+                  upi: {
+                    name: 'Pay using UPI',
+                    instruments: [
+                      {
+                        method: 'upi',
+                        flows: ['intent', 'collect', 'qr'],
+                      },
+                    ],
+                  },
+                },
+                sequence: ['block.upi'],
+                preferences: {
+                  show_default_blocks: true,
+                },
+              },
+            },
+
             prefill: {
               name: this.user?.name || '',
               email: this.user?.email || '',

@@ -75,6 +75,32 @@ export class PostAdvertisementComponent {
           order_id: res?.order?.id,
           name: 'Realtor App',
           description: 'Post Advertisement',
+          method: {
+            upi: true,
+            card: true,
+            netbanking: true,
+            wallet: true,
+            paylater: true,
+          },
+          config: {
+            display: {
+              blocks: {
+                upi: {
+                  name: 'Pay using UPI',
+                  instruments: [
+                    {
+                      method: 'upi',
+                      flows: ['intent', 'collect', 'qr'],
+                    },
+                  ],
+                },
+              },
+              sequence: ['block.upi'],
+              preferences: {
+                show_default_blocks: true,
+              },
+            },
+          },
           theme: { color: '#2563eb' },
           modal: {
             ondismiss: () => this.toastr.info('Payment cancelled'),
