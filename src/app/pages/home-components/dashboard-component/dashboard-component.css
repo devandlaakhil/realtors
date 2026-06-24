@@ -89,6 +89,8 @@
 .nav-item.active {
   background: var(--md-primary-container);
   color: var(--md-on-primary-container);
+  border: 1px solid color-mix(in srgb, var(--md-primary) 34%, transparent);
+  box-shadow: inset 4px 0 0 var(--md-primary);
 }
 
 .main-content {

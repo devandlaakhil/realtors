@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { LoaderServices } from '../../../shared-services/loader-services';
@@ -25,9 +25,12 @@ export class RealtorWorkServicesLandingPageComponent {
   realtorApiSrv = inject(RealtorsServicesApiServices);
   workerApiSrv = inject(WorkerApiServices);
   vehiclesApiSrv = inject(TransportApiService);
-  
+
   serviceGroups: any[] = [];
+  serviceCategoryCards: any[] = [];
   selectedLocation: any = { ...CITY_COORDINATES['Hyderabad'] };
+  selectedService: any = null;
+  popoverPosition: { left: number; top: number } | null = null;
   phoneCall = inject(MobileDialpadService);
   mapServices: any[] = [];
 
@@ -72,36 +75,37 @@ export class RealtorWorkServicesLandingPageComponent {
     this.loaderSrv.show();
     forkJoin({
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.list, this.selectedLocation),
-      workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getAll,this.selectedLocation),
-      vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles,this.selectedLocation),
-
+      workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getAll, this.selectedLocation),
+      vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles, this.selectedLocation),
     }).subscribe({
       next: (res: any) => {
         this.serviceGroups = [
           {
             category: 'Tractors',
-            icon: '🚜',
+            icon: '/images/tractor.png',
             items: (res.tractors?.data || []).map((x: any) => mapTractor(x)),
           },
           {
-            category: 'workers',
-            icon: '👷‍♂️',
+            category: 'Workers',
+            icon: '/images/worker.png',
             items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
           },
           {
             category: 'Vehicles',
-            icon: '🚛',
-            items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x) ),
+            icon: '/images/transport.png',
+            items: (res.vehicles?.data || []).map((x: any) => mapVehicle(x)),
           },
-
-
-
-
-
         ].filter((group) => group.items?.length);
+
         this.services = this.serviceGroups.flatMap((group) =>
           group.items.map((item: any) => mapToServiceCard(item, group.category)),
         );
+        this.serviceCategoryCards = this.serviceGroups.map((group) => ({
+          category: group.category,
+          icon: group.icon,
+          items: group.items.map((item: any) => mapToServiceCard(item, group.category)),
+        }));
+        this.selectedService = null;
         this.mapService();
         this.loaderSrv.hide();
       },
@@ -115,17 +119,7 @@ export class RealtorWorkServicesLandingPageComponent {
     this.mapServices = this.serviceGroups
       .flatMap((group: any) =>
         group.items.map((item: any) => {
-          let coordinates: number[] | null = null;
-
-          // Worker
-          if (item.originalData?.location?.coordinates) {
-            coordinates = item.originalData.location.coordinates;
-          }
-
-          // Tractor
-          if (item.originalData?.location?.coordinates?.coordinates) {
-            coordinates = item.originalData.location.coordinates.coordinates;
-          }
+          const coordinates = this.getServiceCoordinates(item.originalData);
 
           return {
             id: item.id,
@@ -140,7 +134,65 @@ export class RealtorWorkServicesLandingPageComponent {
           };
         }),
       )
-      .filter((x) => x.lat && x.lng);
+      .filter((x) => x.lat != null && x.lng != null);
+  }
+
+  getServiceCoordinates(item: any): number[] | null {
+    const candidates = [
+      item?.location?.coordinates?.coordinates,
+      item?.location?.coordinates,
+      item?.coordinates?.coordinates,
+      item?.coordinates,
+      item?.geoLocation?.coordinates,
+      item?.location,
+    ];
+
+    const coordinatePair = candidates.find(
+      (value) => Array.isArray(value) && value.length >= 2 && Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1])),
+    );
+
+    if (coordinatePair) {
+      return [Number(coordinatePair[0]), Number(coordinatePair[1])];
+    }
+
+    const lat = item?.latitude ?? item?.lat ?? item?.location?.latitude ?? item?.location?.lat;
+    const lng = item?.longitude ?? item?.lng ?? item?.location?.longitude ?? item?.location?.lng;
+
+    if (lat != null && lng != null && Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))) {
+      return [Number(lng), Number(lat)];
+    }
+
+    return null;
+  }
+
+  selectService(service: any, event?: Event): void {
+    event?.stopPropagation();
+    this.selectedService = service;
+    this.setPopoverPosition(event);
+  }
+
+  @HostListener('document:click')
+  closeServicePopover(): void {
+    this.selectedService = null;
+    this.popoverPosition = null;
+  }
+
+  private setPopoverPosition(event?: Event): void {
+    const target = event?.currentTarget as HTMLElement | null;
+
+    if (!target) {
+      this.popoverPosition = null;
+      return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const popoverWidth = Math.min(260, window.innerWidth * 0.88);
+    const left = Math.min(
+      Math.max(rect.left + rect.width / 2, popoverWidth / 2 + 8),
+      window.innerWidth - popoverWidth / 2 - 8,
+    );
+    const top = Math.min(rect.bottom + 8, window.innerHeight - 180);
+
+    this.popoverPosition = { left, top };
   }
 }
-

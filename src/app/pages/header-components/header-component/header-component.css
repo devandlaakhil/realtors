@@ -165,6 +165,12 @@
   background: var(--md-surface-container-high);
 }
 
+.mobile-dropdown .active-link {
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container) !important;
+  border-left: 4px solid var(--md-primary);
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

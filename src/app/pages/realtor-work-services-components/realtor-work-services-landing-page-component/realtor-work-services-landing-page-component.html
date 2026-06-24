@@ -3,9 +3,16 @@
     <div class="hero-content">
       <span class="eyebrow">{{ 'Local service finder' | T }}</span>
       <h1>{{ 'Find equipment and services near you' | T }}</h1>
-      <!-- <p>{{ 'Large buttons, clear labels, and a simple layout help anyone browse quickly.' | T }}</p> -->
-      <button class="hero-btn" [routerLink]="['/services/home']">{{ 'Explore nearby services' | T }}</button>
     </div>
+
+    <nav class="service-actions" aria-label="Service categories">
+      @for (item of footerServices; track item.navigation) {
+        <a class="service-action" [routerLink]="['/services', item.navigation]">
+          <img [src]="item.icon" alt="" />
+          <span>{{ item.name | T }}</span>
+        </a>
+      }
+    </nav>
   </section>
 
   <section class="listing-map">
@@ -13,7 +20,6 @@
       <div class="section-head compact">
         <div>
           <span class="section-kicker">{{ 'Nearby services' | T }}</span>
-          <!-- <h2>{{ 'Cards that are easy to read' | T }}</h2> -->
         </div>
       </div>
 
@@ -23,28 +29,59 @@
           <p>{{ 'Please allow location access so we can show services near you.' | T }}</p>
         </div>
       } @else {
-        @for (service of services; track service.mobile) {
-          <article class="service-card">
-            <img [src]="service.image || '/images/realtors.png'" [alt]="service.name" />
-            <div class="service-info">
-              <div class="service-top">
-                <div>
-                  <h3>{{ service.name }}</h3>
-                  <p class="service-category">{{ service.category }}</p>
-                </div>
-
-                <span class="price-pill">₹{{ service.price }} / {{ service.unit | T }}</span>
+        <div class="category-card-list">
+          @for (group of serviceCategoryCards; track group.category) {
+            <article class="category-service-card">
+              <div class="category-service-head">
+                <img [src]="group.icon" alt="" />
+                <h3>{{ group.category | T }}</h3>
               </div>
 
-              <p class="service-meta">📍 {{ service.location }}</p>
-              <p class="service-meta">👤 {{ service.owner }}</p>
+              <div class="person-grid">
+                @for (service of group.items; track service.id || service.mobile) {
+                  <div class="person-cell">
+                    <button
+                      class="person-tile"
+                      type="button"
+                      [class.active]="selectedService?.id === service.id"
+                      (click)="selectService(service, $event)"
+                    >
+                      <img [src]="service.image || '/images/realtors.png'" [alt]="service.name" />
+                      <span>{{ service.name }}</span>
+                    </button>
 
-              <button class="call-btn" type="button" (click)="phoneCall.call(service.mobile)">
-                {{ 'Call Now' | T }}
-              </button>
-            </div>
-          </article>
-        }
+                    @if (selectedService?.id === service.id) {
+                      <div
+                        class="service-popover"
+                        [style.left.px]="popoverPosition?.left"
+                        [style.top.px]="popoverPosition?.top"
+                        (click)="$event.stopPropagation()"
+                      >
+                        <div class="popover-head">
+                          <img [src]="selectedService.image || '/images/realtors.png'" [alt]="selectedService.name" />
+                          <div>
+                            <h4>{{ selectedService.name }}</h4>
+                            <p>{{ selectedService.category }}</p>
+                          </div>
+                        </div>
+
+                        <p class="service-meta">{{ selectedService.location }}</p>
+                        <p class="service-meta">{{ selectedService.owner }}</p>
+
+                        <div class="popover-actions">
+                          <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
+                          <button class="call-btn compact" type="button" (click)="phoneCall.call(selectedService.mobile)">
+                            {{ 'Call' | T }}
+                          </button>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
       }
     </div>
 
@@ -59,22 +96,4 @@
       <app-map-component [data]="mapServices" [dragble]="false"></app-map-component>
     </div>
   </section>
-
-  <footer class="service-footer surface-card">
-    <div class="section-head compact">
-      <div>
-        <span class="section-kicker">{{ 'Quick links' | T }}</span>
-        <h2>{{ 'Services for everyone' | T }}</h2>
-      </div>
-    </div>
-
-    <div class="footer-links">
-      @for (item of footerServices; track item.navigation) {
-        <a class="footer-link" [routerLink]="['/services', item.navigation]">
-          <img [src]="item.icon" alt="" />
-          <span>{{ item.name | T }}</span>
-        </a>
-      }
-    </div>
-  </footer>
 </div>

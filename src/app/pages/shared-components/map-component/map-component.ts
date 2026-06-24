@@ -153,6 +153,7 @@ export class MapComponent implements OnInit {
   getMarkerIcon(category: string): string {
     const icons: Record<string, string> = {
       Tractors: '/images/tractor.png',
+      Workers: '/images/worker.png',
       workers: '/images/worker.png',
       Vehicles: '/images/transport.png',
       // Cultivator: '/images/cultivator.png',

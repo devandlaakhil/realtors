@@ -59,6 +59,12 @@ export class Homecomponent implements OnInit, OnDestroy {
   properties: any[] = [];
   filteredProperties: any[] = [];
   topAd: Advertisement | null = null;
+  activeAdMediaUrl = '';
+  activeAdLink = '';
+  activeAdEmbedUrl: SafeResourceUrl | null = null;
+  activeAdIsImage = false;
+  activeAdIsVideo = false;
+  activeAdIsEmbed = false;
   adsQueue: Advertisement[] = [];
   currentAdIndex = 0;
   private readonly adBatchSize = 5;
@@ -172,6 +178,7 @@ export class Homecomponent implements OnInit, OnDestroy {
     this.adsQueue = ads;
     this.currentAdIndex = 0;
     this.topAd = this.adsQueue[this.currentAdIndex] || null;
+    this.prepareActiveAdvertisement();
     this.scheduleCurrentAd();
   }
 
@@ -214,6 +221,7 @@ export class Homecomponent implements OnInit, OnDestroy {
 
     if (!this.adsQueue.length) {
       this.topAd = null;
+      this.prepareActiveAdvertisement();
       return;
     }
 
@@ -223,6 +231,7 @@ export class Homecomponent implements OnInit, OnDestroy {
       this.adsQueue = [];
       this.currentAdIndex = 0;
       this.topAd = null;
+      this.prepareActiveAdvertisement();
 
       if (!this.hasNextAdPage) {
         this.cdr.detectChanges();
@@ -236,10 +245,21 @@ export class Homecomponent implements OnInit, OnDestroy {
     }
 
     this.topAd = this.adsQueue[this.currentAdIndex] || null;
+    this.prepareActiveAdvertisement();
     this.isAdMuted = false;
-    this.scheduleCurrentAd(this.isEmbeddableUrlAd(this.topAd) ? this.maxAdDisplayMs : this.adDisplayMs);
+    this.scheduleCurrentAd(this.activeAdIsEmbed ? this.maxAdDisplayMs : this.adDisplayMs);
 
     this.cdr.detectChanges();
+  }
+
+  private prepareActiveAdvertisement(): void {
+    this.activeAdMediaUrl = this.getAdMediaUrl(this.topAd);
+    this.activeAdLink = this.getAdLink(this.topAd);
+    this.activeAdIsImage = this.isImageAd(this.topAd);
+    this.activeAdIsVideo = this.isVideoAd(this.topAd);
+    const embedUrl = this.toEmbedUrl(this.activeAdLink);
+    this.activeAdEmbedUrl = embedUrl ? this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl) : null;
+    this.activeAdIsEmbed = !!this.activeAdEmbedUrl && !this.activeAdIsImage && !this.activeAdIsVideo;
   }
 
   getAdMediaUrl(ad: Advertisement | null): string {
