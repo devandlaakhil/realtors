@@ -17,10 +17,18 @@
 
       <a
         class="nav-item"
-        [class.active]="activeMenu === 'enquiries'"
+        [class.active]="activeMenu === 'services'"
         (click)="navigateTo('services')"
       >
         📥 {{'Services' | T}}
+      </a>
+
+      <a
+        class="nav-item"
+        [class.active]="activeMenu === 'advertisement'"
+        (click)="navigateTo('advertisement')"
+      >
+        📢 Post Advertisement
       </a>
 
       <a
@@ -64,6 +72,11 @@
       <button class="quick-action" [class.active]="activeMenu === 'services'" (click)="navigateTo('services')">
         <span>🛠️</span>
         <span>{{'Services' | T}}</span>
+      </button>
+
+      <button class="quick-action" [class.active]="activeMenu === 'advertisement'" (click)="navigateTo('advertisement')">
+        <span>📢</span>
+        <span>Post Advertisement</span>
       </button>
     </section>
 

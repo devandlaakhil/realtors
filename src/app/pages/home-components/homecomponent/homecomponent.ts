@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,6 +17,23 @@ import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 import { LoaderServices } from '../../../shared-services/loader-services';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapMarker, MapInfoWindow } from '@angular/google-maps';
+import { AdvertisementApiService } from '../../../api-services/advertisement-api-service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+type AdvertisementMedia = {
+  type?: string;
+  url?: string;
+  resourceType?: string;
+};
+
+type Advertisement = {
+  title?: string;
+  adType?: 'photo' | 'video' | 'social' | string;
+  targetLink?: string;
+  notes?: string;
+  media?: AdvertisementMedia[];
+  socialMedia?: { url?: string }[];
+};
 
 @Component({
   selector: 'app-homecomponent',
@@ -38,11 +55,25 @@ import { GoogleMap, MapMarker, MapInfoWindow } from '@angular/google-maps';
   templateUrl: './homecomponent.html',
   styleUrl: './homecomponent.css',
 })
-export class Homecomponent implements OnInit {
+export class Homecomponent implements OnInit, OnDestroy {
   properties: any[] = [];
   filteredProperties: any[] = [];
+  topAd: Advertisement | null = null;
+  adsQueue: Advertisement[] = [];
+  currentAdIndex = 0;
+  private readonly adBatchSize = 5;
+  private readonly adDisplayMs = 30000;
+  private readonly maxAdDisplayMs = 60000;
+  private adTimer?: ReturnType<typeof setTimeout>;
+  private isFetchingAds = false;
+  private adPage = 1;
+  private hasNextAdPage = true;
+  private lastAdCoords: { lat: number; lng: number } | null = null;
+  isAdMuted = false;
   realEstateApiSrv = inject(RealEstateApiService);
-  destroy$ = new Subject<any>();
+  advertiseApiSrv = inject(AdvertisementApiService);
+  sanitizer = inject(DomSanitizer);
+  destroy$ = new Subject<void>();
   toastr = inject(ToastrService);
   cdr = inject(ChangeDetectorRef);
   selectedType: string = '';
@@ -104,6 +135,181 @@ export class Homecomponent implements OnInit {
           this.loaderService.hide();
         },
       });
+  }
+
+  getAdvertisements(lat: any, lng: any) {
+    if (this.isFetchingAds) {
+      return;
+    }
+
+    this.isFetchingAds = true;
+    this.lastAdCoords = { lat, lng };
+    const params = {
+      longitude: lng,
+      latitude: lat,
+      limit: this.adBatchSize,
+      page: this.adPage,
+    }
+    this.advertiseApiSrv.get('client-advertisements/active', params)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next : (res:any) => {
+        const ads = Array.isArray(res) ? res : res?.ads || res?.data;
+        const normalizedAds = Array.isArray(ads) ? ads : ads ? [ads] : [];
+        this.hasNextAdPage = !!res?.pagination?.hasNextPage;
+        this.adPage = (res?.pagination?.page || this.adPage) + 1;
+        this.applyAdvertisements(normalizedAds);
+        this.isFetchingAds = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isFetchingAds = false;
+      },
+    })
+  }
+
+  private applyAdvertisements(ads: Advertisement[]): void {
+    this.adsQueue = ads;
+    this.currentAdIndex = 0;
+    this.topAd = this.adsQueue[this.currentAdIndex] || null;
+    this.scheduleCurrentAd();
+  }
+
+  private scheduleCurrentAd(durationMs = this.adDisplayMs): void {
+    if (this.adTimer) {
+      clearTimeout(this.adTimer);
+    }
+
+    if (!this.adsQueue.length) {
+      return;
+    }
+
+    this.adTimer = setTimeout(() => {
+      this.showNextAdvertisement();
+    }, durationMs);
+  }
+
+  onAdVideoMetadata(event: Event): void {
+    const video = event.target as HTMLVideoElement;
+    const duration = Number.isFinite(video.duration) ? video.duration * 1000 : this.maxAdDisplayMs;
+    const displayMs = Math.min(Math.max(duration, this.adDisplayMs), this.maxAdDisplayMs);
+    this.scheduleCurrentAd(displayMs);
+  }
+
+  onAdVideoEnded(): void {
+    this.showNextAdvertisement();
+  }
+
+  toggleAdVolume(video: HTMLVideoElement): void {
+    this.isAdMuted = !this.isAdMuted;
+    video.muted = this.isAdMuted;
+    video.volume = this.isAdMuted ? 0 : 1;
+  }
+
+  private showNextAdvertisement(): void {
+    if (this.adTimer) {
+      clearTimeout(this.adTimer);
+      this.adTimer = undefined;
+    }
+
+    if (!this.adsQueue.length) {
+      this.topAd = null;
+      return;
+    }
+
+    this.currentAdIndex += 1;
+
+    if (this.currentAdIndex >= this.adsQueue.length) {
+      this.adsQueue = [];
+      this.currentAdIndex = 0;
+      this.topAd = null;
+
+      if (!this.hasNextAdPage) {
+        this.cdr.detectChanges();
+        return;
+      }
+
+      if (this.lastAdCoords) {
+        this.getAdvertisements(this.lastAdCoords.lat, this.lastAdCoords.lng);
+      }
+      return;
+    }
+
+    this.topAd = this.adsQueue[this.currentAdIndex] || null;
+    this.isAdMuted = false;
+    this.scheduleCurrentAd(this.isEmbeddableUrlAd(this.topAd) ? this.maxAdDisplayMs : this.adDisplayMs);
+
+    this.cdr.detectChanges();
+  }
+
+  getAdMediaUrl(ad: Advertisement | null): string {
+    return ad?.media?.[0]?.url || '';
+  }
+
+  isImageAd(ad: Advertisement | null): boolean {
+    const media = ad?.media?.[0];
+    return !!media?.url && (media.type === 'image' || media.resourceType === 'image' || ad?.adType === 'photo');
+  }
+
+  isVideoAd(ad: Advertisement | null): boolean {
+    const media = ad?.media?.[0];
+    return !!media?.url && (media.type === 'video' || media.resourceType === 'video');
+  }
+
+  getAdLink(ad: Advertisement | null): string {
+    return ad?.targetLink || ad?.socialMedia?.[0]?.url || '';
+  }
+
+  hasExternalAdLink(ad: Advertisement | null): boolean {
+    return !!this.getAdLink(ad);
+  }
+
+  isEmbeddableUrlAd(ad: Advertisement | null): boolean {
+    return !!this.getSafeAdEmbedUrl(ad);
+  }
+
+  getSafeAdEmbedUrl(ad: Advertisement | null): SafeResourceUrl | null {
+    const embedUrl = this.toEmbedUrl(this.getAdLink(ad));
+    return embedUrl ? this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl) : null;
+  }
+
+  private toEmbedUrl(url: string): string {
+    if (!url) {
+      return '';
+    }
+
+    try {
+      const parsedUrl = new URL(url);
+      const host = parsedUrl.hostname.replace(/^www\./, '');
+
+      if (host === 'youtu.be') {
+        return `https://www.youtube.com/embed/${parsedUrl.pathname.replace('/', '')}?autoplay=1&mute=0&controls=0&rel=0&modestbranding=1&playsinline=1`;
+      }
+
+      if (host.includes('youtube.com')) {
+        const pathParts = parsedUrl.pathname.split('/').filter(Boolean);
+        const shortsIndex = pathParts.indexOf('shorts');
+        const videoId =
+          parsedUrl.searchParams.get('v') ||
+          (shortsIndex >= 0 ? pathParts[shortsIndex + 1] : pathParts.pop());
+        return videoId
+          ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&rel=0&modestbranding=1&playsinline=1`
+          : url;
+      }
+
+      if (host.includes('vimeo.com')) {
+        const videoId = parsedUrl.pathname.split('/').filter(Boolean).pop();
+        return videoId ? `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=0&controls=0` : url;
+      }
+
+      if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {
+        return url;
+      }
+
+      return url;
+    } catch {
+      return '';
+    }
   }
 
   setupSearch() {
@@ -204,6 +410,7 @@ export class Homecomponent implements OnInit {
         };
         this.zoom = 15;
         this.getAllProperites(lat, lng);
+        this.getAdvertisements(lat,lng);
       },
       (error) => {
         console.error('Location Error:', error);
@@ -234,5 +441,14 @@ export class Homecomponent implements OnInit {
       property?.location?.geoLocation?.coordinates?.[1] != null &&
       property?.location?.geoLocation?.coordinates?.[0] != null
     );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    if (this.adTimer) {
+      clearTimeout(this.adTimer);
+    }
   }
 }

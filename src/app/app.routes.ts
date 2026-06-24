@@ -114,6 +114,13 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'advertisement',
+        loadComponent: () =>
+          import('../app/pages/services-components/dashboard-components/post-advertisement-component/post-advertisement-component').then(
+            (m) => m.PostAdvertisementComponent,
+          )
+      },
+      {
         path: 'home',
         loadComponent: () =>
           import('../app/pages/services-components/dashboard-components/dashboard-home-component/dashboard-home-component').then(
