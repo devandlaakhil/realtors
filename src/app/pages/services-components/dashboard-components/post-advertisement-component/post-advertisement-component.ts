@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { SubscriptionApiService } from '../../../../api-services/subscription-api-service';
 import { AdvertisementApiService } from '../../../../api-services/advertisement-api-service';
+import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 
 declare var Razorpay: any;
 
@@ -12,7 +13,7 @@ type AdvertisementType = 'photo' | 'video' | 'social';
 @Component({
   selector: 'app-post-advertisement-component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,TranslatePipe],
   templateUrl: './post-advertisement-component.html',
   styleUrl: './post-advertisement-component.css',
 })

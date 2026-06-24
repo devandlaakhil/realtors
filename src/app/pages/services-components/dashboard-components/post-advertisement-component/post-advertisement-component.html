@@ -1,25 +1,25 @@
 <section class="ad-post-page">
   <div class="ad-post-header">
-    <span class="eyebrow">Sponsored placement</span>
-    <h2>Post Advertisement</h2>
-    <p>Upload a banner, add a video link, or promote any social media post after a ₹2 payment.</p>
+    <span class="eyebrow">{{'Sponsored placement'| T}}</span>
+    <h2>{{'Post Advertisement'|T}}</h2>
+    <p>{{'Upload a banner, add a video link, or promote any social media post after a ₹2 payment.'|T}}</p>
   </div>
 
   <form class="ad-form" [formGroup]="adForm" (ngSubmit)="submitAdvertisement()">
     <div class="field-group">
-      <label>Advertisement title</label>
+      <label>{{'Advertisement title'|T}}</label>
       <input type="text" formControlName="title" placeholder="Example: Weekend plot offer" />
     </div>
 
     <div class="type-grid">
       <button type="button" [class.active]="selectedType === 'photo'" (click)="onTypeChange('photo')">
-        <span>Photo Banner</span>
+        <span>{{'Photo Banner'|T}}</span>
       </button>
       <button type="button" [class.active]="selectedType === 'video'" (click)="onTypeChange('video')">
-        <span>Video Link</span>
+        <span>{{'Video Link'|T}}</span>
       </button>
       <button type="button" [class.active]="selectedType === 'social'" (click)="onTypeChange('social')">
-        <span>Social Link</span>
+        <span>{{'Social Link'|T}}</span>
       </button>
     </div>
 
@@ -35,14 +35,14 @@
           <strong>
             {{
               selectedFileName ||
-                (selectedType === 'photo' ? 'Choose photo banner' : 'Choose video file')
+                (selectedType === 'photo' ? ('Choose photo banner'|T ): ('Choose video file'|T))
             }}
           </strong>
           <span>
             {{
               selectedType === 'photo'
-                ? 'Recommended banner image for the home advertisement space.'
-                : 'Upload a video file or paste a video URL below.'
+                ? ('Recommended banner image for the home advertisement space.'|T)
+                : ('Upload a video file or paste a video URL below.'|T)
             }}
           </span>
         </label>
@@ -51,28 +51,28 @@
 
     @if (selectedType === 'video' || selectedType === 'social') {
       <div class="field-group">
-        <label>{{ selectedType === 'video' ? 'Video URL' : 'Social media URL' }}</label>
+        <label>{{ selectedType === ('video'|T) ? ('Video URL'|T) : ('Social media URL'|T) }}</label>
         <input type="url" formControlName="targetLink" placeholder="https://..." />
       </div>
     }
 
     <div class="field-group">
-      <label>Notes</label>
-      <textarea formControlName="notes" rows="3" placeholder="Offer details, phone number, or campaign note"></textarea>
+      <label>{{'Notes'|T}}</label>
+      <textarea formControlName="notes" rows="3" placeholder="{{'Offer details, phone number, or campaign note'|T}}"></textarea>
     </div>
 
     <div class="payment-panel">
       <div>
-        <span>Advertisement fee</span>
+        <span>{{'Advertisement fee' | T}}</span>
         <strong>₹{{ adPrice }}</strong>
       </div>
       <button type="button" class="pay-btn" [disabled]="paymentDone" (click)="payForAdvertisement()">
-        {{ paymentDone ? 'Paid' : 'Pay ₹2' }}
+        {{ paymentDone ? 'Paid' : ('Pay ₹2'|T) }}
       </button>
     </div>
 
     <button type="submit" class="submit-btn" [disabled]="!paymentDone || isPosting">
-      Post Advertisement
+     {{'Post Advertisement'|T}}
     </button>
   </form>
 </section>
