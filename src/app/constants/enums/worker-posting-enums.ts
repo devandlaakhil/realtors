@@ -5,5 +5,6 @@ export enum Worker_Type {
     CARPENTER = "Carpenter",
     CONSTRUCTION = "Construction",
     CENTRING = "Centring",
-    PAINTER = "Painter" 
+    PAINTER = "Painter",
+    Flooring = "Flooring" 
 }

@@ -30,7 +30,9 @@ export class RealtorWorkServicesLandingPageComponent {
   serviceCategoryCards: any[] = [];
   selectedLocation: any = { ...CITY_COORDINATES['Hyderabad'] };
   selectedService: any = null;
+  activeCategoryGroup: any = null;
   popoverPosition: { left: number; top: number } | null = null;
+  readonly categoryPreviewLimit = 12;
   phoneCall = inject(MobileDialpadService);
   mapServices: any[] = [];
 
@@ -169,6 +171,20 @@ export class RealtorWorkServicesLandingPageComponent {
     event?.stopPropagation();
     this.selectedService = service;
     this.setPopoverPosition(event);
+  }
+
+  openCategory(group: any, event?: Event): void {
+    event?.stopPropagation();
+    this.selectedService = null;
+    this.popoverPosition = null;
+    this.activeCategoryGroup = group;
+  }
+
+  closeCategory(event?: Event): void {
+    event?.stopPropagation();
+    this.selectedService = null;
+    this.popoverPosition = null;
+    this.activeCategoryGroup = null;
   }
 
   @HostListener('document:click')

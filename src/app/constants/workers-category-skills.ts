@@ -40,5 +40,17 @@ export const WORKER_CATEGORIES:any = {
     'Concrete',
     'Tiles support',
     'Finishing works',
-  ], 
+  ],
+  Painter : [
+    'Full House Painting',
+    'Patch Work',
+    'On Daily basis',
+    'Re Painting'
+  ],
+  Flooring : [
+    'Tiles',
+    'Granite',
+    'Marble',
+    'Tandoor'
+  ]
 }

@@ -33,12 +33,20 @@
           @for (group of serviceCategoryCards; track group.category) {
             <article class="category-service-card">
               <div class="category-service-head">
-                <img [src]="group.icon" alt="" />
-                <h3>{{ group.category | T }}</h3>
+                <div class="category-title">
+                  <img [src]="group.icon" alt="" />
+                  <h3>{{ group.category | T }}</h3>
+                </div>
+
+                @if (group.items.length > categoryPreviewLimit) {
+                  <button class="view-more-btn" type="button" (click)="openCategory(group, $event)">
+                    {{ 'View More' | T }}
+                  </button>
+                }
               </div>
 
               <div class="person-grid">
-                @for (service of group.items; track service.id || service.mobile) {
+                @for (service of group.items.slice(0, categoryPreviewLimit); track service.id || service.mobile) {
                   <div class="person-cell">
                     <button
                       class="person-tile"
@@ -96,4 +104,62 @@
       <app-map-component [data]="mapServices" [dragble]="false"></app-map-component>
     </div>
   </section>
+
+  @if (activeCategoryGroup) {
+    <section class="category-fullscreen" (click)="closeCategory($event)">
+      <div class="category-fullscreen-panel" (click)="$event.stopPropagation()">
+        <header class="category-fullscreen-head">
+          <div>
+            <span class="section-kicker">{{ 'Services' | T }}</span>
+            <h2>{{ activeCategoryGroup.category | T }}</h2>
+          </div>
+
+          <button class="close-category-btn" type="button" (click)="closeCategory($event)">x</button>
+        </header>
+
+        <div class="person-grid expanded">
+          @for (service of activeCategoryGroup.items; track service.id || service.mobile) {
+            <div class="person-cell">
+              <button
+                class="person-tile"
+                type="button"
+                [class.active]="selectedService?.id === service.id"
+                (click)="selectService(service, $event)"
+              >
+                <img [src]="service.image || '/images/realtors.png'" [alt]="service.name" />
+                <span>{{ service.name }}</span>
+              </button>
+
+              @if (selectedService?.id === service.id) {
+                <div
+                  class="service-popover"
+                  [style.left.px]="popoverPosition?.left"
+                  [style.top.px]="popoverPosition?.top"
+                  (click)="$event.stopPropagation()"
+                >
+                  <div class="popover-head">
+                    <img [src]="selectedService.image || '/images/realtors.png'" [alt]="selectedService.name" />
+                    <div>
+                      <h4>{{ selectedService.name }}</h4>
+                      <p>{{ selectedService.category }}</p>
+                    </div>
+                  </div>
+
+                  <p class="service-meta">{{ selectedService.location }}</p>
+                  <p class="service-meta">{{ selectedService.owner }}</p>
+
+                  <div class="popover-actions">
+                    <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
+                    <button class="call-btn compact" type="button" (click)="phoneCall.call(selectedService.mobile)">
+                      {{ 'Call' | T }}
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
 </div>
