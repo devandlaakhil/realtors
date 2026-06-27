@@ -112,6 +112,8 @@ export class HeaderComponent {
     this.isLoggedIn = false;
     sessionStorage.removeItem('userCredentials');
     sessionStorage.removeItem('book');
+    localStorage.removeItem('userCredentials');
+    localStorage.removeItem('book');
     this.authService.logout();
     this.dashBoardService.logOut();
     this.username.update((u) => (u = ''));

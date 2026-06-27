@@ -7,7 +7,7 @@ import { BehaviorSubject } from "rxjs";
 export class DashboardServices {
 
     private loginStatusSubject = new BehaviorSubject<boolean>(
-      !!sessionStorage.getItem('token')
+      !!localStorage.getItem('token') || !!sessionStorage.getItem('token')
     );
 
     loginStatus$ = this.loginStatusSubject.asObservable();

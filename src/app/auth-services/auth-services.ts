@@ -5,24 +5,38 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
 
-  private TOKEN_KEY = 'token';
-  private USER_KEY = 'user';
+  private readonly TOKEN_KEY = 'token';
+  private readonly USER_KEY = 'user';
+
+  constructor() {
+    this.migrateSession();
+  }
 
   logIn(token: string) {
-    sessionStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(this.TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return sessionStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   setUser(user: { id: string; name: string; email: string }) {
-    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
   }
 
   getUser() {
-    const data = sessionStorage.getItem(this.USER_KEY);
-    return data ? JSON.parse(data) : null;
+    const data = localStorage.getItem(this.USER_KEY);
+
+    if (!data) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(data);
+    } catch {
+      localStorage.removeItem(this.USER_KEY);
+      return null;
+    }
   }
 
   isLoggedIn(): boolean {
@@ -30,6 +44,24 @@ export class AuthService {
   }
 
   logout() {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.USER_KEY);
+  }
+
+  private migrateSession(): void {
+    const sessionToken = sessionStorage.getItem(this.TOKEN_KEY);
+    const sessionUser = sessionStorage.getItem(this.USER_KEY);
+
+    if (!localStorage.getItem(this.TOKEN_KEY) && sessionToken) {
+      localStorage.setItem(this.TOKEN_KEY, sessionToken);
+    }
+
+    if (!localStorage.getItem(this.USER_KEY) && sessionUser) {
+      localStorage.setItem(this.USER_KEY, sessionUser);
+    }
+
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
   }

@@ -1,0 +1,242 @@
+@if (!showPostForm) {
+  <main class="hardware-page">
+    <header class="page-head">
+      <div>
+        <h1>Hardware Shops Near You</h1>
+        <p>Find materials, tools and local suppliers nearby</p>
+      </div>
+      <button class="post-btn" type="button" (click)="showPostForm = true">
+        <mat-icon>storefront</mat-icon>
+        List Your Shop
+      </button>
+    </header>
+
+    <label class="search-box">
+      <mat-icon>search</mat-icon>
+      <input [(ngModel)]="searchText" placeholder="Search shop, product or location" />
+      @if (searchText) {
+        <button type="button" aria-label="Clear search" (click)="searchText = ''">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </label>
+
+    @if (!locationReady) {
+      <div class="location-notice">
+        <mat-icon>location_off</mat-icon>
+        <div>
+          <strong>Location is required</strong>
+          <span>Turn on GPS and allow location access to see nearby shops.</span>
+        </div>
+        <button type="button" (click)="getCurrentLocation()" [disabled]="locating">
+          {{ locating ? 'Locating...' : 'Use Current Location' }}
+        </button>
+      </div>
+    }
+
+    <section class="content-layout">
+      <div class="map-panel">
+        @if (!sheetExpanded) {
+          <div class="map-title">Nearby Hardware Shops</div>
+        }
+        <app-map-component
+          [data]="mapItems"
+          [center]="locationReady ? selectedLocation : undefined"
+          [dragble]="false"
+        ></app-map-component>
+      </div>
+
+      <div class="sheet-container">
+        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
+          <div
+            class="drag-line"
+            (pointerdown)="onDragStart($event)"
+            (touchstart)="onDragStart($event)"
+          ></div>
+          <div class="sheet-content">
+            <div class="sheet-title">
+              <div>
+                <h2>Hardware Shop Details</h2>
+                <p>{{ filteredShops.length }} shops available nearby</p>
+              </div>
+              <button type="button" (click)="toggleSheet()">
+                {{ sheetExpanded ? 'Minimize' : 'Maximize' }}
+              </button>
+            </div>
+
+            <div class="shop-list">
+              @for (shop of filteredShops; track shop.id || shop._id) {
+                @if (expandedShopId !== (shop.id || shop._id)) {
+                  <article class="mini-card">
+                    <img
+                      [src]="shop.image?.[0]?.url || shop.images?.[0]?.url || '/images/hardware.png'"
+                      alt=""
+                    />
+                    <div class="card-content">
+                      <h3>{{ shop.shopName || shop.name }}</h3>
+                      <p><mat-icon>location_on</mat-icon>{{ shop.village || shop.address }}, {{ shop.district }}</p>
+                      <p><mat-icon>schedule</mat-icon>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</p>
+                      @if (shop.homeDelivery) {
+                        <span class="delivery"><mat-icon>local_shipping</mat-icon> Home delivery</span>
+                      }
+                      <button class="primary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">
+                        View Details
+                      </button>
+                    </div>
+                  </article>
+                } @else {
+                  <article class="details-card">
+                    <div class="details-head">
+                      <div>
+                        <h3>{{ shop.shopName || shop.name }}</h3>
+                        <span>{{ shop.ownerName }}</span>
+                      </div>
+                      <span class="shop-badge">Hardware Shop</span>
+                    </div>
+                    <div class="location-row">
+                      <mat-icon>location_on</mat-icon>
+                      <span>{{ shop.address || shop.village }}, {{ shop.district }}</span>
+                    </div>
+                    <div class="info-grid">
+                      <div class="info-item"><mat-icon>inventory_2</mat-icon><div><small>Products</small><strong>{{ shop.products || 'Call for availability' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>schedule</mat-icon><div><small>Shop hours</small><strong>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>local_shipping</mat-icon><div><small>Delivery</small><strong>{{ shop.homeDelivery ? 'Available' : 'Not available' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>call</mat-icon><div><small>Mobile</small><strong>{{ shop.mobile }}</strong></div></div>
+                    </div>
+                    @if (shop.description) { <p class="description">{{ shop.description }}</p> }
+                    <div class="expanded-actions">
+                      <button class="primary-btn" type="button" (click)="phoneCall.call(shop.mobile)"><mat-icon>call</mat-icon> Call Shop</button>
+                      <button class="secondary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">Close Details</button>
+                    </div>
+                  </article>
+                }
+              } @empty {
+                <div class="empty-state">
+                  <mat-icon>storefront</mat-icon>
+                  <h3>No hardware shops found nearby</h3>
+                  <p>Be the first shop owner to list your store in this area.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+} @else {
+  <main class="hardware-page form-page">
+    <header class="page-head">
+      <div>
+        <h1>Bring Your Hardware Shop Online</h1>
+        <p>Help nearby customers discover your store and call you directly.</p>
+      </div>
+      <button mat-stroked-button color="warn" type="button" (click)="showPostForm = false">
+        Cancel
+      </button>
+    </header>
+
+    <form [formGroup]="shopForm" (ngSubmit)="publishShop()">
+      <section class="form-section">
+        <div class="section-head">
+          <span>1</span>
+          <div><h2>Shop and address</h2><p>Basic information customers will see</p></div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Shop name</mat-label><input matInput formControlName="shopName"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Owner name</mat-label><input matInput formControlName="ownerName"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Mobile number</mat-label
+            ><input matInput inputmode="numeric" formControlName="mobile"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Village / Area</mat-label><input matInput formControlName="village"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>District</mat-label><input matInput formControlName="district"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Full address</mat-label><input matInput formControlName="address"
+          /></mat-form-field>
+          <div class="location-picker wide">
+            <div>
+              <mat-icon>my_location</mat-icon>
+              <div>
+                <strong>Shop location</strong>
+                <span>Current GPS location is selected. Adjust it only when needed.</span>
+              </div>
+            </div>
+            <mat-checkbox [checked]="showMapPicker" (change)="toggleMapPicker($event.checked)">
+              Adjust on map
+            </mat-checkbox>
+          </div>
+          @if (showMapPicker) {
+            <div class="picker-map wide">
+              <app-map-component
+                [center]="locationReady ? selectedLocation : undefined"
+                (locationSelected)="onLocationSelected($event)"
+              ></app-map-component>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head">
+          <span>2</span>
+          <div><h2>Business details</h2><p>Products, working hours and delivery</p></div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="field wide"
+            ><mat-label>Products available</mat-label
+            ><textarea
+              matInput
+              rows="3"
+              formControlName="products"
+              placeholder="Cement, pipes, electrical items, paint..."
+            ></textarea>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Opening time</mat-label
+            ><input matInput type="time" formControlName="openingTime"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field"
+            ><mat-label>Closing time</mat-label
+            ><input matInput type="time" formControlName="closingTime"
+          /></mat-form-field>
+          <mat-form-field appearance="outline" class="field wide"
+            ><mat-label>About your shop</mat-label
+            ><textarea matInput rows="3" formControlName="description"></textarea>
+          </mat-form-field>
+        </div>
+        <div class="delivery-option">
+          <mat-checkbox formControlName="homeDelivery">Home delivery available</mat-checkbox>
+        </div>
+      </section>
+
+      <section class="form-section">
+        <div class="section-head">
+          <span>3</span>
+          <div><h2>Shop photo</h2><p>Add a clear photo of the storefront</p></div>
+        </div>
+        <app-image-upload-component
+          [imageUrl]="null"
+          (fileSelected)="onImageSelected($event)"
+        ></app-image-upload-component>
+      </section>
+
+      <div class="form-actions">
+        <button mat-stroked-button color="warn" type="button" (click)="showPostForm = false">
+          Cancel
+        </button>
+        <button mat-raised-button color="primary" type="submit">
+          <mat-icon>publish</mat-icon>
+          Publish Shop
+        </button>
+      </div>
+    </form>
+  </main>
+}

@@ -75,7 +75,7 @@ export class Homecomponent implements OnInit, OnDestroy {
   private adPage = 1;
   private hasNextAdPage = true;
   private lastAdCoords: { lat: number; lng: number } | null = null;
-  isAdMuted = false;
+  isAdMuted = true;
   realEstateApiSrv = inject(RealEstateApiService);
   advertiseApiSrv = inject(AdvertisementApiService);
   sanitizer = inject(DomSanitizer);
@@ -213,6 +213,20 @@ export class Homecomponent implements OnInit, OnDestroy {
     video.volume = this.isAdMuted ? 0 : 1;
   }
 
+  toggleEmbeddedAdVolume(frame: HTMLIFrameElement): void {
+    this.isAdMuted = !this.isAdMuted;
+    const command = this.isAdMuted ? 'mute' : 'unMute';
+
+    frame.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func: command, args: [] }),
+      '*',
+    );
+    frame.contentWindow?.postMessage(
+      JSON.stringify({ method: 'setVolume', value: this.isAdMuted ? 0 : 1 }),
+      '*',
+    );
+  }
+
   private showNextAdvertisement(): void {
     if (this.adTimer) {
       clearTimeout(this.adTimer);
@@ -303,7 +317,7 @@ export class Homecomponent implements OnInit, OnDestroy {
       const host = parsedUrl.hostname.replace(/^www\./, '');
 
       if (host === 'youtu.be') {
-        return `https://www.youtube.com/embed/${parsedUrl.pathname.replace('/', '')}?autoplay=1&mute=0&controls=0&rel=0&modestbranding=1&playsinline=1`;
+        return `https://www.youtube.com/embed/${parsedUrl.pathname.replace('/', '')}?autoplay=1&mute=1&controls=0&enablejsapi=1&rel=0&modestbranding=1&playsinline=1`;
       }
 
       if (host.includes('youtube.com')) {
@@ -313,13 +327,13 @@ export class Homecomponent implements OnInit, OnDestroy {
           parsedUrl.searchParams.get('v') ||
           (shortsIndex >= 0 ? pathParts[shortsIndex + 1] : pathParts.pop());
         return videoId
-          ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&rel=0&modestbranding=1&playsinline=1`
+          ? `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1&rel=0&modestbranding=1&playsinline=1`
           : url;
       }
 
       if (host.includes('vimeo.com')) {
         const videoId = parsedUrl.pathname.split('/').filter(Boolean).pop();
-        return videoId ? `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=0&controls=0` : url;
+        return videoId ? `https://player.vimeo.com/video/${videoId}?autoplay=1&muted=1&controls=0&api=1` : url;
       }
 
       if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(parsedUrl.pathname)) {

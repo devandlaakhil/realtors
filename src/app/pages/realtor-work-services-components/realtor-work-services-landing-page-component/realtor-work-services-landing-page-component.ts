@@ -40,9 +40,9 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/tractor.png', name: 'Tractors', navigation: 'tractor' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
-    { icon: '/images/centring.png', name: 'Centring', navigation: 'centring' },
+    // { icon: '/images/centring.png', name: 'Centring', navigation: 'centring' },
     { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
-    { icon: '/images/realtors.png', name: 'All Services', navigation: 'home' },
+    // { icon: '/images/realtors.png', name: 'All Services', navigation: 'home' },
   ];
   footerServices = this.categories;
   services: any[] = [];

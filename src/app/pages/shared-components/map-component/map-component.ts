@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
   SimpleChanges,
@@ -12,8 +13,9 @@ import {
 } from '@angular/core';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
-import { PermissionsServices } from '../../../shared-services/permissions.services';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-map-component',
@@ -21,7 +23,7 @@ import { CITY_COORDINATES } from '../../../constants/location-coordinates';
   templateUrl: './map-component.html',
   styleUrl: './map-component.css',
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnChanges {
   selectedLocation: google.maps.LatLngLiteral | null = null;
   defaultCenter: google.maps.LatLngLiteral = CITY_COORDINATES['Hyderabad'];
   zoom: number = 13;
@@ -44,14 +46,26 @@ export class MapComponent implements OnInit {
   @ViewChild(GoogleMap)
   map!: GoogleMap;
 
-  private permissionSrv = inject(PermissionsServices);
+  async ngOnInit(): Promise<void> {
+    if (this.center?.lat != null && this.center?.lng != null) {
+      this.applyCurrentLocation(this.center.lat, this.center.lng);
+      return;
+    }
 
-  ngOnInit(): void {
-    this.permissionSrv.requestLocationPermission();
-    this.getCurrentLocation();
+    await this.getCurrentLocation();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    const suppliedCenter = changes['center']?.currentValue as
+      | google.maps.LatLngLiteral
+      | undefined;
+
+    if (suppliedCenter?.lat != null && suppliedCenter?.lng != null) {
+      this.center = { lat: Number(suppliedCenter.lat), lng: Number(suppliedCenter.lng) };
+      this.selectedLocation = this.center;
+      this.zoom = 15;
+    }
+
     if (!changes['data']?.currentValue) return;
 
     this.markers = this.data
@@ -78,37 +92,59 @@ export class MapComponent implements OnInit {
       .filter(Boolean);
   }
 
-  getCurrentLocation(): void {
-    if (!navigator.geolocation) {
-      return;
+  async getCurrentLocation(): Promise<void> {
+    try {
+      const position = Capacitor.isNativePlatform()
+        ? await this.getNativePosition()
+        : await this.getBrowserPosition();
+
+      this.applyCurrentLocation(position.coords.latitude, position.coords.longitude);
+    } catch (error) {
+      console.error('Location Error:', error);
+    }
+  }
+
+  private async getNativePosition(): Promise<{ coords: { latitude: number; longitude: number } }> {
+    const currentPermission = await Geolocation.checkPermissions();
+    let locationPermission = currentPermission.location;
+
+    if (locationPermission !== 'granted') {
+      const requestedPermission = await Geolocation.requestPermissions();
+      locationPermission = requestedPermission.location;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
+    if (locationPermission !== 'granted') {
+      throw new Error('Location permission denied');
+    }
 
-        this.center = { lat, lng };
-        this.zoom = 15;
+    return Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 10000,
+    });
+  }
 
-        this.selectedLocation = {
-          lat,
-          lng,
-        };
+  private getBrowserPosition(): Promise<GeolocationPosition> {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject(new Error('Browser geolocation is unavailable'));
+        return;
+      }
 
-        // Send current location to parent
-        this.locationSelected.emit({
-          lat,
-          lng,
-        });
-      },
-      (error) => {
-        console.error('Location Error:', error);
-      },
-      {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
-      },
-    );
+        timeout: 15000,
+        maximumAge: 10000,
+      });
+    });
+  }
+
+  private applyCurrentLocation(lat: number, lng: number): void {
+    this.center = { lat: Number(lat), lng: Number(lng) };
+    this.selectedLocation = this.center;
+    this.zoom = 15;
+    this.locationSelected.emit(this.center);
+    this.cdr.detectChanges();
   }
 
   markerDragged(event: google.maps.MapMouseEvent): void {
