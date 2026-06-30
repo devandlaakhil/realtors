@@ -88,6 +88,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   readonly getShopImage = getHardwareImage;
 
   ngOnInit(): void {
+     this.showPostForm = this.route.snapshot.queryParamMap.get('post') === '1';
      this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
 

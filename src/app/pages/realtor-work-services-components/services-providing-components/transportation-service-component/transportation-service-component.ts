@@ -135,6 +135,7 @@ export class TransportationServiceComponent implements OnInit {
       }
     });
     this.transportForminit();
+    this.showPostVechileForm = this.router.snapshot.queryParamMap.get('post') === '1';
     this.getCurrentLocation();
   }
 

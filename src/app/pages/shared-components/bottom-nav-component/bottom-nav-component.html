@@ -1,14 +1,16 @@
 <nav class="app-bottom-nav" aria-label="Primary">
   @for (link of navLinks; track link.label) {
     @if (link.primary) {
-      <a
+      <button
+        type="button"
         class="bottom-nav-item fab-link"
-        [routerLink]="link.route"
-        routerLinkActive="active"
+        (click)="openPostPicker()"
+        aria-haspopup="dialog"
+        [attr.aria-expanded]="showPostPicker"
       >
         <span class="fab-circle"><mat-icon>{{ link.icon }}</mat-icon></span>
         <span class="fab-label">{{ link.label | T }}</span>
-      </a>
+      </button>
     } @else {
       <a
         class="bottom-nav-item"
@@ -22,3 +24,40 @@
     }
   }
 </nav>
+
+@if (showPostPicker) {
+  <div class="post-picker-backdrop" (click)="closePostPicker()">
+    <section
+      class="post-picker-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="post-picker-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <header class="post-picker-header">
+        <div>
+          <span class="sheet-kicker">Create new</span>
+          <h2 id="post-picker-title">What do you want to post?</h2>
+          <p>Choose a service to continue to its posting form.</p>
+        </div>
+        <button type="button" class="sheet-close" (click)="closePostPicker()" aria-label="Close">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+
+      <div class="post-option-grid">
+        @for (option of postOptions; track option.route) {
+          <button type="button" class="post-option" (click)="selectPostOption(option)">
+            <span class="post-option-icon"><mat-icon>{{ option.icon }}</mat-icon></span>
+            <span class="post-option-copy">
+              <strong>{{ option.label | T }}</strong>
+              <small>{{ option.description | T }}</small>
+            </span>
+            <mat-icon class="post-option-arrow">chevron_right</mat-icon>
+          </button>
+        }
+      </div>
+    </section>
+  </div>
+}

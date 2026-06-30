@@ -109,6 +109,7 @@ export class WorkersServiceComponent implements OnInit {
       }
     });
     this.initForm();
+    this.showPostWorkerForm = this.router.snapshot.queryParamMap.get('post') === '1';
     this.getCurrentLocation();
     this.workerForm.get('category')?.valueChanges.subscribe((category) => {
       this.availableSkills = WORKER_CATEGORIES[category] || [];

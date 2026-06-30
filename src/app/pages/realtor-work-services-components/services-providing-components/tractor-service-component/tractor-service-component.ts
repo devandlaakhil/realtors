@@ -83,6 +83,7 @@ export class TractorServiceComponent implements OnInit {
       }
     });
     this.initializeForm();
+    this.showPostServiceForm = this.route.snapshot.queryParamMap.get('post') === '1';
     this.getCurrentLocation();
   }
 
