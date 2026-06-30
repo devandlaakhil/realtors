@@ -3,13 +3,14 @@
     <div class="hero-content">
       <span class="eyebrow">{{ 'Local service finder' | T }}</span>
       <h1>{{ 'Find equipment and services near you' | T }}</h1>
+      <p class="hero-sub">{{ 'Tap a category to browse trusted local providers nearby' | T }}</p>
     </div>
 
     <nav class="service-actions" aria-label="Service categories">
       @for (item of footerServices; track item.navigation) {
         <a class="service-action" [routerLink]="['/services', item.navigation]">
-          <img [src]="item.icon" alt="" />
-          <span>{{ item.name | T }}</span>
+          <span class="service-action-icon"><img [src]="item.icon" alt="" /></span>
+          <span class="service-action-label">{{ item.name | T }}</span>
         </a>
       }
     </nav>
@@ -20,14 +21,27 @@
       <div class="section-head compact">
         <div>
           <span class="section-kicker">{{ 'Nearby services' | T }}</span>
+          <h2>{{ 'Browse providers near you' | T }}</h2>
         </div>
       </div>
 
       @if (services.length === 0) {
-        <div class="empty-state">
-          <h3>{{ 'Loading nearby services' | T }}</h3>
-          <p>{{ 'Please allow location access so we can show services near you.' | T }}</p>
+        <div class="services-skeleton" aria-hidden="true">
+          @for (row of [1, 2]; track row) {
+            <div class="skeleton-category">
+              <div class="skeleton-line skeleton-title"></div>
+              <div class="skeleton-people">
+                @for (cell of [1, 2, 3, 4]; track cell) {
+                  <div class="skeleton-person">
+                    <div class="skeleton-avatar"></div>
+                    <div class="skeleton-line skeleton-name"></div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
         </div>
+        <p class="services-loading-note">{{ 'Please allow location access so we can show services near you.' | T }}</p>
       } @else {
         <div class="category-card-list">
           @for (group of serviceCategoryCards; track group.category) {

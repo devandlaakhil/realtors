@@ -1,25 +1,25 @@
 @import 'ngx-toastr/toastr';
 
 :root {
-  --md-primary: #1a73e8;
-  --md-primary-dark: #1557b0;
-  --md-primary-light: #4285f4;
+  --md-primary: #2563eb;
+  --md-primary-dark: #1d4ed8;
+  --md-primary-light: #3b82f6;
   --md-on-primary: #ffffff;
-  --md-primary-container: #d3e3fd;
-  --md-on-primary-container: #041e49;
-  --md-secondary: #018786;
-  --md-secondary-container: #cce8e7;
-  --md-surface: #f8f9fa;
-  --md-surface-dim: #e8eaed;
+  --md-primary-container: #dbeafe;
+  --md-on-primary-container: #1e3a8a;
+  --md-secondary: #0d9488;
+  --md-secondary-container: #ccfbf1;
+  --md-surface: #f6f8fc;
+  --md-surface-dim: #e6eaf2;
   --md-surface-container: #ffffff;
-  --md-surface-container-high: #f1f3f4;
-  --md-on-surface: #202124;
-  --md-on-surface-variant: #5f6368;
-  --md-outline: #dadce0;
-  --md-outline-variant: #e8eaed;
-  --md-error: #d93025;
-  --md-success: #188038;
-  --md-warning: #f9ab00;
+  --md-surface-container-high: #eef2f9;
+  --md-on-surface: #111827;
+  --md-on-surface-variant: #5b6472;
+  --md-outline: #d3d9e3;
+  --md-outline-variant: #e7ebf2;
+  --md-error: #dc2626;
+  --md-success: #16a34a;
+  --md-warning: #f59e0b;
 
   --app-bg: var(--md-surface);
   --app-surface: var(--md-surface-container);
@@ -37,11 +37,14 @@
   --app-radius-xl: 28px;
   --app-header-height: 56px;
 
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
   --elevation-0: none;
-  --elevation-1: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
-  --elevation-2: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-  --elevation-3: 0 4px 8px 3px rgba(60, 64, 67, 0.15), 0 1px 3px rgba(60, 64, 67, 0.3);
-  --elevation-4: 0 6px 10px 4px rgba(60, 64, 67, 0.15), 0 2px 3px rgba(60, 64, 67, 0.3);
+  --elevation-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --elevation-2: 0 2px 4px rgba(16, 24, 40, 0.06), 0 4px 8px rgba(16, 24, 40, 0.08);
+  --elevation-3: 0 4px 8px rgba(16, 24, 40, 0.08), 0 10px 20px rgba(16, 24, 40, 0.10);
+  --elevation-4: 0 8px 16px rgba(16, 24, 40, 0.10), 0 18px 32px rgba(16, 24, 40, 0.12);
 
   --touch-target: 48px;
   --bottom-nav-height: 72px;
@@ -68,15 +71,27 @@ body {
   min-height: 100dvh;
   margin: 0;
   overflow-x: hidden;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
-  line-height: 1.43;
-  letter-spacing: 0.01071em;
+  line-height: 1.5;
+  letter-spacing: -0.006em;
   background: var(--app-bg);
   color: var(--app-text);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--md-on-surface);
 }
 
 img,
@@ -98,7 +113,8 @@ button,
 .mat-mdc-button-base {
   border-radius: 20px;
   text-transform: none;
-  letter-spacing: 0.01071em;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
 }
 
 button,
@@ -149,7 +165,7 @@ app-header-component {
   border-radius: 8px !important;
   padding: 10px 34px 10px 44px !important;
   box-shadow: 0 6px 18px rgb(0 0 0 / 18%) !important;
-  font-family: Roboto, sans-serif !important;
+  font-family: var(--font-sans) !important;
   font-size: 0.78rem !important;
   line-height: 1.35 !important;
   background-position: 14px center !important;
@@ -185,7 +201,7 @@ app-header-component {
   width: 100%;
   min-height: 100dvh;
   padding-top: calc(var(--app-header-height) + env(safe-area-inset-top));
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--bottom-nav-height) + 12px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   margin: 0 auto;
 }
