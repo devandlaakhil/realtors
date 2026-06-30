@@ -5,9 +5,10 @@ import { App as CapacitorApp } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { HeaderComponent } from '../app/pages/header-components/header-component/header-component';
 import { LoaderComponent } from './pages/shared-components/loader-component/loader-component';
+import { BottomNavComponent } from './pages/shared-components/bottom-nav-component/bottom-nav-component';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,HeaderComponent,LoaderComponent],
+  imports: [RouterOutlet, HeaderComponent, LoaderComponent, BottomNavComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

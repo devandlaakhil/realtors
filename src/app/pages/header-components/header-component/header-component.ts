@@ -52,9 +52,9 @@ export class HeaderComponent {
   showBackButton = false;
 
   ngOnInit(): void {
-    this.showBackButton = this.router.url !== '/';
+    this.showBackButton = !this.isRootUrl(this.router.url);
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
-      this.showBackButton = this.router.url !== '/';
+      this.showBackButton = !this.isRootUrl(this.router.url);
       this.closeMobileMenu();
     });
     this.languageSrv.languageChange$.subscribe((lang) => {
@@ -139,6 +139,11 @@ export class HeaderComponent {
 
   backToHome() {
     this.router.navigate(['/']);
+  }
+
+  private isRootUrl(url: string): boolean {
+    const path = url.split('?')[0].split('#')[0];
+    return path === '/' || path === '/services/home';
   }
 
   goBack() {

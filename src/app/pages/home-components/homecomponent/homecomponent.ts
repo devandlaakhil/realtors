@@ -93,13 +93,6 @@ export class Homecomponent implements OnInit, OnDestroy {
   center: google.maps.LatLngLiteral = CITY_COORDINATES['Hyderabad'];
   zoom: number = 12;
   showFilters: boolean = false;
-  quickLinks = [
-    { label: 'Services', icon: 'handyman', route: '/services/home' },
-    { label: 'Profile', icon: 'person', route: '/profile' },
-    { label: 'Post Property', icon: 'add_home', route: '/ad-post' },
-    { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts' },
-     { label: 'Filters', icon: 'filter_list', action: 'filters' },
-  ];
 
   selectedProperty: any;
   @ViewChild(MapInfoWindow)

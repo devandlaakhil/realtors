@@ -1,11 +1,11 @@
 <mat-toolbar class="app-header">
   <!-- LEFT -->
   <div class="left-section">
-    <!-- @if (showBackButton) {
+    @if (showBackButton) {
       <button mat-icon-button class="back-btn" type="button" (click)="goBack()" aria-label="Go back">
         <mat-icon>arrow_back</mat-icon>
       </button>
-    } -->
+    }
 
     <div class="logo" (click)="backToHome()">
       <img src="images/realtors.png" alt="logo" />
@@ -72,51 +72,83 @@
 
 <!-- MOBILE MENU -->
 <div class="mobile-dropdown" *ngIf="isMobileMenuOpen">
-  <div
-    class="lang-toggle"
-    [class.telugu]="selectedLang === 'te'"
-    (click)="$event.stopPropagation(); toggleLanguage()"
-  >
-    <div class="slider"></div>
-    <span class="label left">ENG</span>
-    <span class="label right">తెలుగు</span>
+  <div class="mobile-menu-top">
+    <span class="mobile-menu-title">{{ 'Menu' | T }}</span>
+    <div
+      class="lang-toggle"
+      [class.telugu]="selectedLang === 'te'"
+      (click)="$event.stopPropagation(); toggleLanguage()"
+    >
+      <div class="slider"></div>
+      <span class="label left">ENG</span>
+      <span class="label right">తెలుగు</span>
+    </div>
   </div>
-  <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
-    {{ Location }}
+
+  @if (Location) {
+    <button mat-button class="menu-link" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <mat-icon>location_on</mat-icon>
+      <span>{{ Location }}</span>
+    </button>
+    <mat-divider></mat-divider>
+  }
+
+  <button mat-button class="menu-link" (click)="backToHome(); toggleMobileMenu()" routerLinkActive="active-link">
+    <mat-icon>home</mat-icon>
+    <span>{{ 'Home' | T }}</span>
   </button>
-  <button mat-button (click)="backToHome()" routerLinkActive="active-link">{{ 'Home' | T }}</button>
-  <button mat-button routerLink="/contact-us" routerLinkActive="active-link">
-    {{ 'Contact' | T }}
+  <button mat-button class="menu-link" routerLink="/services/home" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+    <mat-icon>handyman</mat-icon>
+    <span>{{ 'Services' | T }}</span>
   </button>
 
   <!-- LOGGED IN USER -->
   @if (isLoggedIn) {
-    <button mat-button routerLink="/dashboard" (click)="toggleMobileMenu()">
-      {{ 'Dashboard' | T }}
+    <button mat-button class="menu-link" routerLink="/dashboard" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>dashboard</mat-icon>
+      <span>{{ 'Dashboard' | T }}</span>
     </button>
-    <button mat-button routerLink="/ad-post" (click)="toggleMobileMenu()">
-      {{ 'Post Property' | T }}
+    <button mat-button class="menu-link" routerLink="/ad-post" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>add_box</mat-icon>
+      <span>{{ 'Post Property' | T }}</span>
     </button>
-    <button mat-button (click)="navToProfile(); toggleMobileMenu()">{{ 'Profile' | T }}</button>
-    <button mat-button routerLink="/services/home" (click)="toggleMobileMenu()">
-      {{ 'Services' | T }}
+    <button mat-button class="menu-link" (click)="navToProfile(); toggleMobileMenu()">
+      <mat-icon>person</mat-icon>
+      <span>{{ 'Profile' | T }}</span>
     </button>
-    <button mat-button (click)="logout(); toggleMobileMenu()">{{ 'Logout' | T }}</button>
-    <button mat-menu-item (click)="navToSubscription()">
+    <button mat-button class="menu-link" (click)="navToSubscription(); toggleMobileMenu()">
       <mat-icon>card_membership</mat-icon>
       <span>{{ 'Subscription' | T }}</span>
+    </button>
+    <button mat-button class="menu-link" routerLink="/contact-us" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>call</mat-icon>
+      <span>{{ 'Contact' | T }}</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-button class="menu-link menu-link-danger" (click)="logout(); toggleMobileMenu()">
+      <mat-icon>logout</mat-icon>
+      <span>{{ 'Logout' | T }}</span>
     </button>
   }
   <!-- LOGGED OUT USER -->
   @else {
-    <button mat-button routerLink="/about" (click)="toggleMobileMenu()">{{ 'About' | T }}</button>
-    <button mat-button routerLink="/services/home" (click)="toggleMobileMenu()">
-      {{ 'Services' | T }}
+    <button mat-button class="menu-link" routerLink="/about" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>info</mat-icon>
+      <span>{{ 'About' | T }}</span>
     </button>
-    <button mat-button routerLink="/login" (click)="toggleMobileMenu()">{{ 'Login' | T }}</button>
-    <button mat-button routerLink="/register" (click)="toggleMobileMenu()">
-      {{ 'Register' | T }}
+    <button mat-button class="menu-link" routerLink="/contact-us" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>call</mat-icon>
+      <span>{{ 'Contact' | T }}</span>
     </button>
+    <mat-divider></mat-divider>
+    <div class="menu-auth">
+      <button mat-stroked-button class="menu-login" routerLink="/login" (click)="toggleMobileMenu()">
+        {{ 'Login' | T }}
+      </button>
+      <button mat-raised-button class="menu-register" routerLink="/register" (click)="toggleMobileMenu()">
+        {{ 'Register' | T }}
+      </button>
+    </div>
   }
 </div>
 

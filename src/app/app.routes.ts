@@ -5,6 +5,11 @@ import { DashboardComponent } from '../app/pages/home-components/dashboard-compo
 export const routes: Routes = [
   {
     path: '',
+    redirectTo: 'services/home',
+    pathMatch: 'full',
+  },
+  {
+    path: 'home',
     loadComponent: () =>
       import('../app/pages/home-components/homecomponent/homecomponent').then(
         (m) => m.Homecomponent,

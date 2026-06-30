@@ -1,0 +1,24 @@
+<nav class="app-bottom-nav" aria-label="Primary">
+  @for (link of navLinks; track link.label) {
+    @if (link.primary) {
+      <a
+        class="bottom-nav-item fab-link"
+        [routerLink]="link.route"
+        routerLinkActive="active"
+      >
+        <span class="fab-circle"><mat-icon>{{ link.icon }}</mat-icon></span>
+        <span class="fab-label">{{ link.label | T }}</span>
+      </a>
+    } @else {
+      <a
+        class="bottom-nav-item"
+        [routerLink]="link.route"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: !!link.exact }"
+      >
+        <mat-icon>{{ link.icon }}</mat-icon>
+        <span>{{ link.label | T }}</span>
+      </a>
+    }
+  }
+</nav>
