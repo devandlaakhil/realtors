@@ -44,3 +44,33 @@ export function mapVehicle(item:any): ServiceItem {
     isActive: item.active,
   };
 }
+
+export function getHardwareImage(item: any): string {
+  const image =
+    item?.imageUrl ??
+    item?.shopImageUrl ??
+    item?.image?.url ??
+    item?.image?.[0]?.url ??
+    item?.images?.[0]?.url ??
+    item?.media?.[0]?.url ??
+    (typeof item?.image === 'string' ? item.image : null);
+
+  return image || '/images/hardware.png';
+}
+
+export function mapHardware(item: any): ServiceItem {
+  return {
+    id: item.id ?? item._id,
+    title: item.shopName ?? item.name ?? 'Hardware Shop',
+    image: getHardwareImage(item),
+    location:
+      item.address ||
+      [item.village, item.district].filter(Boolean).join(', '),
+    price: item.price ?? 0,
+    unit: item.unit || '',
+    category: 'Hardware',
+    mobile: item.mobile,
+    originalData: item,
+    isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,
+  };
+}

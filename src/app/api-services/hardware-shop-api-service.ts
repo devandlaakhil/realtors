@@ -9,10 +9,22 @@ export class HardwareShopApiService {
   private readonly baseUrl = `${environment.serverPort}/shop-services`;
 
   getNearby(params: { lat: number; lng: number }): Observable<any> {
-    return this.http.get(`${this.baseUrl}/get-nearby-hardware-shops`, { params });
+    return this.http.get(`${this.baseUrl}/get-shops`, { params });
   }
 
   create(body: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/create-shop`, body);
+  }
+
+  getMyShops(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/get-my-shops`);
+  }
+
+  updateStatus(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/update-shop-status`, { id });
+  }
+
+  deleteShop(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/delete-shop`, { params: { id } });
   }
 }

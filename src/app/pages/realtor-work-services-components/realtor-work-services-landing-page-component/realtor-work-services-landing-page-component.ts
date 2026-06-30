@@ -7,12 +7,13 @@ import { forkJoin } from 'rxjs';
 import { RealtorsServicesApiServices } from '../../../api-services/realtors-services-api-services';
 import { WorkerApiServices } from '../../../api-services/worker-api-services';
 import { API_CONSTANTS } from '../../../constants/realtors-services-api-constants';
-import { mapTractor, mapVehicle, mapWorker } from '../../../constants/service-mappers';
+import { mapHardware, mapTractor, mapVehicle, mapWorker } from '../../../constants/service-mappers';
 import { MapComponent } from '../../shared-components/map-component/map-component';
 import { mapToServiceCard } from './homeScreen-mapper';
 import { MobileDialpadService } from '../../../shared-services/mobile-dialpad-service';
 import { TransportApiService } from '../../../api-services/transport-api-service';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
+import { HardwareShopApiService } from '../../../api-services/hardware-shop-api-service';
 
 @Component({
   selector: 'app-realtor-work-services-landing-page-component',
@@ -25,6 +26,7 @@ export class RealtorWorkServicesLandingPageComponent {
   realtorApiSrv = inject(RealtorsServicesApiServices);
   workerApiSrv = inject(WorkerApiServices);
   vehiclesApiSrv = inject(TransportApiService);
+  hardwareApiSrv = inject(HardwareShopApiService);
 
   serviceGroups: any[] = [];
   serviceCategoryCards: any[] = [];
@@ -79,6 +81,7 @@ export class RealtorWorkServicesLandingPageComponent {
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.list, this.selectedLocation),
       workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getAll, this.selectedLocation),
       vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles, this.selectedLocation),
+      hardware: this.hardwareApiSrv.getNearby(this.selectedLocation),
     }).subscribe({
       next: (res: any) => {
         this.serviceGroups = [
@@ -96,6 +99,11 @@ export class RealtorWorkServicesLandingPageComponent {
             category: 'Vehicles',
             icon: '/images/transport.png',
             items: (res.vehicles?.data || []).map((x: any) => mapVehicle(x)),
+          },
+          {
+            category: 'Hardware',
+            icon: '/images/hardware.png',
+            items: (res.hardware?.data || res.hardware?.shops || []).map((x: any) => mapHardware(x)),
           },
         ].filter((group) => group.items?.length);
 

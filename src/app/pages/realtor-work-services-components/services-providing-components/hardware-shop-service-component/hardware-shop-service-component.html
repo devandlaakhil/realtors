@@ -69,7 +69,7 @@
                 @if (expandedShopId !== (shop.id || shop._id)) {
                   <article class="mini-card">
                     <img
-                      [src]="shop.image?.[0]?.url || shop.images?.[0]?.url || '/images/hardware.png'"
+                      [src]="getShopImage(shop)"
                       alt=""
                     />
                     <div class="card-content">

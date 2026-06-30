@@ -16,6 +16,7 @@ import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { mapToServiceCard } from '../supporting-files/mapCardMapper';
+import { getHardwareImage } from '../../../../constants/service-mappers';
 
 @Component({
   selector: 'app-hardware-shop-service-component',
@@ -75,6 +76,8 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
     longitude: [null as number | null, Validators.required],
   });
 
+  readonly getShopImage = getHardwareImage;
+
   ngOnInit(): void {
     this.getCurrentLocation();
   }
@@ -89,7 +92,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
     if (!query) return this.shops;
 
     return this.shops.filter((shop) =>
-      [shop.shopName, shop.ownerName, shop.products, shop.village, shop.district]
+      [shop.shopName, shop.ownerName, shop.products, shop.village, shop.district,shop.image.url]
         .filter(Boolean)
         .some((value) => String(value).toLowerCase().includes(query)),
     );

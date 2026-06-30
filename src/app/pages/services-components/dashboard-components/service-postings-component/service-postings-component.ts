@@ -8,8 +8,9 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { WorkerApiServices } from '../../../../api-services/worker-api-services';
-import { mapTractor, mapWorker,mapVehicle } from '../../../../constants/service-mappers';
+import { mapHardware, mapTractor, mapWorker,mapVehicle } from '../../../../constants/service-mappers';
 import { TransportApiService } from '../../../../api-services/transport-api-service';
+import { HardwareShopApiService } from '../../../../api-services/hardware-shop-api-service';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -20,6 +21,7 @@ export class ServicePostingsComponent implements OnInit {
   realtorApiSrv = inject(RealtorsServicesApiServices);
   workerApiSrv = inject(WorkerApiServices);
   transportApiSrv = inject(TransportApiService);
+  hardwareApiSrv = inject(HardwareShopApiService);
 
   loaderSrv = inject(LoaderServices);
   toaster = inject(ToastrService);
@@ -41,7 +43,11 @@ export class ServicePostingsComponent implements OnInit {
     Vehicles : {
       service : this.transportApiSrv,
       url : API_CONSTANTS.transportApiService.updateVehicleStatus,
-    }
+    },
+    Hardware: {
+      service: this.hardwareApiSrv,
+      action: (id: string) => this.hardwareApiSrv.updateStatus(id),
+    },
   };
 
   private deleteApis: any = {
@@ -56,7 +62,11 @@ export class ServicePostingsComponent implements OnInit {
     Vehicles: {
       service : this.transportApiSrv,
       url : API_CONSTANTS.transportApiService.delete,
-    }
+    },
+    Hardware: {
+      service: this.hardwareApiSrv,
+      action: (id: string) => this.hardwareApiSrv.deleteShop(id),
+    },
   };
 
   ngOnInit(): void {
@@ -69,6 +79,7 @@ export class ServicePostingsComponent implements OnInit {
       tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.mylist),
       workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings),
       vehicles : this.transportApiSrv.get(API_CONSTANTS.transportApiService.getMyVehiclePosts),
+      hardware: this.hardwareApiSrv.getMyShops(),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
       next: (res: any) => {
@@ -87,6 +98,11 @@ export class ServicePostingsComponent implements OnInit {
             category: 'Vehicles',
             icon: '🚛',
             items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x)),
+          },
+          {
+            category: 'Hardware',
+            icon: 'Hardware',
+            items: (res.hardware?.data || res.hardware?.shops || []).map((x: any) => mapHardware(x)),
           },
           // {
           //   category: 'Cultivators',
@@ -113,8 +129,11 @@ export class ServicePostingsComponent implements OnInit {
       return;
     }
 
-    apiConfig.service
-      .delete(apiConfig.url, { id: elem.id })
+    const deleteRequest = apiConfig.action
+      ? apiConfig.action(elem.id)
+      : apiConfig.service.delete(apiConfig.url, { id: elem.id });
+
+    deleteRequest
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -155,8 +174,11 @@ export class ServicePostingsComponent implements OnInit {
       this.toaster.error('Status update not supported for this service', 'Error');
       return;
     }
-    apiConfig.service
-      .patch(apiConfig.url, { id: elem.id })
+    const statusRequest = apiConfig.action
+      ? apiConfig.action(elem.id)
+      : apiConfig.service.patch(apiConfig.url, { id: elem.id });
+
+    statusRequest
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
