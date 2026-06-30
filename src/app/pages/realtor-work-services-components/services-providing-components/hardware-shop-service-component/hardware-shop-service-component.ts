@@ -17,6 +17,9 @@ import { ImageUploadComponent } from '../../../shared-components/image-upload-co
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { mapToServiceCard } from '../supporting-files/mapCardMapper';
 import { getHardwareImage } from '../../../../constants/service-mappers';
+import { ActivatedRoute, Router } from '@angular/router';
+import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
+import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 
 @Component({
   selector: 'app-hardware-shop-service-component',
@@ -42,6 +45,8 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   private readonly toastr = inject(ToastrService);
   private readonly destroy$ = new Subject<void>();
   readonly phoneCall = inject(MobileDialpadService);
+  route = inject(ActivatedRoute);
+  router = inject(Router);
 
   showPostForm = false;
   showMapPicker = false;
@@ -58,6 +63,10 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   private isDragging = false;
   private dragStartY = 0;
   private dragStartHeight = 60;
+  isEditMode:boolean = false;
+  propertyId:string = '';
+  existingItem:any;
+  existingImageUrl: string | null = null;
 
   shopForm = this.fb.group({
     shopName: ['', Validators.required],
@@ -79,7 +88,71 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   readonly getShopImage = getHardwareImage;
 
   ngOnInit(): void {
-    this.getCurrentLocation();
+     this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+
+      if (id) {
+        this.isEditMode = true;
+        this.showPostForm = true;
+        this.propertyId = id;
+        this.loadProperty(id);
+      } else {
+        this.getCurrentLocation();
+      }
+    });
+  }
+
+  loadProperty(id: string) {
+    this.isEditMode = true;
+    this.loader.show();
+    this.api
+      .SingleShop(API_CONSTANTS.hardwareShopApiService.getSingleShop, { id })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          const responseShop = res?.data ?? res?.shop ?? res;
+          const shop = Array.isArray(responseShop) ? responseShop[0] : responseShop;
+          const coordinates =
+            shop?.location?.coordinates?.coordinates ??
+            shop?.location?.coordinates ??
+            shop?.coordinates;
+          const latitude = Array.isArray(coordinates)
+            ? Number(coordinates[1])
+            : Number(shop?.latitude ?? shop?.lat);
+          const longitude = Array.isArray(coordinates)
+            ? Number(coordinates[0])
+            : Number(shop?.longitude ?? shop?.lng);
+
+          this.existingItem = shop;
+          this.existingImageUrl = getHardwareImage(shop);
+          this.shopForm.patchValue({
+            shopName: shop.shopName ?? shop.name ?? '',
+            ownerName: shop.ownerName ?? '',
+            mobile: shop.mobile ?? shop.mobileNumber ?? '',
+            address: shop.address ?? '',
+            village: shop.village ?? shop.location?.village ?? '',
+            district: shop.district ?? shop.location?.district ?? '',
+            products: Array.isArray(shop.products) ? shop.products.join(', ') : (shop.products ?? ''),
+            openingTime: shop.openingTime ?? '08:00',
+            closingTime: shop.closingTime ?? '20:00',
+            homeDelivery: shop.homeDelivery ?? false,
+            description: shop.description ?? '',
+            image: this.existingImageUrl,
+            latitude: Number.isFinite(latitude) ? latitude : null,
+            longitude: Number.isFinite(longitude) ? longitude : null,
+          });
+
+          if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+            this.selectedLocation = { lat: latitude, lng: longitude };
+            this.locationReady = true;
+          }
+          this.loader.hide();
+        },
+        error: () => {
+          this.loader.hide();
+          this.toastr.error('Unable to load the hardware shop', 'Fail');
+        },
+      });
   }
 
   ngOnDestroy(): void {
@@ -247,21 +320,33 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
     if (this.selectedImageFile) formData.append('images', this.selectedImageFile);
 
     this.loader.show();
-    this.api
-      .create(formData)
+    if (this.isEditMode) {
+      formData.append('id', this.propertyId);
+    }
+
+    const saveRequest = this.isEditMode ? this.api.update(formData) : this.api.create(formData);
+    saveRequest
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.loader.hide();
-          this.toastr.success('Your hardware shop is now online');
+          this.toastr.success(
+            this.isEditMode ? 'Hardware shop updated successfully' : 'Your hardware shop is now online',
+          );
           this.showPostForm = false;
           this.shopForm.reset({ openingTime: '08:00', closingTime: '20:00', homeDelivery: false });
           this.selectedImageFile = null;
-          this.getCurrentLocation();
+          if (this.isEditMode) {
+            this.router.navigate(['/dashboard/services']);
+          } else {
+            this.getCurrentLocation();
+          }
         },
         error: () => {
           this.loader.hide();
-          this.toastr.error('Unable to publish the hardware shop');
+          this.toastr.error(
+            this.isEditMode ? 'Unable to update the hardware shop' : 'Unable to publish the hardware shop',
+          );
         },
       });
   }

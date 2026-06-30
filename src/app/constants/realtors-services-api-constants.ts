@@ -26,5 +26,10 @@ export const API_CONSTANTS = {
     delete : 'delete-vehicle',
     getSingleVehicle : 'get-singal-vehicle',
     updateVehicle : 'updateVehicle'
+  },
+  hardwareShopApiService : {
+    getSingleShop : 'get-single-shop',
+    deleteShop : 'delete-shop',
+    deactivate:'update-shop-status'
   }
 };

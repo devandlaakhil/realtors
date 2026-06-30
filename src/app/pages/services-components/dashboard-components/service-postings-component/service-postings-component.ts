@@ -164,7 +164,11 @@ export class ServicePostingsComponent implements OnInit {
         this.router.navigate(['/services/edit-worker', elem.id]);
         break;
       case 'Vehicles':
-        this.router.navigate(['/services/edit-vehicle', elem.id])
+        this.router.navigate(['/services/edit-vehicle', elem.id]);
+        break;
+      case 'Hardware':
+        this.router.navigate(['/services/edit-hardware',elem.id]);
+        break;
     }
   }
 

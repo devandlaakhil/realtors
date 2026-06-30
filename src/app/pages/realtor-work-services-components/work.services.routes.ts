@@ -43,7 +43,12 @@ export const WORK_SERVICE_ROUTES: Routes = [
         {
           path :'hardware',
           loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
-        }
+        },
+        {
+          path:'edit-hardware/:id',
+          canActivate:[authGuard],
+          loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
+        },
     ] 
   },
 ];

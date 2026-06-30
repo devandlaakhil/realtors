@@ -127,8 +127,8 @@
   <main class="hardware-page form-page">
     <header class="page-head">
       <div>
-        <h1>Bring Your Hardware Shop Online</h1>
-        <p>Help nearby customers discover your store and call you directly.</p>
+        <h1>{{ isEditMode ? 'Edit Hardware Shop' : 'Bring Your Hardware Shop Online' }}</h1>
+        <p>{{ isEditMode ? 'Update your shop information and location.' : 'Help nearby customers discover your store and call you directly.' }}</p>
       </div>
       <button mat-stroked-button color="warn" type="button" (click)="showPostForm = false">
         Cancel
@@ -223,7 +223,7 @@
           <div><h2>Shop photo</h2><p>Add a clear photo of the storefront</p></div>
         </div>
         <app-image-upload-component
-          [imageUrl]="null"
+          [imageUrl]="existingImageUrl"
           (fileSelected)="onImageSelected($event)"
         ></app-image-upload-component>
       </section>
@@ -234,7 +234,7 @@
         </button>
         <button mat-raised-button color="primary" type="submit">
           <mat-icon>publish</mat-icon>
-          Publish Shop
+          {{ isEditMode ? 'Update Shop' : 'Publish Shop' }}
         </button>
       </div>
     </form>
