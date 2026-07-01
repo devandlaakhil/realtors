@@ -49,12 +49,10 @@
       <div class="post-option-grid">
         @for (option of postOptions; track option.route) {
           <button type="button" class="post-option" (click)="selectPostOption(option)">
-            <span class="post-option-icon"><mat-icon>{{ option.icon }}</mat-icon></span>
-            <span class="post-option-copy">
-              <strong>{{ option.label | T }}</strong>
-              <small>{{ option.description | T }}</small>
+            <span class="post-option-icon">
+              <img [src]="option.image" [alt]="option.label" />
             </span>
-            <mat-icon class="post-option-arrow">chevron_right</mat-icon>
+            <strong>{{ option.label | T }}</strong>
           </button>
         }
       </div>

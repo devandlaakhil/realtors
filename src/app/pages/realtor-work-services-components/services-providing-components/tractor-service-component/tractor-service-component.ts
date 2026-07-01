@@ -33,7 +33,6 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
     ReactiveFormsModule,
     GoogleMap,
     MapMarker,
-    MapInfoWindow,
     GoogleMapsModule,
     MatIcon,
     TranslatePipe,

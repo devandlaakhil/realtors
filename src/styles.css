@@ -560,6 +560,108 @@ app-image-upload-component button[color='primary'] {
   }
 }
 
+/* Normal service-list layout after map and draggable sheet removal */
+app-workers-service-component,
+app-transportation-service-component,
+app-tractor-service-component,
+app-hardware-shop-service-component {
+  display: block;
+}
+
+app-workers-service-component .content-layout,
+app-transportation-service-component .content-layout,
+app-tractor-service-component .content-layout,
+app-hardware-shop-service-component .content-layout {
+  display: block !important;
+  min-height: 0 !important;
+}
+
+app-workers-service-component .search-bar,
+app-transportation-service-component .search-bar,
+app-tractor-service-component .search-bar,
+app-hardware-shop-service-component .search-box {
+  width: min(100%, 420px) !important;
+  min-height: 44px !important;
+  margin: 0 auto 14px !important;
+  padding: 0 12px !important;
+  border-radius: 12px !important;
+}
+
+app-workers-service-component .search-bar input,
+app-transportation-service-component .search-bar input,
+app-tractor-service-component .search-bar input,
+app-hardware-shop-service-component .search-box input {
+  min-width: 0 !important;
+  min-height: 42px !important;
+  padding: 8px 0 !important;
+  font-size: 14px !important;
+}
+
+app-workers-service-component .sheet-container,
+app-transportation-service-component .sheet-container,
+app-tractor-service-component .sheet-container,
+app-hardware-shop-service-component .sheet-container {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+app-workers-service-component .service-list-panel,
+app-transportation-service-component .service-list-panel,
+app-tractor-service-component .service-list-panel,
+app-hardware-shop-service-component .service-list-panel {
+  position: static !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  transform: none !important;
+  border: 1px solid var(--md-outline-variant) !important;
+  border-radius: var(--app-radius-lg) !important;
+  background: var(--md-surface-container) !important;
+  box-shadow: var(--elevation-1) !important;
+}
+
+app-workers-service-component .service-list-panel .sheet-content,
+app-transportation-service-component .service-list-panel .sheet-content,
+app-tractor-service-component .service-list-panel .sheet-content,
+app-hardware-shop-service-component .service-list-panel .sheet-content {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 16px !important;
+}
+
+@media (max-width: 768px) {
+  app-workers-service-component .search-bar,
+  app-transportation-service-component .search-bar,
+  app-tractor-service-component .search-bar,
+  app-hardware-shop-service-component .search-box {
+    width: calc(100% - 32px) !important;
+    max-width: 360px !important;
+  }
+
+  app-workers-service-component .service-list-panel,
+  app-transportation-service-component .service-list-panel,
+  app-tractor-service-component .service-list-panel,
+  app-hardware-shop-service-component .service-list-panel {
+    border-right: 0 !important;
+    border-left: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  app-workers-service-component .service-list-panel .sheet-content,
+  app-transportation-service-component .service-list-panel .sheet-content,
+  app-tractor-service-component .service-list-panel .sheet-content,
+  app-hardware-shop-service-component .service-list-panel .sheet-content {
+    padding: 12px !important;
+  }
+}
+
 /* Home component styles (moved here to keep component styles within Angular budgets) */
 .property-page {
   display: flex;

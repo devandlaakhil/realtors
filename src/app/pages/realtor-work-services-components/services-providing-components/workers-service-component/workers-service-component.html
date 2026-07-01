@@ -7,9 +7,9 @@
         <p>{{ filteredWorkers.length }} {{'workers available'|T}}</p>
       </div>
 
-      <button class="post-btn" (click)="openPostWorker()">
+      <!-- <button class="post-btn" (click)="openPostWorker()">
         {{  'Post Worker'|T }}
-      </button>
+      </button> -->
     </div>
 
     <!-- Search -->
@@ -29,35 +29,21 @@
     </div>
 
     <div class="content-layout">
-      <div class="map-panel">
+      <!-- <div class="map-panel">
         <div class="map-title" *ngIf="!sheetExpanded">{{ 'Workers Map' | T }}</div>
         <div class="map-wrapper">
           <app-map-component [data]="mapCardItems" [dragble]="false"></app-map-component>
         </div>
-      </div>
+      </div> -->
 
       <div class="sheet-container">
-        <div
-          class="bottom-sheet"
-          [class.expanded]="sheetExpanded"
-          [style.height]="sheetHeight"
-        >
-          <div
-            class="drag-line"
-            (pointerdown)="onDragStart($event)"
-            (touchstart)="onDragStart($event)"
-          ></div>
-
+        <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
                 <h3>{{ 'Worker Details' | T }}</h3>
                 <p>{{ filteredWorkers.length }} {{'workers ready' |T}}</p>
               </div>
-
-              <button class="sheet-toggle" type="button" (click)="toggleSheet()">
-                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
-              </button>
             </div>
 
             <div class="worker-list">
@@ -146,7 +132,7 @@
                       <mat-icon>route</mat-icon>
                       <div>
                         <span class="label">{{'Distance' | T}}</span>
-                        <span class="value">{{ worker.distance | number: '1.1-1' }} {{'KM' | T}}</span>
+                        <span class="value">{{ worker.distanceKm | number: '1.1-1' }} {{'KM' | T}}</span>
                       </div>
                     </div>
                   </div>

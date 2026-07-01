@@ -5,10 +5,10 @@
         <h1>Hardware Shops Near You</h1>
         <p>Find materials, tools and local suppliers nearby</p>
       </div>
-      <button class="post-btn" type="button" (click)="showPostForm = true">
+      <!-- <button class="post-btn" type="button" (click)="showPostForm = true">
         <mat-icon>storefront</mat-icon>
         List Your Shop
-      </button>
+      </button> -->
     </header>
 
     <label class="search-box">
@@ -35,33 +35,14 @@
     }
 
     <section class="content-layout">
-      <div class="map-panel">
-        @if (!sheetExpanded) {
-          <div class="map-title">Nearby Hardware Shops</div>
-        }
-        <app-map-component
-          [data]="mapItems"
-          [center]="locationReady ? selectedLocation : undefined"
-          [dragble]="false"
-        ></app-map-component>
-      </div>
-
       <div class="sheet-container">
-        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
-          <div
-            class="drag-line"
-            (pointerdown)="onDragStart($event)"
-            (touchstart)="onDragStart($event)"
-          ></div>
+        <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
                 <h2>Hardware Shop Details</h2>
                 <p>{{ filteredShops.length }} shops available nearby</p>
               </div>
-              <button type="button" (click)="toggleSheet()">
-                {{ sheetExpanded ? 'Minimize' : 'Maximize' }}
-              </button>
             </div>
 
             <div class="shop-list">

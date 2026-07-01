@@ -14,11 +14,11 @@ export class BottomNavComponent {
   showPostPicker = false;
 
   postOptions = [
-    { label: 'Property', description: 'Sell or rent property', icon: 'home_work', route: '/ad-post' },
-    { label: 'Worker', description: 'Offer skilled services', icon: 'engineering', route: '/services/workers' },
-    { label: 'Tractor', description: 'List tractor services', icon: 'agriculture', route: '/services/tractor' },
-    { label: 'Transport', description: 'Add a transport vehicle', icon: 'local_shipping', route: '/services/transport' },
-    { label: 'Hardware Shop', description: 'List your hardware shop', icon: 'hardware', route: '/services/hardware' },
+    { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
+    { label: 'Worker', image: '/images/worker.png', route: '/services/workers' },
+    { label: 'Tractor', image: '/images/tractor.png', route: '/services/tractor' },
+    { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
+    { label: 'Hardware', image: '/images/hardware.png', route: '/services/hardware' },
   ];
 
   navLinks: {

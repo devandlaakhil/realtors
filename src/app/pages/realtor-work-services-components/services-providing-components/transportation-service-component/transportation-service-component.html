@@ -7,9 +7,9 @@
         <p>{{ vehicles.length }} {{ 'vehicles available' | T }}</p>
       </div>
 
-      <button class="post-btn" (click)="openPostvehicle()">
+      <!-- <button class="post-btn" (click)="openPostvehicle()">
         {{ 'Post vehicle' | T }}
-      </button>
+      </button> -->
     </div>
 
     <!-- Search -->
@@ -29,31 +29,21 @@
     </div>
 
     <div class="content-layout">
-      <div class="map-panel">
+      <!-- <div class="map-panel">
         <div class="map-title" *ngIf="!sheetExpanded">{{ 'vehicles Map' | T }}</div>
         <div class="map-wrapper">
           <app-map-component [data]="mapCardItems" [dragble]="false"></app-map-component>
         </div>
-      </div>
+      </div>  -->
 
       <div class="sheet-container">
-        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
-          <div
-            class="drag-line"
-            (pointerdown)="onDragStart($event)"
-            (touchstart)="onDragStart($event)"
-          ></div>
-
+        <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
                 <h3>{{ 'vehicles Details' | T }}</h3>
                 <p>{{ vehicles.length }} {{ 'vehicles ready' | T }}</p>
               </div>
-
-              <button class="sheet-toggle" type="button" (click)="toggleSheet()">
-                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
-              </button>
             </div>
 
             <div class="worker-list">

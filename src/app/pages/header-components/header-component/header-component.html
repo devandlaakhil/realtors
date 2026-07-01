@@ -93,36 +93,40 @@
     <mat-divider></mat-divider>
   }
 
-  <button mat-button class="menu-link" (click)="backToHome(); toggleMobileMenu()" routerLinkActive="active-link">
+  <!-- <button mat-button class="menu-link" (click)="backToHome(); toggleMobileMenu()" routerLinkActive="active-link">
     <mat-icon>home</mat-icon>
     <span>{{ 'Home' | T }}</span>
-  </button>
-  <button mat-button class="menu-link" routerLink="/services/home" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+  </button> -->
+  <!-- <button mat-button class="menu-link" routerLink="/services/home" (click)="toggleMobileMenu()" routerLinkActive="active-link">
     <mat-icon>handyman</mat-icon>
     <span>{{ 'Services' | T }}</span>
-  </button>
+  </button> -->
 
   <!-- LOGGED IN USER -->
   @if (isLoggedIn) {
-    <button mat-button class="menu-link" routerLink="/dashboard" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+    <!-- <button mat-button class="menu-link" routerLink="/dashboard" (click)="toggleMobileMenu()" routerLinkActive="active-link">
       <mat-icon>dashboard</mat-icon>
       <span>{{ 'Dashboard' | T }}</span>
-    </button>
-    <button mat-button class="menu-link" routerLink="/ad-post" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+    </button> -->
+    <!-- <button mat-button class="menu-link" routerLink="/ad-post" (click)="toggleMobileMenu()" routerLinkActive="active-link">
       <mat-icon>add_box</mat-icon>
       <span>{{ 'Post Property' | T }}</span>
-    </button>
-    <button mat-button class="menu-link" (click)="navToProfile(); toggleMobileMenu()">
+    </button> -->
+    <!-- <button mat-button class="menu-link" (click)="navToProfile(); toggleMobileMenu()">
       <mat-icon>person</mat-icon>
       <span>{{ 'Profile' | T }}</span>
-    </button>
-    <button mat-button class="menu-link" (click)="navToSubscription(); toggleMobileMenu()">
-      <mat-icon>card_membership</mat-icon>
-      <span>{{ 'Subscription' | T }}</span>
+    </button> -->
+    <button mat-button class="menu-link" routerLink="/about" (click)="toggleMobileMenu()" routerLinkActive="active-link">
+      <mat-icon>info</mat-icon>
+      <span>{{ 'About' | T }}</span>
     </button>
     <button mat-button class="menu-link" routerLink="/contact-us" (click)="toggleMobileMenu()" routerLinkActive="active-link">
       <mat-icon>call</mat-icon>
       <span>{{ 'Contact' | T }}</span>
+    </button>
+    <button mat-button class="menu-link" (click)="navToSubscription(); toggleMobileMenu()">
+      <mat-icon>card_membership</mat-icon>
+      <span>{{ 'Subscription' | T }}</span>
     </button>
     <mat-divider></mat-divider>
     <button mat-button class="menu-link menu-link-danger" (click)="logout(); toggleMobileMenu()">

@@ -6,21 +6,21 @@
         <p>{{ totalAvailTractors }} {{ 'tractors available' | T }}</p>
       </div>
 
-      <button class="post-btn" (click)="openPostService()">+ {{ 'Post Service' | T }}</button>
-    </div>
+      <!-- <button class="post-btn" (click)="openPostService()">+ {{ 'Post Service' | T }}</button> -->
+    </div> 
 
     <div class="search-bar">
       <input placeholder="{{ 'Search tractors' | T }}..." />
     </div>
 
-    <div class="filters">
+    <!-- <div class="filters">
       <button>5 KM</button>
       <button>10 KM</button>
       <button>20 KM</button>
-    </div>
+    </div> -->
 
     <div class="content-layout">
-      <div class="map-panel">
+      <!-- <div class="map-panel">
         <div class="map-title" *ngIf="!sheetExpanded">Nearby Tractors</div>
         <google-map [center]="center" [zoom]="15" width="100%" height="100%">
           <map-marker
@@ -39,20 +39,16 @@
             </div>
           </map-info-window>
         </google-map>
-      </div>
+      </div> -->
 
       <div class="sheet-container">
-        <div class="bottom-sheet" [class.expanded]="sheetExpanded" [style.height]="sheetHeight">
-          <div class="drag-line" (pointerdown)="onDragStart($event)" (touchstart)="onDragStart($event)"></div>
+        <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
                 <h3>Tractor Details</h3>
                 <p>{{ totalAvailTractors }} {{ 'services ready' | T }}</p>
               </div>
-              <button class="sheet-toggle" type="button" (click)="toggleSheet($event)">
-                {{ sheetExpanded ? ('Minimize' | T) : ('Maximize' | T) }}
-              </button>
             </div>
 
             <div class="worker-list">
