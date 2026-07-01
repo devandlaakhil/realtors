@@ -27,16 +27,16 @@ export class CallLeadService {
 
   async record(provider: ServiceProviderCall, guest?: CallUserIdentity): Promise<void> {
     const sessionUser = this.auth.getUser();
-    const profile = this.auth.isLoggedIn()
+    const profile = !guest && this.auth.isLoggedIn()
       ? await firstValueFrom(this.userApi.getUser())
-      : guest;
-    const caller = this.auth.isLoggedIn()
+      : null;
+    const caller = guest ?? (this.auth.isLoggedIn()
       ? {
           id: String(sessionUser?.id ?? ''),
           name: profile?.name ?? sessionUser?.name ?? '',
           mobile: profile?.mobile ?? '',
         }
-      : guest;
+      : undefined);
     if (!caller) return;
 
     await createServiceCall({
@@ -49,5 +49,18 @@ export class CallLeadService {
       serviceType: provider.serviceType,
       locationAddress: provider.locationAddress ?? null,
     });
+  }
+
+  async getLoggedInIdentity(): Promise<CallUserIdentity | null> {
+    if (!this.auth.isLoggedIn()) return null;
+    const sessionUser = this.auth.getUser();
+    const profile = await firstValueFrom(this.userApi.getUser());
+    const mobile = profile?.mobile ?? '';
+    if (!sessionUser?.id || !mobile) return null;
+    return {
+      id: String(sessionUser.id),
+      name: profile?.name ?? sessionUser.name ?? '',
+      mobile,
+    };
   }
 }

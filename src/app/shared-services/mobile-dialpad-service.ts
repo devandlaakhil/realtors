@@ -20,18 +20,22 @@ export class MobileDialpadService {
       return;
     }
 
-    const guest = this.auth.isLoggedIn() ? undefined : await this.guestIdentity.request();
-    if (!this.auth.isLoggedIn() && !guest) {
+    let caller = undefined;
+    if (this.auth.isLoggedIn()) {
+      caller = await this.callLeads.getLoggedInIdentity().catch(() => null);
+    }
+    caller ??= await this.guestIdentity.request();
+    if (!caller) {
       return;
     }
 
     this.analytics.trackCall(provider.serviceType);
     let recorded = true;
-    await this.callLeads.record(provider, guest ?? undefined).catch((error) => {
+    await this.callLeads.record(provider, caller).catch((error) => {
       recorded = false;
       console.warn('Unable to save service call lead', error);
-      const code = error?.code ? ` (${error.code})` : '';
-      this.toastr.warning(`Call opened, but tracking failed${code}.`, 'Call tracking');
+      const detail = error?.code ?? error?.status ?? error?.message ?? 'unknown error';
+      this.toastr.warning(`Call opened, but tracking failed (${detail}).`, 'Call tracking');
     });
     if (recorded) {
       this.toastr.success('Call details recorded.', 'Calling service');
