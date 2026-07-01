@@ -86,7 +86,7 @@
                     </div>
                     @if (shop.description) { <p class="description">{{ shop.description }}</p> }
                     <div class="expanded-actions">
-                      <button class="primary-btn" type="button" (click)="phoneCall.call(shop.mobile)"><mat-icon>call</mat-icon> Call Shop</button>
+                      <button class="primary-btn" type="button" (click)="phoneCall.call(shop.mobile, 'hardware')"><mat-icon>call</mat-icon> Call Shop</button>
                       <button class="secondary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">Close Details</button>
                     </div>
                   </article>
