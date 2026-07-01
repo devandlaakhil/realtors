@@ -1,0 +1,13 @@
+specVersion: "v1"
+serviceId: "realtors-app-5e09a-service"
+location: "us-east4"
+schemas:
+  - source: "./schema"
+    datasource:
+      postgresql:
+        database: "realtors-app-5e09a-database"
+        cloudSql:
+          instanceId: "realtors-app-5e09a-instance"
+          # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+          # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+connectorDirs: ["./example"]

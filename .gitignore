@@ -10,6 +10,8 @@
 /node_modules
 npm-debug.log
 yarn-error.log
+firebase-debug.log
+firebase-debug.*.log
 
 # IDEs and editors
 .idea/
@@ -31,6 +33,11 @@ yarn-error.log
 
 # Miscellaneous
 /.angular/cache
+/.firebase
+/firebase-export
+/dataconnect/.dataconnect
+/dataconnect/.pgdata
+/dataconnect/.firebase
 .sass-cache/
 /connect.lock
 /coverage

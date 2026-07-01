@@ -11,3 +11,32 @@
 
     <app-bottom-nav-component></app-bottom-nav-component>
 </div>
+
+@if (guestCallIdentity.isOpen()) {
+  <div class="guest-call-backdrop" (click)="guestCallIdentity.cancel()">
+    <section class="guest-call-sheet" role="dialog" aria-modal="true" aria-labelledby="guest-call-title" (click)="$event.stopPropagation()">
+      <div class="guest-call-handle"></div>
+      <span class="guest-call-kicker">Continue to call</span>
+      <h2 id="guest-call-title">Tell us who you are</h2>
+      <p>Enter these details once. We’ll remember them on this device for future service calls.</p>
+
+      <label>
+        <span>Name</span>
+        <input #guestName type="text" autocomplete="name" maxlength="60" placeholder="Your name" />
+      </label>
+      <label>
+        <span>Mobile number</span>
+        <input #guestMobile type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="10-digit mobile number" />
+      </label>
+
+      @if (guestCallIdentity.error()) {
+        <div class="guest-call-error">{{ guestCallIdentity.error() }}</div>
+      }
+
+      <div class="guest-call-actions">
+        <button type="button" class="guest-call-cancel" (click)="guestCallIdentity.cancel()">Cancel</button>
+        <button type="button" class="guest-call-continue" (click)="guestCallIdentity.submit(guestName.value, guestMobile.value)">Continue call</button>
+      </div>
+    </section>
+  </div>
+}

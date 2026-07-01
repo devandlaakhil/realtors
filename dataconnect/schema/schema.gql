@@ -1,0 +1,46 @@
+type User @table {
+  name: String!
+  email: String!
+  phoneNumber: String!
+  profilePictureUrl: String
+}
+
+type ServiceProvider @table {
+  providerName: String!
+  contactNumber: String!
+  serviceCategory: String!
+  rating: Float
+  locationAddress: String
+}
+
+type Service @table {
+  serviceName: String!
+  durationMinutes: Int!
+  price: Float!
+  serviceProvider: ServiceProvider!
+}
+
+type Appointment @table {
+  dateTime: Timestamp!
+  status: String!
+  user: User!
+  service: Service!
+}
+
+type AuditLog @table {
+  actionType: String!
+  timestamp: Timestamp!
+  appointment: Appointment!
+}
+
+type ServiceCall @table {
+  userId: String!
+  userName: String!
+  userPhoneNumber: String!
+  providerName: String!
+  providerPhoneNumber: String!
+  serviceName: String!
+  serviceType: String!
+  locationAddress: String
+  calledAt: Timestamp! @default(expr: "request.time")
+}

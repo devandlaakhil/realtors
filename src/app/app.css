@@ -14,3 +14,124 @@
 	margin: 0 auto;
 	padding: 0;
 }
+.guest-call-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgb(15 23 42 / 52%);
+  backdrop-filter: blur(2px);
+}
+
+.guest-call-sheet {
+  width: min(100%, 520px);
+  padding: 8px 20px calc(22px + env(safe-area-inset-bottom));
+  border-radius: 28px 28px 0 0;
+  background: var(--md-surface-container);
+  box-shadow: var(--elevation-4);
+}
+
+.guest-call-handle {
+  width: 36px;
+  height: 4px;
+  margin: 2px auto 16px;
+  border-radius: 99px;
+  background: var(--md-outline);
+}
+
+.guest-call-kicker {
+  color: var(--md-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.guest-call-sheet h2 {
+  margin: 5px 0;
+  font-size: 1.4rem;
+}
+
+.guest-call-sheet > p {
+  margin: 0 0 18px;
+  color: var(--md-on-surface-variant);
+  font-size: 0.86rem;
+}
+
+.guest-call-sheet label,
+.guest-call-sheet label span {
+  display: block;
+}
+
+.guest-call-sheet label {
+  margin-top: 12px;
+  color: var(--md-on-surface);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.guest-call-sheet input {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 6px;
+  padding: 0 14px;
+  border: 1px solid var(--md-outline);
+  border-radius: 12px;
+  background: var(--md-surface-container);
+  color: var(--md-on-surface);
+  font-size: 16px;
+  outline: none;
+}
+
+.guest-call-sheet input:focus {
+  border-color: var(--md-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-primary) 14%, transparent);
+}
+
+.guest-call-error {
+  margin-top: 10px;
+  color: var(--md-error);
+  font-size: 0.8rem;
+}
+
+.guest-call-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.guest-call-actions button {
+  min-height: 48px;
+  border-radius: 24px;
+  font-weight: 700;
+}
+
+.guest-call-cancel {
+  border: 1px solid var(--md-outline);
+  background: transparent;
+  color: var(--md-on-surface);
+}
+
+.guest-call-continue {
+  border: 0;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+
+@media (min-width: 769px) {
+  .guest-call-backdrop {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .guest-call-sheet {
+    padding: 24px;
+    border-radius: 28px;
+  }
+
+  .guest-call-handle {
+    display: none;
+  }
+}

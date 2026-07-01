@@ -1,0 +1,52 @@
+mutation CreateAppointment($serviceId: UUID!, $dateTime: Timestamp!) @auth(level: USER) {
+  appointment_insert(data: {serviceId: $serviceId, dateTime: $dateTime, userId_expr: "auth.uid", status: "pending"})
+}
+
+query ListServices @auth(level: PUBLIC) {
+  services {
+    serviceName
+    price
+    durationMinutes
+    serviceProvider {
+      providerName
+      rating
+    }
+  }
+}
+
+mutation UpdateUserProfile($name: String, $phoneNumber: String) @auth(level: USER) {
+  user_update(key: {id_expr: "auth.uid"}, data: {name: $name, phoneNumber: $phoneNumber})
+}
+
+query GetUserAppointments @auth(level: USER) {
+  appointments(where: {userId: {eq_expr: "auth.uid"}}) {
+    dateTime
+    status
+    service {
+      serviceName
+      price
+    }
+  }
+}
+
+mutation CreateServiceCall(
+  $userId: String!
+  $userName: String!
+  $userPhoneNumber: String!
+  $providerName: String!
+  $providerPhoneNumber: String!
+  $serviceName: String!
+  $serviceType: String!
+  $locationAddress: String
+) @auth(level: PUBLIC, insecureReason: "Users authenticate through the existing backend JWT") {
+  serviceCall_insert(data: {
+    userId: $userId
+    userName: $userName
+    userPhoneNumber: $userPhoneNumber
+    providerName: $providerName
+    providerPhoneNumber: $providerPhoneNumber
+    serviceName: $serviceName
+    serviceType: $serviceType
+    locationAddress: $locationAddress
+  })
+}

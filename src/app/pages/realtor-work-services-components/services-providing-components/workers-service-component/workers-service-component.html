@@ -144,7 +144,7 @@
                   </div>
 
                   <div class="expanded-actions">
-                    <button class="primary-btn" type="button" (click)="phoneCall.call(worker.mobile, 'worker')">
+                    <button class="primary-btn" type="button" (click)="phoneCall.call({ id: worker.id, name: worker.name, mobile: worker.mobile, serviceType: 'worker', serviceName: worker.category, locationAddress: (worker.village || '') + ', ' + (worker.district || '') })">
                       <mat-icon>call</mat-icon>
                       {{'Contact Worker' | T}}
                     </button>

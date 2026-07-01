@@ -7,6 +7,7 @@ import { HeaderComponent } from '../app/pages/header-components/header-component
 import { LoaderComponent } from './pages/shared-components/loader-component/loader-component';
 import { BottomNavComponent } from './pages/shared-components/bottom-nav-component/bottom-nav-component';
 import { AnalyticsService } from './shared-services/analytics-service';
+import { GuestCallIdentityService } from './shared-services/guest-call-identity-service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, HeaderComponent, LoaderComponent, BottomNavComponent],
@@ -18,6 +19,7 @@ export class App implements OnInit, OnDestroy {
   private router = inject(Router);
   private location = inject(Location);
   private analytics = inject(AnalyticsService);
+  readonly guestCallIdentity = inject(GuestCallIdentityService);
   private backButtonListener?: PluginListenerHandle;
 
   async ngOnInit(): Promise<void> {

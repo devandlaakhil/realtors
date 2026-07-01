@@ -92,7 +92,7 @@
 
                         <div class="popover-actions">
                           <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
-                          <button class="call-btn compact" type="button" (click)="phoneCall.call(selectedService.mobile, 'service_landing')">
+                          <button class="call-btn compact" type="button" (click)="phoneCall.call({ id: selectedService.id, name: selectedService.owner || selectedService.name, mobile: selectedService.mobile, serviceType: selectedService.category || 'service', serviceName: selectedService.name, locationAddress: selectedService.location })">
                             {{ 'Call' | T }}
                           </button>
                         </div>
@@ -164,7 +164,7 @@
 
                   <div class="popover-actions">
                     <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
-                    <button class="call-btn compact" type="button" (click)="phoneCall.call(selectedService.mobile, 'service_landing')">
+                    <button class="call-btn compact" type="button" (click)="phoneCall.call({ id: selectedService.id, name: selectedService.owner || selectedService.name, mobile: selectedService.mobile, serviceType: selectedService.category || 'service', serviceName: selectedService.name, locationAddress: selectedService.location })">
                       {{ 'Call' | T }}
                     </button>
                   </div>
