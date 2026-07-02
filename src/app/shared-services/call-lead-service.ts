@@ -54,7 +54,7 @@ export class CallLeadService {
   async getLoggedInIdentity(): Promise<CallUserIdentity | null> {
     if (!this.auth.isLoggedIn()) return null;
     const sessionUser = this.auth.getUser();
-    const profile = await firstValueFrom(this.userApi.getUser());
+    const profile = await firstValueFrom(this.userApi.getUser(true));
     const mobile = profile?.mobile ?? '';
     if (!sessionUser?.id || !mobile) return null;
     return {
