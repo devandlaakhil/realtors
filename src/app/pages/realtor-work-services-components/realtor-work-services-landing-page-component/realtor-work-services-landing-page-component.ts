@@ -201,6 +201,29 @@ export class RealtorWorkServicesLandingPageComponent {
     this.popoverPosition = null;
   }
 
+  callService(service: any, event?: Event): void {
+    event?.stopPropagation();
+    const provider = {
+      id: service.id,
+      name: service.owner || service.name,
+      mobile: service.mobile,
+      serviceType: service.category || 'service',
+      serviceName: service.name,
+      locationAddress: service.location,
+    };
+    this.closeServicePopover();
+    void this.phoneCall.call(provider);
+  }
+
+  @HostListener('window:scroll')
+  @HostListener('document:touchmove')
+  @HostListener('document:wheel')
+  closeServicePopoverOnScroll(): void {
+    if (this.selectedService) {
+      this.closeServicePopover();
+    }
+  }
+
   private setPopoverPosition(event?: Event): void {
     const target = event?.currentTarget as HTMLElement | null;
 

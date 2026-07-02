@@ -25,29 +25,39 @@ export class CallLeadService {
   private auth = inject(AuthService);
   private userApi = inject(UserApiServices);
 
-  async record(provider: ServiceProviderCall, guest?: CallUserIdentity): Promise<void> {
+  private asString(value: unknown): string {
+    return value == null ? '' : String(value);
+  }
+
+  async record(provider: ServiceProviderCall, suppliedIdentity?: CallUserIdentity): Promise<void> {
     const sessionUser = this.auth.getUser();
-    const profile = !guest && this.auth.isLoggedIn()
-      ? await firstValueFrom(this.userApi.getUser())
+    const loggedIn = this.auth.isLoggedIn();
+    const profile = loggedIn
+      ? await firstValueFrom(this.userApi.getUser(true))
       : null;
-    const caller = guest ?? (this.auth.isLoggedIn()
+    const caller = loggedIn
       ? {
-          id: String(sessionUser?.id ?? ''),
-          name: profile?.name ?? sessionUser?.name ?? '',
-          mobile: profile?.mobile ?? '',
+          id: this.asString(sessionUser?.id ?? profile?.id),
+          name: this.asString(profile?.name ?? sessionUser?.name),
+          mobile: this.asString(profile?.mobile ?? suppliedIdentity?.mobile),
         }
-      : undefined);
+      : suppliedIdentity;
     if (!caller) return;
+    if (loggedIn && !caller.id) {
+      throw new Error('Logged-in user ID is unavailable');
+    }
 
     await createServiceCall({
-      userId: caller.id,
-      userName: caller.name,
-      userPhoneNumber: caller.mobile,
-      providerName: provider.name ?? '',
-      providerPhoneNumber: provider.mobile ?? '',
-      serviceName: provider.serviceName ?? provider.name ?? '',
-      serviceType: provider.serviceType,
-      locationAddress: provider.locationAddress ?? null,
+      userId: this.asString(caller.id),
+      userName: this.asString(caller.name),
+      userPhoneNumber: this.asString(caller.mobile),
+      providerName: this.asString(provider.name),
+      providerPhoneNumber: this.asString(provider.mobile),
+      serviceName: this.asString(provider.serviceName ?? provider.name),
+      serviceType: this.asString(provider.serviceType),
+      locationAddress: provider.locationAddress == null
+        ? null
+        : this.asString(provider.locationAddress),
     });
   }
 
@@ -55,11 +65,12 @@ export class CallLeadService {
     if (!this.auth.isLoggedIn()) return null;
     const sessionUser = this.auth.getUser();
     const profile = await firstValueFrom(this.userApi.getUser(true));
-    const mobile = profile?.mobile ?? '';
-    if (!sessionUser?.id || !mobile) return null;
+    const mobile = this.asString(profile?.mobile);
+    const userId = this.asString(sessionUser?.id ?? profile?.id);
+    if (!userId || !mobile) return null;
     return {
-      id: String(sessionUser.id),
-      name: profile?.name ?? sessionUser.name ?? '',
+      id: userId,
+      name: this.asString(profile?.name ?? sessionUser.name),
       mobile,
     };
   }

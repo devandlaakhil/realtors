@@ -20,25 +20,27 @@ export class MobileDialpadService {
       return;
     }
 
+    const loggedIn = this.auth.isLoggedIn();
     let caller = undefined;
-    if (this.auth.isLoggedIn()) {
+    if (loggedIn) {
       caller = await this.callLeads.getLoggedInIdentity().catch(() => null);
+    } else {
+      caller = await this.guestIdentity.request();
     }
-    caller ??= await this.guestIdentity.request();
-    if (!caller) {
+    if (!caller && !loggedIn) {
       return;
     }
 
     this.analytics.trackCall(provider.serviceType);
     let recorded = true;
-    await this.callLeads.record(provider, caller).catch((error) => {
+    await this.callLeads.record(provider, caller ?? undefined).catch((error) => {
       recorded = false;
       console.warn('Unable to save service call lead', error);
       const detail = error?.code ?? error?.status ?? error?.message ?? 'unknown error';
       this.toastr.warning(`Call opened, but tracking failed (${detail}).`, 'Call tracking');
     });
     if (recorded) {
-      this.toastr.success('Call details recorded.', 'Calling service');
+      this.toastr.success('Call details saved.', 'Calling service');
     }
     window.location.href = `tel:${provider.mobile}`;
   }
