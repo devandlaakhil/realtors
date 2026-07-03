@@ -113,7 +113,6 @@ export class DashboardHomeComponent implements OnInit {
         },
 
         error: () => {
-          this.tostrService.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -142,7 +141,6 @@ export class DashboardHomeComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.tostrService.error('Something went wrong', 'Fail');
         },
       });
   }

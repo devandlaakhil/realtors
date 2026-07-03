@@ -46,7 +46,6 @@ export class ProductViewComponent {
           },
 
           error: () => {
-            this.toastr.error('Something went wrong', 'Fail');
           },
         });
     });

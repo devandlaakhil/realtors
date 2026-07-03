@@ -130,7 +130,6 @@ export class Homecomponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('API ERROR', err);
-          this.toastr.error('Something went wrong', 'Fail');
           this.loaderService.hide();
         },
       });

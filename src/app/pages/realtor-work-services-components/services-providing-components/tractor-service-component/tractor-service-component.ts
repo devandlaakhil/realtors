@@ -158,7 +158,6 @@ export class TractorServiceComponent implements OnInit {
           this.selectedImages = tractor.images || [];
         },
         error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -212,7 +211,6 @@ export class TractorServiceComponent implements OnInit {
         },
         error: () => {
           this.loaderService.hide();
-          this.toastr.error('Something went wrong', 'Fail');
         },
       });
   }

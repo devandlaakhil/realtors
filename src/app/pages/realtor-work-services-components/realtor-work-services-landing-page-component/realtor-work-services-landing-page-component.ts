@@ -39,12 +39,18 @@ export class RealtorWorkServicesLandingPageComponent {
   mapServices: any[] = [];
 
   categories = [
-    { icon: '/images/tractor.png', name: 'Tractors', navigation: 'tractor' },
+    { icon: '/images/tractor.png', name: 'commercial vehicles', navigation: 'tractor' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
-    // { icon: '/images/centring.png', name: 'Centring', navigation: 'centring' },
     { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
-    // { icon: '/images/realtors.png', name: 'All Services', navigation: 'home' },
+    { icon: '/images/dailywage-worker.png', name: 'Daily Wage', navigation: 'workers', category: 'Daily Wage' },
+    { icon: '/images/construction-worker.png', name: 'Construction', navigation: 'workers', category: 'Construction' },
+    { icon: '/images/carpenters.png', name: 'Carpenters', navigation: 'workers', category: 'Carpenter' },
+    { icon: '/images/house-painter.png', name: 'Painters', navigation: 'workers', category: 'Painter' },
+    { icon: '/images/electrician.png', name: 'Electricians', navigation: 'workers', category: 'Electrician' },
+    { icon: '/images/plumber.jpg', name: 'Plumbers', navigation: 'workers', category: 'Plumber' },
+    { icon: '/images/driver.png', name: 'Drivers', navigation: 'workers', category: 'Driver' },
+
   ];
   footerServices = this.categories;
   services: any[] = [];

@@ -131,8 +131,16 @@ mat-form-field {
 
 @media (max-width: 860px) {
   .auth-page {
+    position: fixed;
+    inset: calc(var(--app-header-height) + env(safe-area-inset-top)) 0
+      calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    z-index: 10;
+    width: 100%;
+    height: auto;
+    min-height: 0;
     align-items: start;
-    padding: 8px 0 18px;
+    padding: 4px 0;
+    overflow: hidden;
   }
 
   .auth-shell {
@@ -141,26 +149,64 @@ mat-form-field {
   }
 
   .auth-visual {
-    min-height: 180px;
-    padding: 24px;
+    min-height: 120px;
+    padding: 14px 20px;
   }
 
   .auth-visual img {
-    width: 54px;
-    height: 54px;
-    margin-bottom: 34px;
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    margin-bottom: 10px;
   }
 
   .auth-visual h1 {
-    font-size: 26px;
+    margin-bottom: 3px;
+    font-size: 22px;
+  }
+
+  .auth-visual p {
+    font-size: 12px;
+    line-height: 1.25;
   }
 
   .auth-panel {
-    padding: 26px 20px 24px;
+    padding: 14px 20px 12px;
+  }
+
+  .auth-header {
+    margin-bottom: 8px;
+  }
+
+  .auth-header span {
+    margin-bottom: 2px;
+    font-size: 11px;
+  }
+
+  .auth-header h2 {
+    font-size: 22px;
+  }
+
+  .auth-form {
+    gap: 4px;
+  }
+
+  .submit-btn {
+    min-height: 46px;
+    margin-top: 0;
+  }
+
+  .auth-switch {
+    margin-top: 8px;
+    font-size: 13px;
   }
 }
 
 @media (max-width: 480px) {
+  .auth-page {
+    padding: 0;
+  }
+
   .auth-shell {
     border-radius: 0;
     border-left: 0;
@@ -168,7 +214,23 @@ mat-form-field {
   }
 
   .auth-switch {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  .auth-visual {
+    display: none;
+  }
+
+  .auth-panel {
+    padding: 12px 20px 10px;
+    height: 540px;
+  }
+
+  :host ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    min-height: 12px;
+    font-size: 10px;
   }
 }

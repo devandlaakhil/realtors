@@ -2,16 +2,16 @@
   <div class="services-container">
     <div class="service-header">
       <div>
-        <h2>🚜 {{ 'Tractors Near You' | T }}</h2>
-        <p>{{ totalAvailTractors }} {{ 'tractors available' | T }}</p>
+        <h2>🚜 {{ 'Commercial Vehicles Near You' | T }}</h2>
+        <p>{{ totalAvailTractors }} {{ 'vehicles available' | T }}</p>
       </div>
 
       <!-- <button class="post-btn" (click)="openPostService()">+ {{ 'Post Service' | T }}</button> -->
     </div> 
 
-    <div class="search-bar">
+    <!-- <div class="search-bar">
       <input placeholder="{{ 'Search tractors' | T }}..." />
-    </div>
+    </div> -->
 
     <!-- <div class="filters">
       <button>5 KM</button>
@@ -310,7 +310,16 @@
 
       <mat-card>
         <h3>{{ 'Upload Images' | T }}</h3>
-        <input type="file" multiple (change)="onImageSelect($event)" />
+        <div class="native-image-actions">
+          <label class="native-image-button">
+            <input hidden type="file" accept="image/*" capture="environment" (change)="onImageSelect($event)" />
+            {{ 'Take Photo' | T }}
+          </label>
+          <label class="native-image-button secondary">
+            <input hidden type="file" accept="image/*" multiple (change)="onImageSelect($event)" />
+            {{ 'Choose from Gallery' | T }}
+          </label>
+        </div>
       </mat-card>
 
       <div class="actions">

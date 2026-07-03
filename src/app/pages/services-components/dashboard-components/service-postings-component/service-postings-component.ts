@@ -150,7 +150,6 @@ export class ServicePostingsComponent implements OnInit {
           }
         },
         error: () => {
-          this.toaster.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -193,7 +192,6 @@ export class ServicePostingsComponent implements OnInit {
             res?.message === 'success';
 
           if (!isSuccess) {
-            this.toaster.error('Something went wrong', 'Fail');
             return;
           }
 
@@ -219,7 +217,6 @@ export class ServicePostingsComponent implements OnInit {
           this.toaster.success('Status updated successfully', 'Success');
         },
         error: () => {
-          this.toaster.error('Something went wrong', 'Fail');
         },
       });
   }

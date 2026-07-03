@@ -176,7 +176,6 @@ export class TransportationServiceComponent implements OnInit {
           this.loaderSrv.hide();
         },
         error: () => {
-          this.toastSrv.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -320,7 +319,6 @@ export class TransportationServiceComponent implements OnInit {
           this.loaderSrv.hide();
         },
         error: () => {
-          this.toastSrv.error('Something went wrong', 'Fail');
           this.loaderSrv.hide();
         },
       });

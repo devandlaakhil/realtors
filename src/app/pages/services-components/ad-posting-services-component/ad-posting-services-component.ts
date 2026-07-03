@@ -320,7 +320,6 @@ export class AdPostingServicesComponent implements OnInit {
           },
           error: () => {
             this.loaderSrv.hide();
-            this.toastr.error('Something went wrong', 'Fail');
           },
         });
 
@@ -342,7 +341,6 @@ export class AdPostingServicesComponent implements OnInit {
         error: (err) => {
           this.loaderSrv.hide();
           console.log(err);
-          this.toastr.error('Something went wrong', 'Fail');
         },
       });
   }

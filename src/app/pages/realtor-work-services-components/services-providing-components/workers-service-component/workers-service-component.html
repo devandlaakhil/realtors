@@ -13,12 +13,12 @@
     </div>
 
     <!-- Search -->
-    <div class="search-bar">
+    <!-- <div class="search-bar">
       <input type="text" [(ngModel)]="searchText" placeholder="{{'Search workers'|T}}..." />
-    </div>
+    </div> -->
 
     <!-- Categories -->
-    <div class="category-chips">
+    <!-- <div class="category-chips">
       <button
         *ngFor="let category of categories"
         [class.active]="activeCategory === category.name"
@@ -26,7 +26,7 @@
       >
         {{ category.label | T}}
       </button>
-    </div>
+    </div> -->
 
     <div class="content-layout">
       <!-- <div class="map-panel">
@@ -39,14 +39,17 @@
       <div class="sheet-container">
         <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
-            <div class="sheet-title">
+            <!-- <div class="sheet-title">
               <div>
                 <h3>{{ 'Worker Details' | T }}</h3>
                 <p>{{ filteredWorkers.length }} {{'workers ready' |T}}</p>
               </div>
-            </div>
+            </div> -->
 
             <div class="worker-list">
+              <div class="empty-workers" *ngIf="filteredWorkers.length === 0">
+                {{ 'No workers found in this category' | T }}
+              </div>
               <ng-container *ngFor="let worker of filteredWorkers">
                 <div class="mini-card" *ngIf="expandedWorkerId !== worker.id">
                   <img

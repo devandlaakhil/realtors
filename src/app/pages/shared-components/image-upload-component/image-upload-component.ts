@@ -42,9 +42,10 @@ export class ImageUploadComponent {
     reader.readAsDataURL(file);
   }
 
-  removeImage(fileInput: HTMLInputElement): void {
+  removeImage(fileInput: HTMLInputElement, cameraInput: HTMLInputElement): void {
     this.preview = null;
     fileInput.value = '';
+    cameraInput.value = '';
     this.fileSelected.emit(null);
   }
 }
