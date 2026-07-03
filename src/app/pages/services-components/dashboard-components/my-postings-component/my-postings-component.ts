@@ -33,7 +33,6 @@ export class MyPostingsComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.tostrService.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -52,7 +51,6 @@ export class MyPostingsComponent implements OnInit {
           this.getMyPostings();
         },
         error: () => {
-          this.tostrService.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -75,7 +73,6 @@ export class MyPostingsComponent implements OnInit {
         },
 
         error: () => {
-          this.tostrService.error('Something went wrong', 'Fail');
         },
       });
   }

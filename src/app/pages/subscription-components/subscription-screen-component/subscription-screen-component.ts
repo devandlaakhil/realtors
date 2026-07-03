@@ -37,7 +37,6 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
           this.user = res;
         },
         error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
         },
       });
   }

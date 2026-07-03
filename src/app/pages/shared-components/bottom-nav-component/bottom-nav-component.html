@@ -14,9 +14,13 @@
     } @else {
       <a
         class="bottom-nav-item"
-        [routerLink]="link.route"
+        [class.disabled]="link.requiresAuth && !isLoggedIn"
+        [routerLink]="link.requiresAuth && !isLoggedIn ? null : link.route"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: !!link.exact }"
+        [attr.aria-disabled]="link.requiresAuth && !isLoggedIn"
+        [attr.tabindex]="link.requiresAuth && !isLoggedIn ? -1 : 0"
+        (click)="preventGuestNavigation($event, link.requiresAuth)"
       >
         <mat-icon>{{ link.icon }}</mat-icon>
         <span>{{ link.label | T }}</span>

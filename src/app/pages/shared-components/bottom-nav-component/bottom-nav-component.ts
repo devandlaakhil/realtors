@@ -2,6 +2,7 @@ import { Component, HostListener, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
+import { DashboardServices } from '../../../shared-services/dashboard-services';
 
 @Component({
   selector: 'app-bottom-nav-component',
@@ -11,7 +12,9 @@ import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 })
 export class BottomNavComponent {
   private router = inject(Router);
+  private dashboardService = inject(DashboardServices);
   showPostPicker = false;
+  isLoggedIn = false;
 
   postOptions = [
     { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
@@ -27,13 +30,27 @@ export class BottomNavComponent {
     route: string;
     exact?: boolean;
     primary?: boolean;
+    requiresAuth?: boolean;
   }[] = [
-    { label: 'Home', icon: 'home', route: '/home', exact: true },
-    { label: 'Services', icon: 'handyman', route: '/services/home' },
+    { label: 'Home', icon: 'handyman', route: '/services/home', exact: true },
+    { label: 'Real Estate', icon: 'home', route: '/home' },
     { label: 'Post', icon: 'add', route: '/ad-post', primary: true },
-    { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts' },
-    { label: 'Profile', icon: 'person', route: '/profile' },
+    { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts', requiresAuth: true },
+    { label: 'Profile', icon: 'person', route: '/profile', requiresAuth: true },
   ];
+
+  ngOnInit(): void {
+    this.dashboardService.loginStatus$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
+  }
+
+  preventGuestNavigation(event: Event, requiresAuth?: boolean): void {
+    if (requiresAuth && !this.isLoggedIn) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 
   openPostPicker(): void {
     this.showPostPicker = true;

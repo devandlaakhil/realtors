@@ -8,7 +8,8 @@
 
     <nav class="service-actions" aria-label="Service categories">
       @for (item of footerServices; track item.navigation) {
-        <a class="service-action" [routerLink]="['/services', item.navigation]">
+        <a class="service-action" [routerLink]="['/services', item.navigation]"
+          [queryParams]="item.category ? { category: item.category } : null">
           <span class="service-action-icon"><img [src]="item.icon" alt="" /></span>
           <span class="service-action-label">{{ item.name | T }}</span>
         </a>

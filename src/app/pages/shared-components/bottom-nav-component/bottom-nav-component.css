@@ -63,6 +63,20 @@
   color: var(--md-primary);
 }
 
+.bottom-nav-item.disabled {
+  color: var(--md-outline);
+  background: transparent;
+  cursor: not-allowed;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.bottom-nav-item.disabled:hover,
+.bottom-nav-item.disabled:focus {
+  color: var(--md-outline);
+  background: transparent;
+}
+
 /* Center floating action button */
 .fab-link {
   justify-content: flex-end;

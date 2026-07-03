@@ -12,6 +12,25 @@
     <app-bottom-nav-component></app-bottom-nav-component>
 </div>
 
+@if (showLocationPrompt()) {
+  <div class="location-required-backdrop" role="presentation">
+    <section class="location-required-card" role="dialog" aria-modal="true"
+      aria-labelledby="location-required-title">
+      <div class="location-required-icon">📍</div>
+      <h2 id="location-required-title">Turn on location</h2>
+      <p>{{ locationPromptMessage() }}</p>
+      <div class="location-required-steps">
+        <span>1. Open your phone’s Quick Settings</span>
+        <span>2. Turn on Location or GPS</span>
+        <span>3. Return here and tap Retry</span>
+      </div>
+      <button type="button" (click)="checkLocation()" [disabled]="checkingLocation()">
+        {{ checkingLocation() ? 'Checking…' : 'Retry location' }}
+      </button>
+    </section>
+  </div>
+}
+
 @if (guestCallIdentity.isOpen()) {
   <div class="guest-call-backdrop" (click)="guestCallIdentity.cancel()">
     <section class="guest-call-sheet" role="dialog" aria-modal="true" aria-labelledby="guest-call-title" (click)="$event.stopPropagation()">

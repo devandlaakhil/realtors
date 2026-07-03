@@ -99,6 +99,11 @@ export class WorkersServiceComponent implements OnInit {
 
 
   ngOnInit(): void {
+    const requestedCategory = this.router.snapshot.queryParamMap.get('category');
+    if (requestedCategory && this.categories.some((category) => category.name === requestedCategory)) {
+      this.activeCategory = requestedCategory;
+    }
+
     this.router.paramMap.subscribe((params) => {
       const id = params.get('id');
 
@@ -157,7 +162,6 @@ export class WorkersServiceComponent implements OnInit {
           this.loaderService.hide();
         },
         error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
           this.loaderService.hide();
         },
       });
@@ -379,7 +383,6 @@ export class WorkersServiceComponent implements OnInit {
           },
           error: () => {
             this.loaderService.hide();
-            //this.toastr.error('Something went wrong', 'Fail');
           },
         });
     }else{
@@ -401,7 +404,6 @@ export class WorkersServiceComponent implements OnInit {
           },
           error: () => {
             this.loaderService.hide();
-            this.toastr.error('Something went wrong', 'Fail');
           },
         });
     }
@@ -422,7 +424,6 @@ export class WorkersServiceComponent implements OnInit {
           this.loaderService.hide();
         },
         error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
           this.loaderService.hide();
         },
       });

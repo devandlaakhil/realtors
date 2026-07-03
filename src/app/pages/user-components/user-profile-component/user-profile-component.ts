@@ -53,7 +53,6 @@ export class UserProfileComponent implements OnInit {
           this.cdr.detectChanges();
         },
         error: () => {
-          this.toastr.error('Something went wrong', 'Fail');
         },
       });
   }
@@ -78,7 +77,6 @@ export class UserProfileComponent implements OnInit {
         this.toastr.success('Details updated successfully','Success');
       },
       error : () => {
-        this.toastr.error('Something went wrong', 'Fail');
       }
     })
     this.isEditingProfile = false;
@@ -111,7 +109,6 @@ export class UserProfileComponent implements OnInit {
         this.toastr.success("Password updated successfully",'Success');
       },
       error : () => {
-        this.toastr.error("Something went wrong", 'Fail')
       }
     })
 

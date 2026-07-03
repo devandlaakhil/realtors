@@ -15,15 +15,25 @@ import { GuestCallIdentityService } from './shared-services/guest-call-identity-
   styleUrl: './app.css'
 })
 export class App implements OnInit, OnDestroy {
-  protected readonly title = signal('realtors');
+  protected readonly title = signal('NearWages');
   private router = inject(Router);
   private location = inject(Location);
   private analytics = inject(AnalyticsService);
   readonly guestCallIdentity = inject(GuestCallIdentityService);
+  readonly showLocationPrompt = signal(false);
+  readonly locationPromptMessage = signal('');
+  readonly checkingLocation = signal(false);
   private backButtonListener?: PluginListenerHandle;
+  private readonly visibilityHandler = () => {
+    if (document.visibilityState === 'visible' && this.showLocationPrompt()) {
+      this.checkLocation();
+    }
+  };
 
   async ngOnInit(): Promise<void> {
     this.analytics.initialize();
+    this.checkLocation();
+    document.addEventListener('visibilitychange', this.visibilityHandler);
     this.backButtonListener = await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
       if (canGoBack && this.router.url !== '/') {
         this.location.back();
@@ -41,5 +51,31 @@ export class App implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.backButtonListener?.remove();
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  checkLocation(): void {
+    if (!navigator.geolocation || this.checkingLocation()) {
+      return;
+    }
+
+    this.checkingLocation.set(true);
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        this.checkingLocation.set(false);
+        this.showLocationPrompt.set(false);
+        this.locationPromptMessage.set('');
+      },
+      (error) => {
+        this.checkingLocation.set(false);
+        this.showLocationPrompt.set(true);
+        this.locationPromptMessage.set(
+          error.code === error.PERMISSION_DENIED
+            ? 'Location permission is blocked. Allow location for NearWages in your browser or app settings, then tap Retry.'
+            : 'Your phone location service appears to be turned off. Turn on Location/GPS in Quick Settings or Settings, then tap Retry.',
+        );
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
+    );
   }
 }
