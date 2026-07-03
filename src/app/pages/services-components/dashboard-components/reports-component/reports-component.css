@@ -1,4 +1,10 @@
-.reports-page { display: grid; gap: 16px; }
+.reports-page {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: var(--content-bottom-clearance);
+}
 .reports-header, .summary-card, .chart-card, .calls-report, .report-state {
   padding: 20px; border: 1px solid var(--md-outline-variant); border-radius: 16px;
   background: var(--md-surface-container); box-shadow: var(--elevation-1);
@@ -24,9 +30,174 @@ table { width: 100%; border-collapse: collapse; min-width: 720px; }
 th, td { padding: 12px; border-bottom: 1px solid var(--md-outline-variant); text-align: left; }
 th { color: var(--md-on-surface-variant); font-size: .75rem; text-transform: uppercase; }
 td a { color: var(--md-primary); font-weight: 600; text-decoration: none; }
+.load-more-btn {
+  display: block;
+  min-width: 180px;
+  min-height: 46px;
+  margin: 18px auto 0;
+  padding: 0 20px;
+  border: 1px solid var(--md-primary);
+  border-radius: 23px;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-weight: 700;
+}
+.load-more-btn:disabled { opacity: .6; }
+.report-end { margin: 16px 0 0; color: var(--md-on-surface-variant); text-align: center; font-size: .78rem; }
 @media (max-width: 720px) {
-  .reports-header { align-items: stretch; flex-direction: column; }
-  .report-summary, .charts-grid { grid-template-columns: 1fr; }
-  .reports-header, .summary-card, .chart-card, .calls-report { padding: 16px; }
-  .chart-wrap { height: 240px; }
+  .reports-page {
+    gap: 12px;
+    width: 100%;
+    margin: 0;
+    padding: 8px 8px var(--content-bottom-clearance);
+    overflow-x: hidden;
+  }
+
+  .reports-header {
+    position: relative;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 20px;
+    flex-direction: row;
+  }
+
+  .reports-header h2 {
+    margin: 3px 0;
+    font-size: 1.35rem;
+  }
+
+  .reports-header p {
+    padding-right: 4px;
+    font-size: .78rem;
+    line-height: 1.35;
+  }
+
+  .reports-header button {
+    flex: 0 0 auto;
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 50%;
+    color: transparent;
+    font-size: 0;
+  }
+
+  .reports-header button::before {
+    content: '↻';
+    color: var(--md-on-primary);
+    font-size: 22px;
+  }
+
+  .report-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .summary-card {
+    min-height: 106px;
+    padding: 15px;
+    border-radius: 18px;
+    justify-content: center;
+  }
+
+  .summary-card strong {
+    font-size: 2.15rem;
+    line-height: 1;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .chart-card,
+  .calls-report {
+    padding: 15px;
+    border-radius: 20px;
+  }
+
+  .chart-card h3,
+  .calls-report h3 {
+    font-size: 1rem;
+  }
+
+  .chart-wrap {
+    width: 100%;
+    min-width: 0;
+    height: 245px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    overflow: visible;
+    margin-top: 10px;
+  }
+
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  tr {
+    padding: 13px 14px;
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 16px;
+    background: var(--md-surface-container-high);
+  }
+
+  td {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 8px;
+    padding: 5px 0;
+    border: 0;
+    overflow-wrap: anywhere;
+    font-size: .82rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    color: var(--md-on-surface-variant);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+
+  td[data-label='Mobile'] a {
+    display: inline-flex;
+    min-height: 36px;
+    padding: 6px 12px;
+    border-radius: 18px;
+    background: var(--md-primary-container);
+    align-items: center;
+    justify-self: start;
+  }
+
+  .report-state {
+    padding: 32px 16px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .chart-wrap { height: 205px; }
+  .summary-card { min-height: 96px; padding: 12px; }
+  td { grid-template-columns: 68px minmax(0, 1fr); }
 }

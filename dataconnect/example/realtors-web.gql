@@ -51,10 +51,12 @@ mutation CreateServiceCall(
   })
 }
 
-query ListProviderCalls($providerPhoneNumber: String!) @auth(level: PUBLIC, insecureReason: "Provider identity is verified by the existing backend session") {
+query ListProviderCalls($providerPhoneNumber: String!, $limit: Int = 20, $offset: Int = 0) @auth(level: PUBLIC, insecureReason: "Provider identity is verified by the existing backend session") {
   serviceCalls(
     where: {providerPhoneNumber: {eq: $providerPhoneNumber}}
     orderBy: {calledAt: DESC}
+    limit: $limit
+    offset: $offset
   ) {
     id
     userId

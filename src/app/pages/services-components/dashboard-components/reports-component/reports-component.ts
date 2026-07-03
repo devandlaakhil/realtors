@@ -31,7 +31,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   calls: ProviderCall[] = [];
   loggedInPhoneNumber = '';
   loading = true;
+  loadingMore = false;
+  hasMore = false;
   errorMessage = '';
+  private readonly pageSize = 10;
 
   get callsReceived(): number {
     return this.calls.length;
@@ -57,6 +60,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadCalls(): Promise<void> {
     this.loading = true;
     this.errorMessage = '';
+    this.calls = [];
     try {
       const response = await firstValueFrom(this.userApi.getUser(true));
       const profile = response?.data ?? response;
@@ -67,10 +71,9 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         throw new Error('Add a mobile number to your profile to view call reports.');
       }
 
-      const result = await listProviderCalls({
-        providerPhoneNumber: this.loggedInPhoneNumber,
-      });
+      const result = await this.fetchCallPage(0);
       this.calls = result.data.serviceCalls ?? [];
+      this.hasMore = this.calls.length === this.pageSize;
       this.renderCharts();
     } catch (error: any) {
       this.errorMessage = error?.message || 'Call reports could not be loaded.';
@@ -78,6 +81,24 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loading = false;
       this.cdr.detectChanges();
       requestAnimationFrame(() => this.renderCharts());
+    }
+  }
+
+  async loadMore(): Promise<void> {
+    if (this.loadingMore || !this.hasMore) return;
+    this.loadingMore = true;
+    this.errorMessage = '';
+    try {
+      const result = await this.fetchCallPage(this.calls.length);
+      const nextCalls = result.data.serviceCalls ?? [];
+      this.calls = [...this.calls, ...nextCalls];
+      this.hasMore = nextCalls.length === this.pageSize;
+      this.cdr.detectChanges();
+      requestAnimationFrame(() => this.renderCharts());
+    } catch (error: any) {
+      this.errorMessage = error?.message || 'More call records could not be loaded.';
+    } finally {
+      this.loadingMore = false;
     }
   }
 
@@ -102,7 +123,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         month: 'short',
       });
       daily.set(date, (daily.get(date) ?? 0) + 1);
-      const type = call.serviceName || call.serviceType || 'Other';
+      const type = call.serviceType || call.serviceName || 'Other';
       services.set(type, (services.get(type) ?? 0) + 1);
     }
 
@@ -113,7 +134,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
           labels: [...daily.keys()].reverse(),
           datasets: [{ label: 'Calls', data: [...daily.values()].reverse(), backgroundColor: '#2563eb', borderRadius: 7 }],
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { left: 2, right: 6 } },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, font: { size: 10 } } },
+            y: { beginAtZero: true, ticks: { precision: 0, stepSize: 1, font: { size: 10 } } },
+          },
+        },
       }),
       new Chart(this.serviceChartCanvas.nativeElement, {
         type: 'doughnut',
@@ -121,9 +151,28 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
           labels: [...services.keys()],
           datasets: [{ data: [...services.values()], backgroundColor: ['#2563eb', '#0d9488', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4'] }],
         },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: 4 },
+          cutout: '62%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, boxHeight: 10, padding: 10, usePointStyle: true, font: { size: 10 } },
+            },
+          },
+        },
       }),
     );
+  }
+
+  private fetchCallPage(offset: number) {
+    return listProviderCalls({
+      providerPhoneNumber: this.loggedInPhoneNumber,
+      limit: this.pageSize,
+      offset,
+    });
   }
 
   private destroyCharts(): void {

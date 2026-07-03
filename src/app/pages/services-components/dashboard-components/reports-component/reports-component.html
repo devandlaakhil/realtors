@@ -38,16 +38,23 @@
           <tbody>
             @for (call of calls; track call.id) {
               <tr>
-                <td>{{ formatDate(call.calledAt) }}</td>
-                <td>{{ call.userName || 'Guest' }}</td>
-                <td><a [href]="'tel:' + call.userPhoneNumber">{{ call.userPhoneNumber }}</a></td>
-                <td>{{ call.serviceName }}</td>
-                <td>{{ call.locationAddress || '—' }}</td>
+                <td data-label="Date">{{ formatDate(call.calledAt) }}</td>
+                <td data-label="Caller">{{ call.userName || 'Guest' }}</td>
+                <td data-label="Mobile"><a [href]="'tel:' + call.userPhoneNumber">{{ call.userPhoneNumber }}</a></td>
+                <td data-label="Service">{{ call.serviceName }}</td>
+                <td data-label="Location">{{ call.locationAddress || '—' }}</td>
               </tr>
             }
           </tbody>
         </table>
       </div>
+      @if (hasMore) {
+        <button class="load-more-btn" type="button" (click)="loadMore()" [disabled]="loadingMore">
+          {{ loadingMore ? 'Loading…' : 'Load more calls' }}
+        </button>
+      } @else {
+        <p class="report-end">All call records are loaded.</p>
+      }
     </article>
   }
 </section>

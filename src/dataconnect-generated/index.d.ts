@@ -70,6 +70,8 @@ export interface ListServicesData {
 
 export interface ListProviderCallsVariables {
   providerPhoneNumber: string;
+  limit?: number | null;
+  offset?: number | null;
 }
 
 export interface ListProviderCallsData {
