@@ -1,11 +1,11 @@
 <mat-toolbar class="app-header">
   <!-- LEFT -->
   <div class="left-section">
-    @if (showBackButton) {
+    <!-- @if (showBackButton) {
       <button mat-icon-button class="back-btn" type="button" (click)="goBack()" aria-label="Go back">
         <mat-icon>arrow_back</mat-icon>
       </button>
-    }
+    } -->
 
     <div class="logo" (click)="backToHome()">
       <img src="images/realtors.png" alt="logo" />
@@ -18,18 +18,18 @@
     <button mat-button data-bs-toggle="modal" data-bs-target="#exampleModal">
       {{ Location }}
     </button>
-    <button mat-button (click)="backToHome()" routerLinkActive="active-link">
+    <!-- <button mat-button (click)="backToHome()" routerLinkActive="active-link">
       {{ 'Home' | T }}
-    </button>
+    </button> -->
     @if (isLoggedIn) {
       <button mat-button routerLink="/dashboard" routerLinkActive="active-link">
         {{ 'Dashboard' | T }}
       </button>
     }
     <button mat-button routerLink="/about" routerLinkActive="active-link">{{ 'About' | T }}</button>
-    <button mat-button routerLink="/services/home" routerLinkActive="active-link">
+    <!-- <button mat-button routerLink="/services/home" routerLinkActive="active-link">
       {{ 'Services' | T }}
-    </button>
+    </button> -->
     <button mat-button routerLink="/contact-us" routerLinkActive="active-link">
       {{ 'Contact' | T }}
     </button>
@@ -40,9 +40,9 @@
   <!-- RIGHT SIDE -->
   <div class="right-section desktop-actions">
     @if (isLoggedIn) {
-      <button mat-button class="post-property" routerLink="/ad-post">
+      <!-- <button mat-button class="post-property" routerLink="/ad-post">
         {{ 'Post Property' | T }}
-      </button>
+      </button> -->
       <button mat-button class="user-btn" [matMenuTriggerFor]="profileMenu">
         <div class="avatar">
           {{ username()[0] || 'U' }}

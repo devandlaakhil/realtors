@@ -1,8 +1,9 @@
 /* property.component.css */
 
 .property-page {
-  min-height: 100vh;
-  padding: 16px;
+  width: 100%;
+  min-height: calc(100dvh - var(--app-header-height));
+  padding: 24px;
   position: relative;
   background: var(--md-surface);
   overflow-x: hidden;
@@ -15,8 +16,9 @@
 }
 
 .premium-form {
-  max-width: 1300px;
-  margin: auto;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   position: relative;
   z-index: 2;
 }
@@ -54,8 +56,9 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
+  align-items: start;
 }
 
 .full {
@@ -134,9 +137,7 @@
 
 .image-grid {
   display: grid;
-
-  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
@@ -271,12 +272,45 @@
     0 16px 32px rgba(37, 99, 235, 0.28) !important;
 }
 
+/* LARGE DESKTOP */
+
+@media (min-width: 1280px) {
+  .property-page {
+    padding: 28px 32px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    padding: 26px;
+  }
+}
+
+/* TABLET / COMPACT WEBVIEW */
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .property-page {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .image-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* MOBILE */
 
 @media (max-width: 768px) {
 
   .property-page {
-    padding: 16px;
+    padding: 12px;
   }
 
   .title {
@@ -284,9 +318,8 @@
   }
 
   .card {
-    padding: 18px;
-
-    border-radius: 18px;
+    padding: 16px;
+    border-radius: 16px;
   }
 
   .grid {
@@ -305,7 +338,7 @@
 
 @media (max-width: 480px) {
   .property-page {
-    padding: 12px;
+    padding: 8px;
   }
 
   .title {

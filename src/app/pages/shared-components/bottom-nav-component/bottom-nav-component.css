@@ -225,6 +225,11 @@
   transform: scale(0.98);
 }
 
+.post-option:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .post-option-icon {
   display: flex;
   align-items: center;

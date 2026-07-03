@@ -14,12 +14,13 @@ export class BottomNavComponent {
   private router = inject(Router);
   private dashboardService = inject(DashboardServices);
   showPostPicker = false;
+  isNavigatingToPost = false;
   isLoggedIn = false;
 
   postOptions = [
     { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
     { label: 'Worker', image: '/images/worker.png', route: '/services/workers' },
-    { label: 'Tractor', image: '/images/tractor.png', route: '/services/tractor' },
+    { label: 'Commercial Vehicles', image: '/images/tractor.png', route: '/services/tractor' },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
     { label: 'Hardware', image: '/images/hardware.png', route: '/services/hardware' },
   ];
@@ -60,10 +61,25 @@ export class BottomNavComponent {
     this.showPostPicker = false;
   }
 
-  selectPostOption(option: (typeof this.postOptions)[number]): void {
-    this.closePostPicker();
+  async selectPostOption(option: (typeof this.postOptions)[number]): Promise<void> {
+    if (this.isNavigatingToPost) {
+      return;
+    }
+
+    this.isNavigatingToPost = true;
     const queryParams = option.route === '/ad-post' ? undefined : { post: 1 };
-    this.router.navigate([option.route], { queryParams });
+
+    try {
+      const currentPath = this.router.url.split('?')[0];
+      if (currentPath === option.route) {
+        await this.router.navigateByUrl('/services/home', { skipLocationChange: true });
+      }
+
+      await this.router.navigate([option.route], { queryParams });
+      this.closePostPicker();
+    } finally {
+      this.isNavigatingToPost = false;
+    }
   }
 
   @HostListener('document:keydown.escape')

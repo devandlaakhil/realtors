@@ -52,7 +52,8 @@
 
       <div class="post-option-grid">
         @for (option of postOptions; track option.route) {
-          <button type="button" class="post-option" (click)="selectPostOption(option)">
+          <button type="button" class="post-option" [disabled]="isNavigatingToPost"
+            (click)="selectPostOption(option)">
             <span class="post-option-icon">
               <img [src]="option.image" [alt]="option.label" />
             </span>
