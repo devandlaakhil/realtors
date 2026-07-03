@@ -42,6 +42,20 @@ exports.listServices = function listServices(dcOrOptions, options) {
 }
 ;
 
+const listProviderCallsRef = (dcOrVars, vars) => {
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListProviderCalls', inputVars);
+}
+listProviderCallsRef.operationName = 'ListProviderCalls';
+exports.listProviderCallsRef = listProviderCallsRef;
+
+exports.listProviderCalls = function listProviderCalls(dcOrVars, varsOrOptions, options) {
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } =
+    validateArgsWithOptions(connectorConfig, dcOrVars, varsOrOptions, options, true, true);
+  return executeQuery(listProviderCallsRef(dcInstance, inputVars), inputOpts && { fetchPolicy: inputOpts.fetchPolicy });
+};
+
 const updateUserProfileRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars);
   dcInstance._useGeneratedSdk();

@@ -68,6 +68,25 @@ export interface ListServicesData {
   })[];
 }
 
+export interface ListProviderCallsVariables {
+  providerPhoneNumber: string;
+}
+
+export interface ListProviderCallsData {
+  serviceCalls: ({
+    id: UUIDString;
+    userId: string;
+    userName: string;
+    userPhoneNumber: string;
+    providerName: string;
+    providerPhoneNumber: string;
+    serviceName: string;
+    serviceType: string;
+    locationAddress?: string | null;
+    calledAt: TimestampString;
+  })[];
+}
+
 export interface ServiceCall_Key {
   id: UUIDString;
   __typename?: 'ServiceCall_Key';
@@ -121,6 +140,15 @@ export const listServicesRef: ListServicesRef;
 export function listServices(options?: ExecuteQueryOptions): QueryPromise<ListServicesData, undefined>;
 export function listServices(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListServicesData, undefined>;
 
+interface ListProviderCallsRef {
+  (vars: ListProviderCallsVariables): QueryRef<ListProviderCallsData, ListProviderCallsVariables>;
+  (dc: DataConnect, vars: ListProviderCallsVariables): QueryRef<ListProviderCallsData, ListProviderCallsVariables>;
+  operationName: string;
+}
+export const listProviderCallsRef: ListProviderCallsRef;
+export function listProviderCalls(vars: ListProviderCallsVariables, options?: ExecuteQueryOptions): QueryPromise<ListProviderCallsData, ListProviderCallsVariables>;
+export function listProviderCalls(dc: DataConnect, vars: ListProviderCallsVariables, options?: ExecuteQueryOptions): QueryPromise<ListProviderCallsData, ListProviderCallsVariables>;
+
 interface UpdateUserProfileRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars?: UpdateUserProfileVariables): MutationRef<UpdateUserProfileData, UpdateUserProfileVariables>;
@@ -156,4 +184,3 @@ export const createServiceCallRef: CreateServiceCallRef;
 
 export function createServiceCall(vars: CreateServiceCallVariables): MutationPromise<CreateServiceCallData, CreateServiceCallVariables>;
 export function createServiceCall(dc: DataConnect, vars: CreateServiceCallVariables): MutationPromise<CreateServiceCallData, CreateServiceCallVariables>;
-

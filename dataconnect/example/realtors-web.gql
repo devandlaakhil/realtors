@@ -50,3 +50,21 @@ mutation CreateServiceCall(
     locationAddress: $locationAddress
   })
 }
+
+query ListProviderCalls($providerPhoneNumber: String!) @auth(level: PUBLIC, insecureReason: "Provider identity is verified by the existing backend session") {
+  serviceCalls(
+    where: {providerPhoneNumber: {eq: $providerPhoneNumber}}
+    orderBy: {calledAt: DESC}
+  ) {
+    id
+    userId
+    userName
+    userPhoneNumber
+    providerName
+    providerPhoneNumber
+    serviceName
+    serviceType
+    locationAddress
+    calledAt
+  }
+}

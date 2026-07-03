@@ -38,6 +38,9 @@
       >
         ⚙️ Settings
       </a>
+      <a class="nav-item" [class.active]="activeMenu === 'reports'" (click)="navigateTo('reports')">
+        Reports
+      </a>
     </nav>
   </aside>
 
@@ -77,6 +80,9 @@
       <button class="quick-action" [class.active]="activeMenu === 'advertisement'" (click)="navigateTo('advertisement')">
         <span>📢</span>
         <span>{{'Post Advertisement'|T}}</span>
+      </button>
+      <button class="quick-action" [class.active]="activeMenu === 'reports'" (click)="navigateTo('reports')">
+        <span>Reports</span>
       </button>
     </section>
 

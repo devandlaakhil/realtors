@@ -132,6 +132,13 @@ export const routes: Routes = [
             (m) => m.DashboardHomeComponent,
           ),
       },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('../app/pages/services-components/dashboard-components/reports-component/reports-component').then(
+            (m) => m.ReportsComponent,
+          ),
+      },
     ],
   },
   {

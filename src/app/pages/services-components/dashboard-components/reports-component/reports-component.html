@@ -1,0 +1,53 @@
+<section class="reports-page">
+  <header class="reports-header">
+    <div>
+      <span class="reports-kicker">Provider analytics</span>
+      <h2>Call Reports</h2>
+      <p>
+        Calls received for {{ user?.name || 'your account' }}
+        @if (loggedInPhoneNumber) { ({{ loggedInPhoneNumber }}) }
+      </p>
+    </div>
+    <button type="button" (click)="loadCalls()" [disabled]="loading">Refresh</button>
+  </header>
+
+  @if (errorMessage) {
+    <div class="report-error">{{ errorMessage }}</div>
+  }
+
+  <div class="report-summary">
+    <article class="summary-card"><span>Total calls</span><strong>{{ callsReceived }}</strong></article>
+    <article class="summary-card"><span>Unique callers</span><strong>{{ uniqueCallers }}</strong></article>
+  </div>
+
+  @if (loading) {
+    <div class="report-state">Loading call reports…</div>
+  } @else if (calls.length === 0) {
+    <div class="report-state">No calls have been recorded for your mobile number yet.</div>
+  } @else {
+    <div class="charts-grid">
+      <article class="chart-card"><h3>Calls by day</h3><div class="chart-wrap"><canvas #dailyChart></canvas></div></article>
+      <article class="chart-card"><h3>Calls by service</h3><div class="chart-wrap"><canvas #serviceChart></canvas></div></article>
+    </div>
+
+    <article class="calls-report">
+      <h3>Call details</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Date</th><th>Caller</th><th>Mobile</th><th>Service</th><th>Location</th></tr></thead>
+          <tbody>
+            @for (call of calls; track call.id) {
+              <tr>
+                <td>{{ formatDate(call.calledAt) }}</td>
+                <td>{{ call.userName || 'Guest' }}</td>
+                <td><a [href]="'tel:' + call.userPhoneNumber">{{ call.userPhoneNumber }}</a></td>
+                <td>{{ call.serviceName }}</td>
+                <td>{{ call.locationAddress || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </article>
+  }
+</section>

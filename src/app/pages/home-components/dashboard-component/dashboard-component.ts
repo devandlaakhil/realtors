@@ -55,6 +55,10 @@ export class DashboardComponent implements OnInit {
         this.route.navigateByUrl('/dashboard/advertisement');
         break;
 
+      case 'reports':
+        this.route.navigateByUrl('/dashboard/reports');
+        break;
+
       case 'settings':
         break;
     }
@@ -73,6 +77,11 @@ export class DashboardComponent implements OnInit {
 
     if (url.includes('/dashboard/advertisement')) {
       this.activeMenu = 'advertisement';
+      return;
+    }
+
+    if (url.includes('/dashboard/reports')) {
+      this.activeMenu = 'reports';
       return;
     }
 
