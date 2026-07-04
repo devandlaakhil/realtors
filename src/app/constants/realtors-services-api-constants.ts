@@ -8,6 +8,15 @@ export const API_CONSTANTS = {
     delete: 'delete-commercial-vehicle-service',
     statusUpdate: 'update-commercial-vehicle-status',
   },
+  driverServices: {
+    save: 'create-driver-service',
+    list: 'get-driver-services',
+    mylist: 'get-my-drivers-list',
+    getSingleItem: 'get-single-driver',
+    updateItem: 'update-driver',
+    delete: 'delete-driver-service',
+    statusUpdate: 'update-driver-status',
+  },
   workerapiServices: {
     save : 'worker-register',
     getAll : 'get-all-workers',

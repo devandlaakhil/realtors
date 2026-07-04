@@ -194,6 +194,8 @@ export class MapComponent implements OnInit, OnChanges {
       Vehicles: '/images/transport.png',
       Hardware: '/images/hardware.png',
       hardware: '/images/hardware.png',
+      Drivers: '/images/driver.png',
+      drivers: '/images/driver.png',
       // Cultivator: '/images/cultivator.png',
     };
 

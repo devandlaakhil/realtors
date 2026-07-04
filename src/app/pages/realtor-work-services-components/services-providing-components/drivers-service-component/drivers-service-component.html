@@ -1,0 +1,143 @@
+@if (!showPostForm) {
+  <main class="drivers-page">
+    <header class="drivers-header">
+      <div>
+        <span>{{ 'DRIVERS NEAR YOU' | T }}</span>
+        <h1>{{ 'Find the right driver' | T }}</h1>
+        <p>{{ drivers.length }} {{ 'drivers available' | T }}</p>
+      </div>
+      <mat-icon>local_taxi</mat-icon>
+    </header>
+
+    <section class="driver-list">
+      @if (drivers.length === 0) {
+        <div class="empty-state">
+          <mat-icon>person_search</mat-icon>
+          <strong>{{ 'No drivers found near you' | T }}</strong>
+          <span>{{ 'Try again later or post your requirement.' | T }}</span>
+        </div>
+      }
+      @for (driver of drivers; track driver.id) {
+        <article class="driver-card">
+          <div class="driver-summary">
+            <img [src]="driver.image?.[0]?.url || driver.images?.[0]?.url || '/images/avatar.png'" alt="Driver" />
+            <div>
+              <h2>{{ driver.name }}</h2>
+              <p>{{ driver.experience || 0 }} {{ 'years experience' | T }}</p>
+              <div class="type-row">
+                @for (type of (driver.vehicleTypes || []); track type) {
+                  <span>{{ type }}</span>
+                }
+              </div>
+            </div>
+            <strong class="price">₹{{ driver.pricePerDay || 0 }}<small>/day</small></strong>
+          </div>
+
+          @if (expandedId === driver.id) {
+            <div class="driver-details">
+              <p><mat-icon>badge</mat-icon>{{ driver.licenceType }} · {{ driver.licenceNumber }}</p>
+              <p><mat-icon>location_on</mat-icon>{{ driver.village }}, {{ driver.district }}</p>
+              <p><mat-icon>translate</mat-icon>{{ driver.languages || '—' }}</p>
+              <div class="feature-row">
+                @if (driver.availableForOutstation) { <span>Outstation</span> }
+                @if (driver.availableAtNight) { <span>Night driving</span> }
+                @if (driver.hasOwnVehicle) { <span>Own vehicle</span> }
+              </div>
+            </div>
+          }
+
+          <div class="card-actions">
+            <button type="button" class="secondary" (click)="toggleDetails(driver.id)">
+              {{ (expandedId === driver.id ? 'Close details' : 'View details') | T }}
+            </button>
+            <button type="button" class="primary"
+              (click)="phoneCall.call({ id: driver.id, name: driver.name, mobile: driver.mobile, serviceType: 'Drivers', serviceName: (driver.vehicleTypes || []).join(', '), locationAddress: (driver.village || '') + ', ' + (driver.district || '') })">
+              <mat-icon>call</mat-icon>{{ 'Call Driver' | T }}
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  </main>
+} @else {
+  <main class="driver-form-page">
+    <header>
+      <div><span>{{ 'DRIVER SERVICE' | T }}</span><h1>{{ (isEditMode ? 'Edit driver' : 'Post driver') | T }}</h1></div>
+      <button type="button" (click)="router.navigate(['/services/drivers'])">{{ 'Cancel' | T }}</button>
+    </header>
+
+    <form [formGroup]="driverForm" (ngSubmit)="save()">
+      <section>
+        <h2>{{ 'Personal details' | T }}</h2>
+        <div class="form-grid">
+          <label><span>Name *</span><input formControlName="name" /></label>
+          <label><span>Mobile *</span><input inputmode="numeric" maxlength="10" formControlName="mobile" /></label>
+          <label><span>WhatsApp number</span><input inputmode="numeric" maxlength="10" formControlName="whatsappNumber" /></label>
+          <label><span>Experience in years *</span><input type="number" min="0" formControlName="experience" /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>{{ 'Vehicles they can drive' | T }}</h2>
+        <div class="choice-grid">
+          @for (type of vehicleTypes; track type) {
+            <button type="button" [class.selected]="hasVehicleType(type)" (click)="toggleVehicleType(type)">{{ type }}</button>
+          }
+        </div>
+        <div class="form-grid top-gap">
+          <label><span>Licence type *</span>
+            <select formControlName="licenceType"><option value="">Select licence</option>
+              @for (type of licenceTypes; track type) { <option [value]="type">{{ type }}</option> }
+            </select>
+          </label>
+          <label><span>Licence number</span><input formControlName="licenceNumber" /></label>
+        </div>
+      </section>
+
+      <section>
+        <h2>{{ 'Pricing and availability' | T }}</h2>
+        <div class="form-grid">
+          <label><span>Price per day *</span><input type="number" min="0" formControlName="pricePerDay" /></label>
+          <label><span>Price per trip</span><input type="number" min="0" formControlName="pricePerTrip" /></label>
+        </div>
+        <div class="check-row">
+          <label><input type="checkbox" formControlName="availableForOutstation" /> Outstation trips</label>
+          <label><input type="checkbox" formControlName="availableAtNight" /> Night driving</label>
+          <label><input type="checkbox" formControlName="hasOwnVehicle" /> Has own vehicle</label>
+        </div>
+      </section>
+
+      <section>
+        <h2>{{ 'Service location' | T }}</h2>
+        <div class="form-grid">
+          <label><span>Village *</span><input formControlName="village" /></label>
+          <label><span>District *</span><input formControlName="district" /></label>
+          <label><span>State *</span><input formControlName="state" /></label>
+          <label><span>Languages</span><input formControlName="languages" placeholder="Telugu, Hindi, English" /></label>
+        </div>
+        <label class="map-toggle">
+          <input type="checkbox" [checked]="showLocationMap"
+            (change)="showLocationMap = $any($event.target).checked" />
+          {{ 'Choose a different point on map' | T }}
+        </label>
+        @if (showLocationMap) {
+          <div class="form-map">
+            <app-map-component
+              [data]="[]"
+              [center]="selectedLocation.lat != null && selectedLocation.lng != null
+                ? { lat: selectedLocation.lat, lng: selectedLocation.lng }
+                : undefined"
+              [dragble]="true"
+              (locationSelected)="onLocationSelected($event)">
+            </app-map-component>
+          </div>
+        }
+        <label class="full-field"><span>Description</span><textarea rows="3" formControlName="description"></textarea></label>
+        <h2 class="photo-title">{{ 'Profile photo' | T }}</h2>
+        <app-image-upload-component (fileSelected)="onImageSelected($event)"></app-image-upload-component>
+      </section>
+
+      <button class="submit-button" type="submit">{{ 'Publish Driver Service' | T }}</button>
+    </form>
+  </main>
+}

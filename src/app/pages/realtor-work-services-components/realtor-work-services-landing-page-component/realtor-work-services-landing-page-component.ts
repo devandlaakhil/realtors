@@ -30,7 +30,7 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/house-painter.png', name: 'Painters', navigation: 'workers', category: 'Painter' },
     { icon: '/images/electrician.png', name: 'Electricians', navigation: 'workers', category: 'Electrician' },
     { icon: '/images/plumber.jpg', name: 'Plumbers', navigation: 'workers', category: 'Plumber' },
-    { icon: '/images/driver.png', name: 'Drivers', navigation: 'workers', category: 'Driver' },
+    { icon: '/images/driver.png', name: 'Drivers', navigation: 'drivers' },
     { icon: '/images/worker.png', name: 'Cleaners', navigation: 'workers', category: 'Cleaner' },
   ];
 
