@@ -115,7 +115,10 @@ export class WorkersServiceComponent implements OnInit {
     });
     this.initForm();
     this.showPostWorkerForm = this.router.snapshot.queryParamMap.get('post') === '1';
-    this.getCurrentLocation();
+    if (!this.showPostWorkerForm && !this.isEditMode) {
+      this.loaderService.show();
+      this.getCurrentLocation();
+    }
     this.workerForm.get('category')?.valueChanges.subscribe((category) => {
       this.availableSkills = WORKER_CATEGORIES[category] || [];
 
@@ -258,17 +261,30 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   getCurrentLocation(): void {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.selectedLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-      this.workerForm.patchValue({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      });
+    if (!navigator.geolocation) {
       this.getAllWorkers();
-    });
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.selectedLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        this.workerForm.patchValue({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        this.getAllWorkers();
+      },
+      () => this.getAllWorkers(),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      },
+    );
   }
 
   onLocationSelected(location: { lat: number; lng: number }): void {
@@ -412,9 +428,13 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   getAllWorkers() {
-    this.loaderService.show();
+    const locationParams =
+      this.selectedLocation.lat !== '' && this.selectedLocation.lng !== ''
+        ? this.selectedLocation
+        : undefined;
+
     this.workerApiSrv
-      .get(API_CONSTANTS.workerapiServices.getAll, this.selectedLocation)
+      .get(API_CONSTANTS.workerapiServices.getAll, locationParams)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {

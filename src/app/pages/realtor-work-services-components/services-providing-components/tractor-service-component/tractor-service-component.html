@@ -40,18 +40,21 @@
           </map-info-window>
         </google-map>
       </div> -->
-
+      
       <div class="sheet-container">
         <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
-            <div class="sheet-title">
+            <!-- <div class="sheet-title">
               <div>
                 <h3>{{ 'Commercial Vehicle Details' | T }}</h3>
                 <p>{{ totalAvailTractors }} {{ 'services ready' | T }}</p>
               </div>
-            </div>
+            </div> -->
 
             <div class="worker-list">
+              <div class="empty-vehicles" *ngIf="tractors.length === 0">
+                {{ 'No commercial vehicles found near you' | T }}
+              </div>
               <ng-container *ngFor="let tractor of tractors">
                 <div class="mini-card" *ngIf="expandedTractorId !== tractor.id" (click)="selectTractor(tractor)">
                   <img [src]="tractor.image" />

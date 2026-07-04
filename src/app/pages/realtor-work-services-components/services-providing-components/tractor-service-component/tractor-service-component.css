@@ -651,6 +651,13 @@ mat-card h3 {
   }
 }
 
+.empty-vehicles {
+  padding: 32px 16px;
+  color: var(--md-on-surface-variant);
+  font-weight: 600;
+  text-align: center;
+}
+
 @media(max-width:768px) {
   .post-service-container {
     padding: 20px;

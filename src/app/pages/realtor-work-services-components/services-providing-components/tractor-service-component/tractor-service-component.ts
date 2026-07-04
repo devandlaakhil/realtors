@@ -83,7 +83,10 @@ export class TractorServiceComponent implements OnInit {
     });
     this.initializeForm();
     this.showPostServiceForm = this.route.snapshot.queryParamMap.get('post') === '1';
-    this.getCurrentLocation();
+    if (!this.showPostServiceForm && !this.isEditMode) {
+      this.loaderService.show();
+      this.getCurrentLocation();
+    }
   }
 
   loadProperty(id: string) {
@@ -164,7 +167,6 @@ export class TractorServiceComponent implements OnInit {
   }
 
   getAllNearByTractors() {
-    this.loaderService.show();
     const locationParams =
       Number.isFinite(Number(this.selectedLocation?.lat)) &&
       Number.isFinite(Number(this.selectedLocation?.lng)) &&
