@@ -12,7 +12,7 @@ export class HardwareShopApiService {
     return `${this.baseUrl}/${endpoint}`;
   }
 
-  getNearby(params: { lat: number; lng: number }): Observable<any> {
+  getNearby(params?: { lat: number; lng: number }): Observable<any> {
     return this.http.get(`${this.baseUrl}/get-shops`, { params });
   }
 

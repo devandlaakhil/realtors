@@ -61,7 +61,7 @@ export function getHardwareImage(item: any): string {
 export function mapHardware(item: any): ServiceItem {
   return {
     id: item.id ?? item._id,
-    title: item.shopName ?? item.name ?? 'Hardware Shop',
+    title: item.shopName ?? item.name ?? 'Home Repair Service',
     image: getHardwareImage(item),
     location:
       item.address ||

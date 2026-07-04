@@ -6,6 +6,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ToastrService } from 'ngx-toastr';
@@ -32,6 +33,7 @@ import { API_CONSTANTS } from '../../../../constants/realtors-services-api-const
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatSelectModule,
     ImageUploadComponent,
     MapComponent,
   ],
@@ -51,6 +53,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   showPostForm = false;
   showMapPicker = false;
   searchText = '';
+  activeRepairType = '';
   expandedShopId: string | null = null;
   selectedImageFile: File | null = null;
   shops: any[] = [];
@@ -75,7 +78,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
     address: ['', Validators.required],
     village: [''],
     district: [''],
-    products: ['', Validators.required],
+    products: [<string[]>[], Validators.required],
     openingTime: ['08:00'],
     closingTime: ['20:00'],
     homeDelivery: [false],
@@ -86,9 +89,28 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   });
 
   readonly getShopImage = getHardwareImage;
+  readonly repairTypes = [
+    'AC Repair',
+    'Refrigerator Repair',
+    'TV Repair',
+    'Washing Machine Repair',
+    'Geyser Repair',
+    'Microwave Repair',
+    'RO / Water Purifier Repair',
+    'Inverter / Battery Repair',
+    'Electrical Repair',
+    'Plumbing',
+    'Fan / Cooler Repair',
+    'Mixer / Grinder Repair',
+    'Computer / Laptop Repair',
+    'Mobile Repair',
+    'Furniture Repair',
+    'Other Home Appliance Repair',
+  ];
 
   ngOnInit(): void {
      this.showPostForm = this.route.snapshot.queryParamMap.get('post') === '1';
+     this.activeRepairType = this.route.snapshot.queryParamMap.get('category') || '';
      this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
 
@@ -98,7 +120,8 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
         this.propertyId = id;
         this.loadProperty(id);
       } else {
-        this.getCurrentLocation();
+        if (!this.showPostForm) this.loader.show();
+        this.getCurrentLocation(!this.showPostForm);
       }
     });
   }
@@ -133,7 +156,9 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
             address: shop.address ?? '',
             village: shop.village ?? shop.location?.village ?? '',
             district: shop.district ?? shop.location?.district ?? '',
-            products: Array.isArray(shop.products) ? shop.products.join(', ') : (shop.products ?? ''),
+            products: Array.isArray(shop.products)
+              ? shop.products
+              : String(shop.products || '').split(',').map((item) => item.trim()).filter(Boolean),
             openingTime: shop.openingTime ?? '08:00',
             closingTime: shop.closingTime ?? '20:00',
             homeDelivery: shop.homeDelivery ?? false,
@@ -151,7 +176,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loader.hide();
-          this.toastr.error('Unable to load the hardware shop', 'Fail');
+          this.toastr.error('Unable to load the repair service', 'Fail');
         },
       });
   }
@@ -163,16 +188,23 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
 
   get filteredShops(): any[] {
     const query = this.searchText.trim().toLowerCase();
-    if (!query) return this.shops;
 
-    return this.shops.filter((shop) =>
-      [shop.shopName, shop.ownerName, shop.products, shop.village, shop.district,shop.image.url]
-        .filter(Boolean)
-        .some((value) => String(value).toLowerCase().includes(query)),
-    );
+    return this.shops.filter((shop) => {
+      const products = Array.isArray(shop.products)
+        ? shop.products
+        : String(shop.products || '').split(',').map((item) => item.trim());
+      const matchesRepair =
+        !this.activeRepairType || products.includes(this.activeRepairType);
+      const matchesSearch =
+        !query ||
+        [shop.shopName, shop.ownerName, ...products, shop.village, shop.district]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(query));
+      return matchesRepair && matchesSearch;
+    });
   }
 
-  async getCurrentLocation(): Promise<void> {
+  async getCurrentLocation(loadNearby = !this.showPostForm): Promise<void> {
     if (this.locating) return;
 
     this.locating = true;
@@ -186,10 +218,14 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
       this.selectedLocation = { lat, lng };
       this.locationReady = true;
       this.shopForm.patchValue({ latitude: lat, longitude: lng });
-      this.loadShops();
+      if (loadNearby) this.loadShops();
     } catch {
       this.locationReady = false;
-      this.toastr.error('Current location could not be detected. Please turn on GPS and try again');
+      if (loadNearby) {
+        this.loadShops();
+      } else {
+        this.toastr.error('Current location could not be detected. Please turn on GPS and try again');
+      }
     } finally {
       this.locating = false;
     }
@@ -231,9 +267,9 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   }
 
   loadShops(): void {
-    this.loader.show();
+    const locationParams = this.locationReady ? this.selectedLocation : undefined;
     this.api
-      .getNearby(this.selectedLocation)
+      .getNearby(locationParams)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
@@ -243,7 +279,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loader.hide();
-          this.toastr.error('Unable to load nearby hardware shops');
+          this.toastr.error('Unable to load nearby repair services');
         },
       });
   }
@@ -332,21 +368,22 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
         next: () => {
           this.loader.hide();
           this.toastr.success(
-            this.isEditMode ? 'Hardware shop updated successfully' : 'Your hardware shop is now online',
+            this.isEditMode ? 'Repair service updated successfully' : 'Your repair service is now online',
           );
           this.showPostForm = false;
-          this.shopForm.reset({ openingTime: '08:00', closingTime: '20:00', homeDelivery: false });
+          this.shopForm.reset({ products: [], openingTime: '08:00', closingTime: '20:00', homeDelivery: false });
           this.selectedImageFile = null;
           if (this.isEditMode) {
             this.router.navigate(['/dashboard/services']);
           } else {
-            this.getCurrentLocation();
+            this.loader.show();
+            this.getCurrentLocation(true);
           }
         },
         error: () => {
           this.loader.hide();
           this.toastr.error(
-            this.isEditMode ? 'Unable to update the hardware shop' : 'Unable to publish the hardware shop',
+            this.isEditMode ? 'Unable to update the repair service' : 'Unable to publish the repair service',
           );
         },
       });

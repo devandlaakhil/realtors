@@ -49,13 +49,23 @@ export const WORK_SERVICE_ROUTES: Routes = [
           loadComponent:() => import('./services-providing-components/transportation-service-component/transportation-service-component').then(n => n.TransportationServiceComponent)
         },
         {
+          path :'repairs',
+          loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
+        },
+        {
           path :'hardware',
+          redirectTo:'repairs',
+          pathMatch:'full'
+        },
+        {
+          path:'edit-repair/:id',
+          canActivate:[authGuard],
           loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
         },
         {
           path:'edit-hardware/:id',
-          canActivate:[authGuard],
-          loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
+          redirectTo:'edit-repair/:id',
+          pathMatch:'full'
         },
         {
           path:'drivers',

@@ -2,8 +2,8 @@
   <main class="hardware-page">
     <header class="page-head">
       <div>
-        <h1>Hardware Shops Near You</h1>
-        <p>Find materials, tools and local suppliers nearby</p>
+        <h1>{{ activeRepairType || 'Home Repair Services' }} Near You</h1>
+        <p>Find trusted technicians for appliances and home repairs</p>
       </div>
       <!-- <button class="post-btn" type="button" (click)="showPostForm = true">
         <mat-icon>storefront</mat-icon>
@@ -13,7 +13,7 @@
 
     <label class="search-box">
       <mat-icon>search</mat-icon>
-      <input [(ngModel)]="searchText" placeholder="Search shop, product or location" />
+      <input [(ngModel)]="searchText" placeholder="Search repair, technician or location" />
       @if (searchText) {
         <button type="button" aria-label="Clear search" (click)="searchText = ''">
           <mat-icon>close</mat-icon>
@@ -26,7 +26,7 @@
         <mat-icon>location_off</mat-icon>
         <div>
           <strong>Location is required</strong>
-          <span>Turn on GPS and allow location access to see nearby shops.</span>
+          <span>Turn on GPS and allow location access to see nearby repair services.</span>
         </div>
         <button type="button" (click)="getCurrentLocation()" [disabled]="locating">
           {{ locating ? 'Locating...' : 'Use Current Location' }}
@@ -40,8 +40,8 @@
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
-                <h2>Hardware Shop Details</h2>
-                <p>{{ filteredShops.length }} shops available nearby</p>
+                <h2>{{ activeRepairType || 'Repair Service' }} Details</h2>
+                <p>{{ filteredShops.length }} technicians available nearby</p>
               </div>
             </div>
 
@@ -58,7 +58,7 @@
                       <p><mat-icon>location_on</mat-icon>{{ shop.village || shop.address }}, {{ shop.district }}</p>
                       <p><mat-icon>schedule</mat-icon>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</p>
                       @if (shop.homeDelivery) {
-                        <span class="delivery"><mat-icon>local_shipping</mat-icon> Home delivery</span>
+                        <span class="delivery"><mat-icon>home_repair_service</mat-icon> Home visit available</span>
                       }
                       <button class="primary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">
                         View Details
@@ -72,21 +72,21 @@
                         <h3>{{ shop.shopName || shop.name }}</h3>
                         <span>{{ shop.ownerName }}</span>
                       </div>
-                      <span class="shop-badge">Hardware Shop</span>
+                      <span class="shop-badge">Repair Service</span>
                     </div>
                     <div class="location-row">
                       <mat-icon>location_on</mat-icon>
                       <span>{{ shop.address || shop.village }}, {{ shop.district }}</span>
                     </div>
                     <div class="info-grid">
-                      <div class="info-item"><mat-icon>inventory_2</mat-icon><div><small>Products</small><strong>{{ shop.products || 'Call for availability' }}</strong></div></div>
-                      <div class="info-item"><mat-icon>schedule</mat-icon><div><small>Shop hours</small><strong>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</strong></div></div>
-                      <div class="info-item"><mat-icon>local_shipping</mat-icon><div><small>Delivery</small><strong>{{ shop.homeDelivery ? 'Available' : 'Not available' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>build</mat-icon><div><small>Repairs offered</small><strong>{{ shop.products || 'Call for availability' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>schedule</mat-icon><div><small>Working hours</small><strong>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>home</mat-icon><div><small>Home visit</small><strong>{{ shop.homeDelivery ? 'Available' : 'Not available' }}</strong></div></div>
                       <div class="info-item"><mat-icon>call</mat-icon><div><small>Mobile</small><strong>{{ shop.mobile }}</strong></div></div>
                     </div>
                     @if (shop.description) { <p class="description">{{ shop.description }}</p> }
                     <div class="expanded-actions">
-                      <button class="primary-btn" type="button" (click)="phoneCall.call({ id: shop.id || shop._id, name: shop.shopName || shop.name, mobile: shop.mobile, serviceType: 'hardware', serviceName: shop.shopName || shop.name, locationAddress: shop.address || ((shop.village || '') + ', ' + (shop.district || '')) })"><mat-icon>call</mat-icon> Call Shop</button>
+                      <button class="primary-btn" type="button" (click)="phoneCall.call({ id: shop.id || shop._id, name: shop.shopName || shop.name, mobile: shop.mobile, serviceType: 'Home Repairs', serviceName: shop.shopName || shop.name, locationAddress: shop.address || ((shop.village || '') + ', ' + (shop.district || '')) })"><mat-icon>call</mat-icon> Call Technician</button>
                       <button class="secondary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">Close Details</button>
                     </div>
                   </article>
@@ -94,8 +94,8 @@
               } @empty {
                 <div class="empty-state">
                   <mat-icon>storefront</mat-icon>
-                  <h3>No hardware shops found nearby</h3>
-                  <p>Be the first shop owner to list your store in this area.</p>
+                  <h3>No repair services found nearby</h3>
+                  <p>Be the first technician to offer home repair services in this area.</p>
                 </div>
               }
             </div>
@@ -108,8 +108,8 @@
   <main class="hardware-page form-page">
     <header class="page-head">
       <div>
-        <h1>{{ isEditMode ? 'Edit Hardware Shop' : 'Bring Your Hardware Shop Online' }}</h1>
-        <p>{{ isEditMode ? 'Update your shop information and location.' : 'Help nearby customers discover your store and call you directly.' }}</p>
+        <h1>{{ isEditMode ? 'Edit Repair Service' : 'Post Your Home Repair Service' }}</h1>
+        <p>{{ isEditMode ? 'Update your service information and location.' : 'Help nearby customers find and call you for home repairs.' }}</p>
       </div>
       <button mat-stroked-button color="warn" type="button" (click)="showPostForm = false">
         Cancel
@@ -119,12 +119,11 @@
     <form [formGroup]="shopForm" (ngSubmit)="publishShop()">
       <section class="form-section">
         <div class="section-head">
-          <span>1</span>
-          <div><h2>Shop and address</h2><p>Basic information customers will see</p></div>
+          <div><h2>Technician and address</h2><p>Basic information customers will see</p></div>
         </div>
         <div class="form-grid">
           <mat-form-field appearance="outline" class="field"
-            ><mat-label>Shop name</mat-label><input matInput formControlName="shopName"
+            ><mat-label>Service / business name</mat-label><input matInput formControlName="shopName"
           /></mat-form-field>
           <mat-form-field appearance="outline" class="field"
             ><mat-label>Owner name</mat-label><input matInput formControlName="ownerName"
@@ -146,7 +145,7 @@
             <div>
               <mat-icon>my_location</mat-icon>
               <div>
-                <strong>Shop location</strong>
+                <strong>Service location</strong>
                 <span>Current GPS location is selected. Adjust it only when needed.</span>
               </div>
             </div>
@@ -167,18 +166,16 @@
 
       <section class="form-section">
         <div class="section-head">
-          <span>2</span>
-          <div><h2>Business details</h2><p>Products, working hours and delivery</p></div>
+          <div><h2>Repair details</h2><p>Choose every repair service you provide</p></div>
         </div>
         <div class="form-grid">
-          <mat-form-field appearance="outline" class="field wide"
-            ><mat-label>Products available</mat-label
-            ><textarea
-              matInput
-              rows="3"
-              formControlName="products"
-              placeholder="Cement, pipes, electrical items, paint..."
-            ></textarea>
+          <mat-form-field appearance="outline" class="field wide">
+            <mat-label>Repair services</mat-label>
+            <mat-select formControlName="products" multiple>
+              @for (repair of repairTypes; track repair) {
+                <mat-option [value]="repair">{{ repair }}</mat-option>
+              }
+            </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="field"
             ><mat-label>Opening time</mat-label
@@ -189,19 +186,18 @@
             ><input matInput type="time" formControlName="closingTime"
           /></mat-form-field>
           <mat-form-field appearance="outline" class="field wide"
-            ><mat-label>About your shop</mat-label
+            ><mat-label>Experience and service details</mat-label
             ><textarea matInput rows="3" formControlName="description"></textarea>
           </mat-form-field>
         </div>
         <div class="delivery-option">
-          <mat-checkbox formControlName="homeDelivery">Home delivery available</mat-checkbox>
+          <mat-checkbox formControlName="homeDelivery">Home visit available</mat-checkbox>
         </div>
       </section>
 
       <section class="form-section">
         <div class="section-head">
-          <span>3</span>
-          <div><h2>Shop photo</h2><p>Add a clear photo of the storefront</p></div>
+          <div><h2>Profile photo</h2><p>Add a clear technician or business photo</p></div>
         </div>
         <app-image-upload-component
           [imageUrl]="existingImageUrl"
@@ -215,7 +211,7 @@
         </button>
         <button mat-raised-button color="primary" type="submit">
           <mat-icon>publish</mat-icon>
-          {{ isEditMode ? 'Update Shop' : 'Publish Shop' }}
+          {{ isEditMode ? 'Update Service' : 'Publish Repair Service' }}
         </button>
       </div>
     </form>

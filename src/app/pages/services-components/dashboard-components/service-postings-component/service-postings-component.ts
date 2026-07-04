@@ -100,8 +100,8 @@ export class ServicePostingsComponent implements OnInit {
             items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x)),
           },
           {
-            category: 'Hardware',
-            icon: 'Hardware',
+            category: 'Home Repairs',
+            icon: 'Home Repairs',
             items: (res.hardware?.data || res.hardware?.shops || []).map((x: any) => mapHardware(x)),
           },
           // {
@@ -166,7 +166,7 @@ export class ServicePostingsComponent implements OnInit {
         this.router.navigate(['/services/edit-vehicle', elem.id]);
         break;
       case 'Hardware':
-        this.router.navigate(['/services/edit-hardware',elem.id]);
+        this.router.navigate(['/services/edit-repair',elem.id]);
         break;
     }
   }

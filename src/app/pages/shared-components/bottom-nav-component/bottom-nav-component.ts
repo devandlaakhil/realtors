@@ -25,7 +25,7 @@ export class BottomNavComponent {
     { label: 'Driver', image: '/images/driver.png', route: '/services/drivers' },
     { label: 'Commercial Vehicles', image: '/images/tractor.png', route: '/services/commercial-vehicles' },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
-    { label: 'Hardware', image: '/images/hardware.png', route: '/services/hardware' },
+    { label: 'Home Repairs', image: '/images/hardware.png', route: '/services/repairs' },
   ];
 
   navLinks: {

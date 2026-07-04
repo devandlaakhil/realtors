@@ -23,7 +23,7 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/tractor.png', name: 'Commercial Vehicles', navigation: 'commercial-vehicles' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
-    { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
+    { icon: '/images/hardware.png', name: 'Home Repairs', navigation: 'repairs' },
     { icon: '/images/dailywage-worker.png', name: 'Daily Wage', navigation: 'workers', category: 'Daily Wage' },
     { icon: '/images/construction-worker.png', name: 'Construction', navigation: 'workers', category: 'Construction' },
     { icon: '/images/carpenters.png', name: 'Carpenters', navigation: 'workers', category: 'Carpenter' },
@@ -41,6 +41,25 @@ export class RealtorWorkServicesLandingPageComponent {
     this.categories[8],
   ];
 
+  readonly repairServices: ServiceItem[] = [
+    { icon: '/images/ac-repair.png', name: 'AC Repair', navigation: 'repairs', category: 'AC Repair' },
+    { icon: '/images/fridge-repair.png', name: 'Fridge Repair', navigation: 'repairs', category: 'Refrigerator Repair' },
+    { icon: '/images/tv-repair.png', name: 'TV Repair', navigation: 'repairs', category: 'TV Repair' },
+    { icon: '/images/washing-machine-repair.png', name: 'Washing Machine', navigation: 'repairs', category: 'Washing Machine Repair' },
+    { icon: '/images/home-geyser.png', name: 'Geyser Repair', navigation: 'repairs', category: 'Geyser Repair' },
+    { icon: '/images/microwave-repair.png', name: 'Microwave Repair', navigation: 'repairs', category: 'Microwave Repair' },
+    { icon: '/images/water-purifier.png', name: 'Water Purifier', navigation: 'repairs', category: 'RO / Water Purifier Repair' },
+    { icon: '/images/inverter-battery-repair.png', name: 'Inverter & Battery', navigation: 'repairs', category: 'Inverter / Battery Repair' },
+    { icon: '/images/electrician.png', name: 'Electrical Repair', navigation: 'repairs', category: 'Electrical Repair' },
+    { icon: '/images/plumbing-repair.png', name: 'Plumbing', navigation: 'repairs', category: 'Plumbing' },
+    { icon: '/images/cooler-repair.png', name: 'Fan & Cooler', navigation: 'repairs', category: 'Fan / Cooler Repair' },
+    { icon: '/images/mixer-grinder.png', name: 'Mixer & Grinder', navigation: 'repairs', category: 'Mixer / Grinder Repair' },
+    { icon: '/images/computer-laptop.png', name: 'Computer & Laptop', navigation: 'repairs', category: 'Computer / Laptop Repair' },
+    { icon: '/images/mobile-repair.png', name: 'Mobile Repair', navigation: 'repairs', category: 'Mobile Repair' },
+    { icon: '/images/carpenters.png', name: 'Furniture Repair', navigation: 'repairs', category: 'Furniture Repair' },
+    { icon: '/images/electrical-repair.png', name: 'Other Repairs', navigation: 'repairs', category: 'Other Home Appliance Repair' },
+  ];
+
   readonly serviceSections = [
     {
       title: 'Vehicles & Equipment',
@@ -55,8 +74,8 @@ export class RealtorWorkServicesLandingPageComponent {
     },
     {
       title: 'Shops & Services',
-      subtitle: 'Materials and general service providers',
-      items: [this.categories[3]],
+      subtitle: 'Home appliance and maintenance services',
+      items: this.repairServices,
     },
   ];
 
