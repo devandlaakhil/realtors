@@ -8,7 +8,12 @@ export function mapToServiceCard(item: any, category: string) {
     owner: item.originalData?.ownerName ?? item.originalData?.name ?? item.name,
     price: item.price,
     unit: item.unit ?? item.pricingType,
-    image: item.image ?? item.images[0]?.url,
+    image:
+      item.image?.[0]?.url ??
+      item.image?.url ??
+      item.image ??
+      item.images?.[0]?.url ??
+      '/images/avatar.png',
     mobile: item.mobile,
     location: item.location ?? '',
   };

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
+import { HomeRepairType } from '../../../constants/enums/home-repair-types';
 
 interface ServiceItem {
   icon: string;
@@ -42,38 +43,38 @@ export class RealtorWorkServicesLandingPageComponent {
   ];
 
   readonly repairServices: ServiceItem[] = [
-    { icon: '/images/ac-repair.png', name: 'AC Repair', navigation: 'repairs', category: 'AC Repair' },
-    { icon: '/images/fridge-repair.png', name: 'Fridge Repair', navigation: 'repairs', category: 'Refrigerator Repair' },
-    { icon: '/images/tv-repair.png', name: 'TV Repair', navigation: 'repairs', category: 'TV Repair' },
-    { icon: '/images/washing-machine-repair.png', name: 'Washing Machine', navigation: 'repairs', category: 'Washing Machine Repair' },
-    { icon: '/images/home-geyser.png', name: 'Geyser Repair', navigation: 'repairs', category: 'Geyser Repair' },
-    { icon: '/images/microwave-repair.png', name: 'Microwave Repair', navigation: 'repairs', category: 'Microwave Repair' },
-    { icon: '/images/water-purifier.png', name: 'Water Purifier', navigation: 'repairs', category: 'RO / Water Purifier Repair' },
-    { icon: '/images/inverter-battery-repair.png', name: 'Inverter & Battery', navigation: 'repairs', category: 'Inverter / Battery Repair' },
-    { icon: '/images/electrician.png', name: 'Electrical Repair', navigation: 'repairs', category: 'Electrical Repair' },
-    { icon: '/images/plumbing-repair.png', name: 'Plumbing', navigation: 'repairs', category: 'Plumbing' },
-    { icon: '/images/cooler-repair.png', name: 'Fan & Cooler', navigation: 'repairs', category: 'Fan / Cooler Repair' },
-    { icon: '/images/mixer-grinder.png', name: 'Mixer & Grinder', navigation: 'repairs', category: 'Mixer / Grinder Repair' },
-    { icon: '/images/computer-laptop.png', name: 'Computer & Laptop', navigation: 'repairs', category: 'Computer / Laptop Repair' },
-    { icon: '/images/mobile-repair.png', name: 'Mobile Repair', navigation: 'repairs', category: 'Mobile Repair' },
-    { icon: '/images/carpenters.png', name: 'Furniture Repair', navigation: 'repairs', category: 'Furniture Repair' },
-    { icon: '/images/electrical-repair.png', name: 'Other Repairs', navigation: 'repairs', category: 'Other Home Appliance Repair' },
+    { icon: '/images/ac-repair.png', name: HomeRepairType.AcRepair, navigation: 'repairs', category: HomeRepairType.AcRepair },
+    { icon: '/images/fridge-repair.png', name: HomeRepairType.RefrigeratorRepair, navigation: 'repairs', category: HomeRepairType.RefrigeratorRepair },
+    { icon: '/images/tv-repair.png', name: HomeRepairType.TvRepair, navigation: 'repairs', category: HomeRepairType.TvRepair },
+    { icon: '/images/washing-machine-repair.png', name: HomeRepairType.WashingMachineRepair, navigation: 'repairs', category: HomeRepairType.WashingMachineRepair },
+    { icon: '/images/home-geyser.png', name: HomeRepairType.GeyserRepair, navigation: 'repairs', category: HomeRepairType.GeyserRepair },
+    { icon: '/images/microwave-repair.png', name: HomeRepairType.MicrowaveRepair, navigation: 'repairs', category: HomeRepairType.MicrowaveRepair },
+    { icon: '/images/water-purifier.png', name: HomeRepairType.WaterPurifierRepair, navigation: 'repairs', category: HomeRepairType.WaterPurifierRepair },
+    { icon: '/images/inverter-battery-repair.png', name: HomeRepairType.InverterBatteryRepair, navigation: 'repairs', category: HomeRepairType.InverterBatteryRepair },
+    { icon: '/images/electrician.png', name: HomeRepairType.ElectricalRepair, navigation: 'repairs', category: HomeRepairType.ElectricalRepair },
+    { icon: '/images/plumbing-repair.png', name: HomeRepairType.Plumbing, navigation: 'repairs', category: HomeRepairType.Plumbing },
+    { icon: '/images/cooler-repair.png', name: HomeRepairType.FanCoolerRepair, navigation: 'repairs', category: HomeRepairType.FanCoolerRepair },
+    { icon: '/images/mixer-grinder.png', name: HomeRepairType.MixerGrinderRepair, navigation: 'repairs', category: HomeRepairType.MixerGrinderRepair },
+    { icon: '/images/computer-laptop.png', name: HomeRepairType.ComputerLaptopRepair, navigation: 'repairs', category: HomeRepairType.ComputerLaptopRepair },
+    { icon: '/images/mobile-repair.png', name: HomeRepairType.MobileRepair, navigation: 'repairs', category: HomeRepairType.MobileRepair },
+    { icon: '/images/carpenters.png', name: HomeRepairType.FurnitureRepair, navigation: 'repairs', category: HomeRepairType.FurnitureRepair },
+    { icon: '/images/electrical-repair.png', name: HomeRepairType.OtherHomeApplianceRepair, navigation: 'repairs', category: HomeRepairType.OtherHomeApplianceRepair },
   ];
 
   readonly serviceSections = [
     {
-      title: 'Vehicles & Equipment',
+      title: 'Vehicles',
       subtitle: 'Hire vehicles and machinery nearby',
-      items: [this.categories[0], this.categories[2]],
+      items: [this.categories[10],this.categories[0], this.categories[2]],
     },
     {
       title: 'Skilled Workers',
       subtitle: 'Find trusted people for every job',
       featured: true,
-      items: this.categories.slice(4),
+      items: this.categories.slice(4).filter((item) => item.navigation !== 'drivers'),
     },
     {
-      title: 'Shops & Services',
+      title: 'Home Services',
       subtitle: 'Home appliance and maintenance services',
       items: this.repairServices,
     },

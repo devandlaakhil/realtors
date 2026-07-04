@@ -17,7 +17,7 @@ export class BottomNavComponent {
   private toastr = inject(ToastrService);
   showPostPicker = false;
   isNavigatingToPost = false;
-  isLoggedIn = false;
+  isLoggedIn = !!localStorage.getItem('token') || !!sessionStorage.getItem('token');
 
   postOptions = [
     { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },

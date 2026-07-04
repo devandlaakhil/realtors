@@ -65,9 +65,19 @@
                     <p>₹{{ worker.price }}/{{ worker.unit | T}}</p>
                     <p>📍 {{ worker.distanceKm }} {{'KM Away'|T}}</p>
 
+                    <div class="worker-card-skills" *ngIf="worker.skills?.length">
+                      <span *ngFor="let skill of worker.skills | slice: 0 : 3">{{ $any(skill) | T }}</span>
+                      <span *ngIf="worker.skills.length > 3">+{{ worker.skills.length - 3 }}</span>
+                    </div>
+
                     <div class="card-actions">
-                      <button class="primary-btn" type="button" (click)="toggleDetails(worker.id)">
+                      <button class="secondary-btn" type="button" (click)="toggleDetails(worker.id)">
                         {{'View Details'|T}}
+                      </button>
+                      <button class="primary-btn" type="button"
+                        (click)="phoneCall.call({ id: worker.id, name: worker.name, mobile: worker.mobile, serviceType: 'worker', serviceName: worker.category, locationAddress: (worker.village || '') + ', ' + (worker.district || '') })">
+                        <mat-icon>call</mat-icon>
+                        {{ 'Contact Worker' | T }}
                       </button>
                     </div>
                   </div>

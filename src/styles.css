@@ -112,6 +112,36 @@ select {
   font-family: var(--font-sans);
 }
 
+/* Enforce the shared horizontal card on Workers mobile views. */
+app-workers-service-component .service-list-panel .mini-card {
+  display: grid !important;
+  grid-template-columns: 72px minmax(0, 1fr) !important;
+  gap: 9px !important;
+  padding: 9px !important;
+  align-items: start !important;
+}
+
+app-workers-service-component .service-list-panel .mini-card > img {
+  width: 72px !important;
+  min-width: 72px !important;
+  height: 72px !important;
+  border-radius: 12px !important;
+}
+
+app-workers-service-component .service-list-panel .card-content {
+  min-width: 0;
+}
+
+app-workers-service-component .service-list-panel .card-actions {
+  flex-direction: row !important;
+}
+
+app-workers-service-component .service-list-panel .card-actions button {
+  width: auto !important;
+  min-height: 34px !important;
+  padding: 4px 9px !important;
+}
+
 .mat-typography,
 .mat-toolbar,
 .mat-mdc-toolbar,
@@ -2421,6 +2451,118 @@ button {
   color: #176b45;
   font-size: 0.74rem;
   font-weight: 700;
+}
+
+.repair-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 7px 0;
+}
+
+.repair-chip-row span {
+  padding: 3px 7px;
+  border-radius: 9px;
+  background: var(--md-secondary-container);
+  color: #115e59;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.repair-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.repair-card-actions button {
+  min-height: 38px;
+  margin: 0;
+}
+
+.repair-card-actions .primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.repair-card-actions mat-icon {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+}
+
+.details-chips {
+  margin-bottom: 12px;
+}
+
+.service-list-panel .mini-card {
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 9px;
+  padding: 9px;
+  border-radius: 14px;
+}
+
+.service-list-panel .mini-card > img {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.service-list-panel .card-content h3,
+.service-list-panel .card-content h4,
+.service-list-panel .card-content h6 {
+  margin-bottom: 3px;
+  font-size: 0.88rem;
+}
+
+.service-list-panel .card-content p {
+  margin: 2px 0;
+  font-size: 0.68rem;
+}
+
+.service-list-panel .repair-chip-row {
+  gap: 3px;
+  margin: 5px 0;
+}
+
+.service-list-panel .repair-chip-row span {
+  padding: 2px 5px;
+  font-size: 0.56rem;
+}
+
+.service-list-panel .delivery {
+  font-size: 0.66rem;
+}
+
+.service-list-panel .repair-card-actions {
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.service-list-panel .repair-card-actions button {
+  min-height: 34px;
+  padding: 4px 7px;
+  font-size: 0.68rem;
+}
+
+.service-list-panel .card-actions {
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.service-list-panel .card-actions button {
+  min-height: 34px;
+  padding: 4px 8px;
+  font-size: 0.68rem;
+}
+
+.service-list-panel .worker-details-card,
+.service-list-panel .details-card {
+  border-radius: 14px;
+  padding: 12px;
 }
 
 .primary-btn {

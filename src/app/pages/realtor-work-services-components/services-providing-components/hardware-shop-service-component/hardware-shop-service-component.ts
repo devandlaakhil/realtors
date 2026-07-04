@@ -21,6 +21,7 @@ import { getHardwareImage } from '../../../../constants/service-mappers';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
+import { HOME_REPAIR_TYPES } from '../../../../constants/enums/home-repair-types';
 
 @Component({
   selector: 'app-hardware-shop-service-component',
@@ -89,24 +90,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   });
 
   readonly getShopImage = getHardwareImage;
-  readonly repairTypes = [
-    'AC Repair',
-    'Refrigerator Repair',
-    'TV Repair',
-    'Washing Machine Repair',
-    'Geyser Repair',
-    'Microwave Repair',
-    'RO / Water Purifier Repair',
-    'Inverter / Battery Repair',
-    'Electrical Repair',
-    'Plumbing',
-    'Fan / Cooler Repair',
-    'Mixer / Grinder Repair',
-    'Computer / Laptop Repair',
-    'Mobile Repair',
-    'Furniture Repair',
-    'Other Home Appliance Repair',
-  ];
+  readonly repairTypes = HOME_REPAIR_TYPES;
 
   ngOnInit(): void {
      this.showPostForm = this.route.snapshot.queryParamMap.get('post') === '1';
@@ -188,8 +172,9 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
 
   get filteredShops(): any[] {
     const query = this.searchText.trim().toLowerCase();
+    const shops = Array.isArray(this.shops) ? this.shops : [];
 
-    return this.shops.filter((shop) => {
+    return shops.filter((shop) => {
       const products = Array.isArray(shop.products)
         ? shop.products
         : String(shop.products || '').split(',').map((item) => item.trim());
@@ -267,13 +252,25 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   }
 
   loadShops(): void {
-    const locationParams = this.locationReady ? this.selectedLocation : undefined;
+    const requestParams = {
+      ...(this.locationReady ? this.selectedLocation : {}),
+      ...(this.activeRepairType ? { repairType: this.activeRepairType } : {}),
+    };
     this.api
-      .getNearby(locationParams)
+      .getNearby(requestParams)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.shops = res?.data ?? res?.shops ?? [];
+          const responseData = res?.data ?? res;
+          this.shops = Array.isArray(responseData)
+            ? responseData
+            : Array.isArray(responseData?.shops)
+              ? responseData.shops
+              : Array.isArray(responseData?.items)
+                ? responseData.items
+                : Array.isArray(res?.shops)
+                  ? res.shops
+                  : [];
           this.mapItems = this.shops.map((shop) => mapToServiceCard(shop, 'hardware'));
           this.loader.hide();
         },

@@ -4,6 +4,107 @@
   min-height: calc(100dvh - var(--app-header-height));
 }
 
+/* Shared compact service-card appearance */
+.service-list-panel .worker-list {
+  gap: 10px;
+}
+
+.service-list-panel .mini-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 9px;
+  padding: 9px;
+  border-radius: 14px;
+  box-shadow: var(--elevation-1);
+  align-items: start;
+}
+
+.service-list-panel .mini-card img {
+  width: 72px;
+  min-width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.service-list-panel .card-content h4 {
+  margin: 0 0 3px;
+  font-size: .88rem;
+}
+
+.service-list-panel .card-content h6,
+.service-list-panel .card-content p {
+  margin: 2px 0;
+  font-size: .68rem;
+}
+
+.service-list-panel .card-actions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  margin-top: 6px;
+  gap: 5px;
+}
+
+.service-list-panel .primary-btn,
+.service-list-panel .secondary-btn {
+  min-height: 34px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: .68rem;
+}
+
+.service-list-panel .primary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: var(--md-primary);
+}
+
+.service-list-panel .primary-btn mat-icon {
+  width: 15px;
+  height: 15px;
+  font-size: 15px;
+}
+
+.worker-card-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.worker-card-skills span {
+  padding: 2px 5px;
+  border-radius: 8px;
+  background: var(--md-secondary-container);
+  color: #115e59;
+  font-size: .54rem;
+  font-weight: 700;
+}
+
+.service-list-panel .worker-details-card {
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: var(--elevation-1);
+}
+
+@media (max-width: 768px) {
+  .service-list-panel .mini-card {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .service-list-panel .mini-card img {
+    width: 72px;
+    min-width: 72px;
+    height: 72px;
+    border-radius: 12px;
+  }
+
+  .service-list-panel .card-actions {
+    grid-template-columns: auto 1fr;
+  }
+}
+
 .service-header {
   display: flex;
   justify-content: space-between;

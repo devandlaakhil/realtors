@@ -11,7 +11,7 @@
       </button> -->
     </header>
 
-    <label class="search-box">
+    <!-- <label class="search-box">
       <mat-icon>search</mat-icon>
       <input [(ngModel)]="searchText" placeholder="Search repair, technician or location" />
       @if (searchText) {
@@ -19,7 +19,7 @@
           <mat-icon>close</mat-icon>
         </button>
       }
-    </label>
+    </label> -->
 
     @if (!locationReady) {
       <div class="location-notice">
@@ -38,12 +38,12 @@
       <div class="sheet-container">
         <div class="bottom-sheet service-list-panel">
           <div class="sheet-content">
-            <div class="sheet-title">
+            <!-- <div class="sheet-title">
               <div>
                 <h2>{{ activeRepairType || 'Repair Service' }} Details</h2>
                 <p>{{ filteredShops.length }} technicians available nearby</p>
               </div>
-            </div>
+            </div> -->
 
             <div class="shop-list">
               @for (shop of filteredShops; track shop.id || shop._id) {
@@ -55,14 +55,23 @@
                     />
                     <div class="card-content">
                       <h3>{{ shop.shopName || shop.name }}</h3>
+                      <p><mat-icon>person</mat-icon>{{ shop.ownerName || 'Service technician' }}</p>
                       <p><mat-icon>location_on</mat-icon>{{ shop.village || shop.address }}, {{ shop.district }}</p>
-                      <p><mat-icon>schedule</mat-icon>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</p>
+                      @if (shop.distanceKm != null) {
+                        <p><mat-icon>route</mat-icon>{{ shop.distanceKm | number: '1.1-1' }} km away</p>
+                      }
+                      <div class="repair-chip-row">
+                        @for (repair of (shop.products || shop.categories || []); track repair) {
+                          <span>{{ repair }}</span>
+                        }
+                      </div>
                       @if (shop.homeDelivery) {
                         <span class="delivery"><mat-icon>home_repair_service</mat-icon> Home visit available</span>
                       }
-                      <button class="primary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">
-                        View Details
-                      </button>
+                      <div class="repair-card-actions">
+                        <button class="secondary-btn" type="button" (click)="toggleDetails(shop.id || shop._id)">View Details</button>
+                        <button class="primary-btn" type="button" (click)="phoneCall.call({ id: shop.id || shop._id, name: shop.shopName || shop.name, mobile: shop.mobile, serviceType: 'Home Repairs', serviceName: activeRepairType || (shop.products || []).join(', '), locationAddress: shop.address || ((shop.village || '') + ', ' + (shop.district || '')) })"><mat-icon>call</mat-icon> Call</button>
+                      </div>
                     </div>
                   </article>
                 } @else {
@@ -78,8 +87,14 @@
                       <mat-icon>location_on</mat-icon>
                       <span>{{ shop.address || shop.village }}, {{ shop.district }}</span>
                     </div>
+                    <div class="repair-chip-row details-chips">
+                      @for (repair of (shop.products || shop.categories || []); track repair) {
+                        <span>{{ repair }}</span>
+                      }
+                    </div>
                     <div class="info-grid">
-                      <div class="info-item"><mat-icon>build</mat-icon><div><small>Repairs offered</small><strong>{{ shop.products || 'Call for availability' }}</strong></div></div>
+                      <div class="info-item"><mat-icon>person</mat-icon><div><small>Technician</small><strong>{{ shop.ownerName }}</strong></div></div>
+                      <div class="info-item"><mat-icon>route</mat-icon><div><small>Distance</small><strong>{{ shop.distanceKm != null ? ((shop.distanceKm | number: '1.1-1') + ' km') : 'Nearby' }}</strong></div></div>
                       <div class="info-item"><mat-icon>schedule</mat-icon><div><small>Working hours</small><strong>{{ shop.openingTime || '08:00' }} - {{ shop.closingTime || '20:00' }}</strong></div></div>
                       <div class="info-item"><mat-icon>home</mat-icon><div><small>Home visit</small><strong>{{ shop.homeDelivery ? 'Available' : 'Not available' }}</strong></div></div>
                       <div class="info-item"><mat-icon>call</mat-icon><div><small>Mobile</small><strong>{{ shop.mobile }}</strong></div></div>
