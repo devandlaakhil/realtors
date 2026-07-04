@@ -89,7 +89,7 @@ export class TractorServiceComponent implements OnInit {
   loadProperty(id: string) {
     this.isEditMode = true;
     this.realtorsApiSrv
-      .get(API_CONSTANTS.tractorServices.getsingleitem, {
+      .get(API_CONSTANTS.commercialVehicleServices.getSingleItem, {
         id: id,
       })
       .pipe(takeUntil(this.destroy$))
@@ -103,6 +103,7 @@ export class TractorServiceComponent implements OnInit {
               whatsappNumber: tractor.whatsappNumber,
             },
             tractorDetails: {
+              vehicleType: tractor.vehicleType || 'Tractor',
               title: tractor.title,
               brand: tractor.brand,
               model: tractor.model,
@@ -164,8 +165,16 @@ export class TractorServiceComponent implements OnInit {
 
   getAllNearByTractors() {
     this.loaderService.show();
+    const locationParams =
+      Number.isFinite(Number(this.selectedLocation?.lat)) &&
+      Number.isFinite(Number(this.selectedLocation?.lng)) &&
+      this.selectedLocation.lat !== '' &&
+      this.selectedLocation.lng !== ''
+        ? { lat: this.selectedLocation.lat, lng: this.selectedLocation.lng }
+        : undefined;
+
     this.realtorsApiSrv
-      .get(API_CONSTANTS.tractorServices.list, this.selectedLocation)
+      .get(API_CONSTANTS.commercialVehicleServices.list, locationParams)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
@@ -223,8 +232,9 @@ export class TractorServiceComponent implements OnInit {
         mobileNumber: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
         whatsappNumber: [''],
       }),
-      // Tractor Details
+      // Commercial vehicle details (kept under tractorDetails for API compatibility)
       tractorDetails: this.fb.group({
+        vehicleType: ['Tractor', Validators.required],
         title: ['', Validators.required],
         brand: ['', Validators.required],
         model: ['', Validators.required],
@@ -283,6 +293,11 @@ export class TractorServiceComponent implements OnInit {
   }
 
   private getCurrentLocation(showMap = false): void {
+    if (!navigator.geolocation) {
+      this.getAllNearByTractors();
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -308,6 +323,7 @@ export class TractorServiceComponent implements OnInit {
       },
       (error) => {
         console.error('Location Error:', error);
+        this.getAllNearByTractors();
       },
       {
         enableHighAccuracy: true,
@@ -382,7 +398,7 @@ export class TractorServiceComponent implements OnInit {
 
     if (!this.isEditMode) {
       this.realtorsApiSrv
-        .post(API_CONSTANTS.tractorServices.save, formData)
+        .post(API_CONSTANTS.commercialVehicleServices.save, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
@@ -400,7 +416,7 @@ export class TractorServiceComponent implements OnInit {
     } else {
       formData.append('id', this.propertyId);
       this.realtorsApiSrv
-        .put(API_CONSTANTS.tractorServices.updateItem, formData)
+        .put(API_CONSTANTS.commercialVehicleServices.updateItem, formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {

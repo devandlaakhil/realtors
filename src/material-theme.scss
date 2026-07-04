@@ -25,7 +25,7 @@ body {
 
 .mat-toolbar,
 .mat-mdc-toolbar {
-  font-family: Roboto, sans-serif;
+  font-family: var(--font-sans), sans-serif;
 }
 
 .mat-mdc-button,

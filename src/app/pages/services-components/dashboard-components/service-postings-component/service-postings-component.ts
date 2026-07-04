@@ -34,7 +34,7 @@ export class ServicePostingsComponent implements OnInit {
   private statusApis: any = {
     Tractor: {
       service: this.realtorApiSrv,
-      url: API_CONSTANTS.tractorServices.statusUpdate,
+      url: API_CONSTANTS.commercialVehicleServices.statusUpdate,
     },
     Worker: {
       service: this.workerApiSrv,
@@ -53,7 +53,7 @@ export class ServicePostingsComponent implements OnInit {
   private deleteApis: any = {
     Tractor: {
       service: this.realtorApiSrv,
-      url: API_CONSTANTS.tractorServices.delete,
+      url: API_CONSTANTS.commercialVehicleServices.delete,
     },
     Worker: {
       service: this.workerApiSrv,
@@ -76,7 +76,7 @@ export class ServicePostingsComponent implements OnInit {
   loadMyServices() {
     this.loaderSrv.show();
     forkJoin({
-      tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.mylist),
+      commercialVehicles: this.realtorApiSrv.get(API_CONSTANTS.commercialVehicleServices.mylist),
       workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings),
       vehicles : this.transportApiSrv.get(API_CONSTANTS.transportApiService.getMyVehiclePosts),
       hardware: this.hardwareApiSrv.getMyShops(),
@@ -85,9 +85,9 @@ export class ServicePostingsComponent implements OnInit {
       next: (res: any) => {
         this.serviceGroups = [
           {
-            category: 'Tractors',
+            category: 'Commercial Vehicles',
             icon: '🚜',
-            items: (res.tractors?.data || []).map((x: any) => mapTractor(x)),
+            items: (res.commercialVehicles?.data || []).map((x: any) => mapTractor(x)),
           },
           {
             category: 'workers',
@@ -124,7 +124,7 @@ export class ServicePostingsComponent implements OnInit {
       this.toaster.error('Delete not supported for this service', 'Error');
       return;
     }
-    const confirmed = confirm('Are you sure you want to delete this Tractor?');
+    const confirmed = confirm('Are you sure you want to delete this commercial vehicle?');
     if (!confirmed) {
       return;
     }
@@ -145,7 +145,7 @@ export class ServicePostingsComponent implements OnInit {
               }))
               .filter((group) => group.items.length > 0);
 
-            this.toaster.success('Your tractor deleted sccessfully', 'Success');
+            this.toaster.success('Your commercial vehicle was deleted successfully', 'Success');
             this.cdr.detectChanges();
           }
         },

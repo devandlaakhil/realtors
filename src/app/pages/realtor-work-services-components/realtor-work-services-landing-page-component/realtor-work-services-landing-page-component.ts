@@ -1,45 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
-import { LoaderServices } from '../../../shared-services/loader-services';
-import { forkJoin } from 'rxjs';
-import { RealtorsServicesApiServices } from '../../../api-services/realtors-services-api-services';
-import { WorkerApiServices } from '../../../api-services/worker-api-services';
-import { API_CONSTANTS } from '../../../constants/realtors-services-api-constants';
-import { mapHardware, mapTractor, mapVehicle, mapWorker } from '../../../constants/service-mappers';
-import { MapComponent } from '../../shared-components/map-component/map-component';
-import { mapToServiceCard } from './homeScreen-mapper';
-import { MobileDialpadService } from '../../../shared-services/mobile-dialpad-service';
-import { TransportApiService } from '../../../api-services/transport-api-service';
-import { CITY_COORDINATES } from '../../../constants/location-coordinates';
-import { HardwareShopApiService } from '../../../api-services/hardware-shop-api-service';
+
+interface ServiceItem {
+  icon: string;
+  name: string;
+  navigation: string;
+  category?: string;
+}
 
 @Component({
   selector: 'app-realtor-work-services-landing-page-component',
-  imports: [CommonModule, RouterModule, TranslatePipe, MapComponent],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './realtor-work-services-landing-page-component.html',
   styleUrl: './realtor-work-services-landing-page-component.css',
 })
 export class RealtorWorkServicesLandingPageComponent {
-  loaderSrv = inject(LoaderServices);
-  realtorApiSrv = inject(RealtorsServicesApiServices);
-  workerApiSrv = inject(WorkerApiServices);
-  vehiclesApiSrv = inject(TransportApiService);
-  hardwareApiSrv = inject(HardwareShopApiService);
-
-  serviceGroups: any[] = [];
-  serviceCategoryCards: any[] = [];
-  selectedLocation: any = { ...CITY_COORDINATES['Hyderabad'] };
-  selectedService: any = null;
-  activeCategoryGroup: any = null;
-  popoverPosition: { left: number; top: number } | null = null;
-  readonly categoryPreviewLimit = 12;
-  phoneCall = inject(MobileDialpadService);
-  mapServices: any[] = [];
-
-  categories = [
-    { icon: '/images/tractor.png', name: 'commercial vehicles', navigation: 'tractor' },
+  activeSection: any = null;
+  readonly previewLimit = 4;
+  readonly categories: ServiceItem[] = [
+    { icon: '/images/tractor.png', name: 'Commercial Vehicles', navigation: 'commercial-vehicles' },
     { icon: '/images/worker.png', name: 'Workers', navigation: 'workers' },
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
     { icon: '/images/hardware.png', name: 'Hardware', navigation: 'hardware' },
@@ -50,202 +31,40 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/electrician.png', name: 'Electricians', navigation: 'workers', category: 'Electrician' },
     { icon: '/images/plumber.jpg', name: 'Plumbers', navigation: 'workers', category: 'Plumber' },
     { icon: '/images/driver.png', name: 'Drivers', navigation: 'workers', category: 'Driver' },
-
+    { icon: '/images/worker.png', name: 'Cleaners', navigation: 'workers', category: 'Cleaner' },
   ];
-  footerServices = this.categories;
-  services: any[] = [];
 
-  ngOnInit(): void {
-    this.getCurrentLocation();
+  readonly dailyNeeds = [
+    this.categories[5],
+    this.categories[10],
+    this.categories[11],
+    this.categories[8],
+  ];
+
+  readonly serviceSections = [
+    {
+      title: 'Vehicles & Equipment',
+      subtitle: 'Hire vehicles and machinery nearby',
+      items: [this.categories[0], this.categories[2]],
+    },
+    {
+      title: 'Skilled Workers',
+      subtitle: 'Find trusted people for every job',
+      featured: true,
+      items: this.categories.slice(4),
+    },
+    {
+      title: 'Shops & Services',
+      subtitle: 'Materials and general service providers',
+      items: [this.categories[3]],
+    },
+  ];
+
+  openSection(section: any): void {
+    this.activeSection = section;
   }
 
-  getCurrentLocation(): void {
-    if (!navigator.geolocation) {
-      this.loadAllServices();
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.selectedLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        this.loadAllServices();
-      },
-      () => {
-        this.selectedLocation = { ...CITY_COORDINATES['Hyderabad'] };
-        this.loadAllServices();
-      },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
-    );
-  }
-
-  loadAllServices() {
-    this.loaderSrv.show();
-    forkJoin({
-      tractors: this.realtorApiSrv.get(API_CONSTANTS.tractorServices.list, this.selectedLocation),
-      workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getAll, this.selectedLocation),
-      vehicles: this.vehiclesApiSrv.get(API_CONSTANTS.transportApiService.getNearByVehicles, this.selectedLocation),
-      hardware: this.hardwareApiSrv.getNearby(this.selectedLocation),
-    }).subscribe({
-      next: (res: any) => {
-        this.serviceGroups = [
-          {
-            category: 'Tractors',
-            icon: '/images/tractor.png',
-            items: (res.tractors?.data || []).map((x: any) => mapTractor(x)),
-          },
-          {
-            category: 'Workers',
-            icon: '/images/worker.png',
-            items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
-          },
-          {
-            category: 'Vehicles',
-            icon: '/images/transport.png',
-            items: (res.vehicles?.data || []).map((x: any) => mapVehicle(x)),
-          },
-          {
-            category: 'Hardware',
-            icon: '/images/hardware.png',
-            items: (res.hardware?.data || res.hardware?.shops || []).map((x: any) => mapHardware(x)),
-          },
-        ].filter((group) => group.items?.length);
-
-        this.services = this.serviceGroups.flatMap((group) =>
-          group.items.map((item: any) => mapToServiceCard(item, group.category)),
-        );
-        this.serviceCategoryCards = this.serviceGroups.map((group) => ({
-          category: group.category,
-          icon: group.icon,
-          items: group.items.map((item: any) => mapToServiceCard(item, group.category)),
-        }));
-        this.selectedService = null;
-        this.mapService();
-        this.loaderSrv.hide();
-      },
-      error: () => {
-        this.loaderSrv.hide();
-      },
-    });
-  }
-
-  mapService() {
-    this.mapServices = this.serviceGroups
-      .flatMap((group: any) =>
-        group.items.map((item: any) => {
-          const coordinates = this.getServiceCoordinates(item.originalData);
-
-          return {
-            id: item.id,
-            name: item.title,
-            image: item.image,
-            price: item.price,
-            unit: item.unit,
-            mobile: item.mobile,
-            category: group.category,
-            lat: coordinates?.[1],
-            lng: coordinates?.[0],
-          };
-        }),
-      )
-      .filter((x) => x.lat != null && x.lng != null);
-  }
-
-  getServiceCoordinates(item: any): number[] | null {
-    const candidates = [
-      item?.location?.coordinates?.coordinates,
-      item?.location?.coordinates,
-      item?.coordinates?.coordinates,
-      item?.coordinates,
-      item?.geoLocation?.coordinates,
-      item?.location,
-    ];
-
-    const coordinatePair = candidates.find(
-      (value) => Array.isArray(value) && value.length >= 2 && Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1])),
-    );
-
-    if (coordinatePair) {
-      return [Number(coordinatePair[0]), Number(coordinatePair[1])];
-    }
-
-    const lat = item?.latitude ?? item?.lat ?? item?.location?.latitude ?? item?.location?.lat;
-    const lng = item?.longitude ?? item?.lng ?? item?.location?.longitude ?? item?.location?.lng;
-
-    if (lat != null && lng != null && Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))) {
-      return [Number(lng), Number(lat)];
-    }
-
-    return null;
-  }
-
-  selectService(service: any, event?: Event): void {
-    event?.stopPropagation();
-    this.selectedService = service;
-    this.setPopoverPosition(event);
-  }
-
-  openCategory(group: any, event?: Event): void {
-    event?.stopPropagation();
-    this.selectedService = null;
-    this.popoverPosition = null;
-    this.activeCategoryGroup = group;
-  }
-
-  closeCategory(event?: Event): void {
-    event?.stopPropagation();
-    this.selectedService = null;
-    this.popoverPosition = null;
-    this.activeCategoryGroup = null;
-  }
-
-  @HostListener('document:click')
-  closeServicePopover(): void {
-    this.selectedService = null;
-    this.popoverPosition = null;
-  }
-
-  callService(service: any, event?: Event): void {
-    event?.stopPropagation();
-    const provider = {
-      id: service.id,
-      name: service.owner || service.name,
-      mobile: service.mobile,
-      serviceType: service.category || 'service',
-      serviceName: service.name,
-      locationAddress: service.location,
-    };
-    this.closeServicePopover();
-    void this.phoneCall.call(provider);
-  }
-
-  @HostListener('window:scroll')
-  @HostListener('document:touchmove')
-  @HostListener('document:wheel')
-  closeServicePopoverOnScroll(): void {
-    if (this.selectedService) {
-      this.closeServicePopover();
-    }
-  }
-
-  private setPopoverPosition(event?: Event): void {
-    const target = event?.currentTarget as HTMLElement | null;
-
-    if (!target) {
-      this.popoverPosition = null;
-      return;
-    }
-
-    const rect = target.getBoundingClientRect();
-    const popoverWidth = Math.min(260, window.innerWidth * 0.88);
-    const left = Math.min(
-      Math.max(rect.left + rect.width / 2, popoverWidth / 2 + 8),
-      window.innerWidth - popoverWidth / 2 - 8,
-    );
-    const top = Math.min(rect.bottom + 8, window.innerHeight - 180);
-
-    this.popoverPosition = { left, top };
+  closeSection(): void {
+    this.activeSection = null;
   }
 }

@@ -3,7 +3,7 @@ import { ServiceItem } from './services-items-normalization';
 export function mapTractor(item: any): ServiceItem {
   return {
     id: item.id,
-    title: item.ownerName,
+    title: item.title || item.vehicleType || 'Commercial Vehicle',
     image: item.images?.[0]?.url || '/assets/images/tractor.png',
     location: `${item.location?.village || ''}, ${item.location?.district || ''}`,
     price: item.pricePerHour,

@@ -20,7 +20,7 @@ export class BottomNavComponent {
   postOptions = [
     { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
     { label: 'Worker', image: '/images/worker.png', route: '/services/workers' },
-    { label: 'Commercial Vehicles', image: '/images/tractor.png', route: '/services/tractor' },
+    { label: 'Commercial Vehicles', image: '/images/tractor.png', route: '/services/commercial-vehicles' },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
     { label: 'Hardware', image: '/images/hardware.png', route: '/services/hardware' },
   ];
@@ -33,10 +33,10 @@ export class BottomNavComponent {
     primary?: boolean;
     requiresAuth?: boolean;
   }[] = [
-    { label: 'Home', icon: 'handyman', route: '/services/home', exact: true },
-    { label: 'Real Estate', icon: 'home', route: '/home' },
+    { label: 'Home', icon: 'home', route: '/services/home', exact: true },
+    // { label: 'Real Estate', icon: 'home', route: '/home' },
     { label: 'Post', icon: 'add', route: '/ad-post', primary: true },
-    { label: 'My Posts', icon: 'dashboard', route: '/dashboard/my-posts', requiresAuth: true },
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard/my-posts', requiresAuth: true },
     { label: 'Profile', icon: 'person', route: '/profile', requiresAuth: true },
   ];
 

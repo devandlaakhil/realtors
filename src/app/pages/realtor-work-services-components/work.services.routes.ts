@@ -7,11 +7,19 @@ export const WORK_SERVICE_ROUTES: Routes = [
     children: [
         {
             path:'home',
-            loadComponent:() => import('./realtor-work-services-landing-page-component/realtor-work-services-landing-page-component').then(n => n.RealtorWorkServicesLandingPageComponent)
+            loadComponent: () =>
+              import('./realtor-work-services-landing-page-component/realtor-work-services-landing-page-component').then(
+                (component) => component.RealtorWorkServicesLandingPageComponent,
+              ),
+        },
+        {
+          path:'commercial-vehicles',
+          loadComponent:() => import('./services-providing-components/tractor-service-component/tractor-service-component').then(n => n.TractorServiceComponent)
         },
         {
           path:'tractor',
-          loadComponent:() => import('./services-providing-components/tractor-service-component/tractor-service-component').then(n => n.TractorServiceComponent)
+          redirectTo:'commercial-vehicles',
+          pathMatch:'full'
         },
         {
           path:'edit-tractor/:id',

@@ -1,180 +1,81 @@
-<div class="home-page">
-  <section class="hero-shell">
-    <div class="hero-content">
-      <span class="eyebrow">{{ 'Local service finder' | T }}</span>
-      <h1>{{ 'Find equipment and services near you' | T }}</h1>
-      <p class="hero-sub">{{ 'Tap a category to browse trusted local providers nearby' | T }}</p>
+<main class="services-hub">
+  <section class="services-welcome">
+    <div>
+      <span class="welcome-kicker">{{ 'SERVICES NEAR YOU' | T }}</span>
+      <h1>{{ 'What do you need today?' | T }}</h1>
+      <p>{{ 'Choose a category to find trusted local providers.' | T }}</p>
     </div>
+    <span class="welcome-location" aria-hidden="true">⌖</span>
+  </section>
 
-    <nav class="service-actions" aria-label="Service categories">
-      @for (item of footerServices; track item.navigation) {
-        <a class="service-action" [routerLink]="['/services', item.navigation]"
+  <section class="daily-needs-card">
+    <header>
+      <div>
+        <span>{{ 'QUICK ACCESS' | T }}</span>
+        <h2>{{ 'Daily Needs' | T }}</h2>
+      </div>
+      <small>{{ 'Most used' | T }}</small>
+    </header>
+
+    <nav class="daily-needs-grid" aria-label="Daily needs">
+      @for (item of dailyNeeds; track item.name) {
+        <a class="daily-need-item" [routerLink]="['/services', item.navigation]"
           [queryParams]="item.category ? { category: item.category } : null">
-          <span class="service-action-icon"><img [src]="item.icon" alt="" /></span>
-          <span class="service-action-label">{{ item.name | T }}</span>
+          <span class="daily-need-icon"><img [src]="item.icon" [alt]="item.name" /></span>
+          <strong>{{ item.name | T }}</strong>
         </a>
       }
     </nav>
   </section>
 
-  <section class="listing-map">
-    <div class="listing-section surface-card">
-      <div class="section-head compact">
-        <div>
-          <span class="section-kicker">{{ 'Nearby services' | T }}</span>
-          <h2>{{ 'Browse providers near you' | T }}</h2>
-        </div>
-      </div>
-
-      @if (services.length === 0) {
-        <div class="services-skeleton" aria-hidden="true">
-          @for (row of [1, 2]; track row) {
-            <div class="skeleton-category">
-              <div class="skeleton-line skeleton-title"></div>
-              <div class="skeleton-people">
-                @for (cell of [1, 2, 3, 4]; track cell) {
-                  <div class="skeleton-person">
-                    <div class="skeleton-avatar"></div>
-                    <div class="skeleton-line skeleton-name"></div>
-                  </div>
-                }
-              </div>
-            </div>
-          }
-        </div>
-        <p class="services-loading-note">{{ 'Please allow location access so we can show services near you.' | T }}</p>
-      } @else {
-        <div class="category-card-list">
-          @for (group of serviceCategoryCards; track group.category) {
-            <article class="category-service-card">
-              <div class="category-service-head">
-                <div class="category-title">
-                  <img [src]="group.icon" alt="" />
-                  <h3>{{ group.category | T }}</h3>
-                </div>
-
-                @if (group.items.length > categoryPreviewLimit) {
-                  <button class="view-more-btn" type="button" (click)="openCategory(group, $event)">
-                    {{ 'View More' | T }}
-                  </button>
-                }
-              </div>
-
-              <div class="person-grid">
-                @for (service of group.items.slice(0, categoryPreviewLimit); track service.id || service.mobile) {
-                  <div class="person-cell">
-                    <button
-                      class="person-tile"
-                      type="button"
-                      [class.active]="selectedService?.id === service.id"
-                      (click)="selectService(service, $event)"
-                    >
-                      <img [src]="service.image || '/images/realtors.png'" [alt]="service.name" />
-                      <span>{{ service.name }}</span>
-                    </button>
-
-                    @if (selectedService?.id === service.id) {
-                      <div
-                        class="service-popover"
-                        [style.left.px]="popoverPosition?.left"
-                        [style.top.px]="popoverPosition?.top"
-                        (click)="$event.stopPropagation()"
-                      >
-                        <div class="popover-head">
-                          <img [src]="selectedService.image || '/images/realtors.png'" [alt]="selectedService.name" />
-                          <div>
-                            <h4>{{ selectedService.name }}</h4>
-                            <p>{{ selectedService.category }}</p>
-                          </div>
-                        </div>
-
-                        <p class="service-meta">{{ selectedService.location }}</p>
-                        <p class="service-meta">{{ selectedService.owner }}</p>
-
-                        <div class="popover-actions">
-                          <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
-                          <button class="call-btn compact" type="button" (click)="callService(selectedService, $event)">
-                            {{ 'Call' | T }}
-                          </button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                }
-              </div>
-            </article>
-          }
-        </div>
-      }
-    </div>
-
-    <div class="map-section surface-card">
-      <div class="section-head compact">
-        <div>
-          <span class="section-kicker">{{ 'Live map' | T }}</span>
-          <h2>{{ 'Nearby service map' | T }}</h2>
-        </div>
-      </div>
-
-      <app-map-component [data]="mapServices" [dragble]="false"></app-map-component>
-    </div>
-  </section>
-
-  @if (activeCategoryGroup) {
-    <section class="category-fullscreen" (click)="closeCategory($event)">
-      <div class="category-fullscreen-panel" (click)="$event.stopPropagation()">
-        <header class="category-fullscreen-head">
+  <section class="category-sections" aria-label="Service categories">
+    @for (section of serviceSections; track section.title) {
+      <article class="category-section">
+        <header class="category-section-head">
           <div>
-            <span class="section-kicker">{{ 'Services' | T }}</span>
-            <h2>{{ activeCategoryGroup.category | T }}</h2>
+            <h2>{{ section.title | T }}</h2>
           </div>
-
-          <button class="close-category-btn" type="button" (click)="closeCategory($event)">x</button>
+          @if (section.items.length > previewLimit) {
+            <button type="button" (click)="openSection(section)">{{ 'View all' | T }}</button>
+          }
         </header>
 
-        <div class="person-grid expanded">
-          @for (service of activeCategoryGroup.items; track service.id || service.mobile) {
-            <div class="person-cell">
-              <button
-                class="person-tile"
-                type="button"
-                [class.active]="selectedService?.id === service.id"
-                (click)="selectService(service, $event)"
-              >
-                <img [src]="service.image || '/images/realtors.png'" [alt]="service.name" />
-                <span>{{ service.name }}</span>
-              </button>
-
-              @if (selectedService?.id === service.id) {
-                <div
-                  class="service-popover"
-                  [style.left.px]="popoverPosition?.left"
-                  [style.top.px]="popoverPosition?.top"
-                  (click)="$event.stopPropagation()"
-                >
-                  <div class="popover-head">
-                    <img [src]="selectedService.image || '/images/realtors.png'" [alt]="selectedService.name" />
-                    <div>
-                      <h4>{{ selectedService.name }}</h4>
-                      <p>{{ selectedService.category }}</p>
-                    </div>
-                  </div>
-
-                  <p class="service-meta">{{ selectedService.location }}</p>
-                  <p class="service-meta">{{ selectedService.owner }}</p>
-
-                  <div class="popover-actions">
-                    <span class="price-pill">Rs {{ selectedService.price }} / {{ selectedService.unit | T }}</span>
-                    <button class="call-btn compact" type="button" (click)="callService(selectedService, $event)">
-                      {{ 'Call' | T }}
-                    </button>
-                  </div>
-                </div>
-              }
-            </div>
+        <nav class="category-item-grid" [attr.aria-label]="section.title">
+          @for (item of section.items.slice(0, previewLimit); track item.name) {
+            <a class="category-item" [routerLink]="['/services', item.navigation]"
+              [queryParams]="item.category ? { category: item.category } : null">
+              <span class="category-item-image"><img [src]="item.icon" [alt]="item.name" /></span>
+              <span>{{ item.name | T }}</span>
+            </a>
           }
+        </nav>
+      </article>
+    }
+  </section>
+</main>
+
+@if (activeSection) {
+  <div class="services-sheet-backdrop" (click)="closeSection()">
+    <section class="services-sheet" role="dialog" aria-modal="true"
+      [attr.aria-label]="activeSection.title" (click)="$event.stopPropagation()">
+      <div class="sheet-grabber"></div>
+      <header>
+        <div>
+          <h2>{{ activeSection.title | T }}</h2>
+          <p>{{ activeSection.subtitle | T }}</p>
         </div>
-      </div>
+        <button class="sheet-close" type="button" aria-label="Close" (click)="closeSection()">×</button>
+      </header>
+
+      <nav class="sheet-item-grid" [attr.aria-label]="activeSection.title">
+        @for (item of activeSection.items; track item.name) {
+          <a class="category-item" [routerLink]="['/services', item.navigation]"
+            [queryParams]="item.category ? { category: item.category } : null" (click)="closeSection()">
+            <span class="category-item-image"><img [src]="item.icon" [alt]="item.name" /></span>
+            <span>{{ item.name | T }}</span>
+          </a>
+        }
+      </nav>
     </section>
-  }
-</div>
+  </div>
+}

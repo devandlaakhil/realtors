@@ -37,8 +37,8 @@
   --app-radius-xl: 28px;
   --app-header-height: 56px;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --elevation-0: none;
   --elevation-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
@@ -73,7 +73,7 @@ body {
   min-height: 100dvh;
   margin: 0;
   overflow-x: hidden;
-  font-family: var(--font-sans);
+  font-family: var(--font-sans) !important;
   font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.006em;
@@ -92,6 +92,7 @@ h3,
 h4,
 h5 {
   font-family: var(--font-display);
+  font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--md-on-surface);
 }
@@ -108,6 +109,16 @@ input,
 textarea,
 select {
   font: inherit;
+  font-family: var(--font-sans);
+}
+
+.mat-typography,
+.mat-toolbar,
+.mat-mdc-toolbar,
+.mat-mdc-button,
+.mat-mdc-form-field,
+.mat-mdc-dialog-container {
+  font-family: var(--font-sans) !important;
 }
 
 button,
@@ -536,6 +547,21 @@ app-image-upload-component .image-source-actions button {
 }
 
 @media (max-width: 768px) {
+  html,
+  body,
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
   #toast-container.toast-top-right,
   #toast-container.toast-top-left,
   #toast-container.toast-top-center,

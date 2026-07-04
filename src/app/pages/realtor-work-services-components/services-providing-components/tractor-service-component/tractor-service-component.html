@@ -2,7 +2,7 @@
   <div class="services-container">
     <div class="service-header">
       <div>
-        <h2>🚜 {{ 'Commercial Vehicles Near You' | T }}</h2>
+        <h2>{{ 'Commercial Vehicles Near You' | T }}</h2>
         <p>{{ totalAvailTractors }} {{ 'vehicles available' | T }}</p>
       </div>
 
@@ -10,7 +10,7 @@
     </div> 
 
     <!-- <div class="search-bar">
-      <input placeholder="{{ 'Search tractors' | T }}..." />
+      <input placeholder="{{ 'Search commercial vehicles' | T }}..." />
     </div> -->
 
     <!-- <div class="filters">
@@ -21,7 +21,7 @@
 
     <div class="content-layout">
       <!-- <div class="map-panel">
-        <div class="map-title" *ngIf="!sheetExpanded">Nearby Tractors</div>
+        <div class="map-title" *ngIf="!sheetExpanded">Nearby Commercial Vehicles</div>
         <google-map [center]="center" [zoom]="15" width="100%" height="100%">
           <map-marker
             *ngFor="let tractor of tractors"
@@ -46,7 +46,7 @@
           <div class="sheet-content">
             <div class="sheet-title">
               <div>
-                <h3>Tractor Details</h3>
+                <h3>{{ 'Commercial Vehicle Details' | T }}</h3>
                 <p>{{ totalAvailTractors }} {{ 'services ready' | T }}</p>
               </div>
             </div>
@@ -57,7 +57,7 @@
                   <img [src]="tractor.image" />
                   <div class="card-content">
                     <h4>👤 {{ tractor.owner }}</h4>
-                    <h6>🚜 {{ tractor.name }}</h6>
+                    <h6>{{ tractor.name }}</h6>
                     <p>₹{{ tractor.price }}/hour</p>
                     <p>📍 {{ tractor.distance }}</p>
                     <div class="card-actions">
@@ -70,7 +70,7 @@
                   <div class="worker-header">
                     <div>
                       <h3>👤 {{ tractor.owner }}</h3>
-                      <span>🚜 {{ tractor.name }}</span>
+                      <span>{{ tractor.name }}</span>
                     </div>
                     <div class="price-badge">
                       ₹{{ tractor.price }}
@@ -115,7 +115,7 @@
                   </div>
 
                   <div class="expanded-actions">
-                    <button class="primary-btn" type="button" (click)="phoneCall.call({ id: tractor.id, name: tractor.owner || tractor.name, mobile: tractor.mobile, serviceType: 'tractor', serviceName: tractor.name, locationAddress: (tractor.village || '') + ', ' + (tractor.district || '') })">{{ 'Call Owner' | T }}</button>
+                    <button class="primary-btn" type="button" (click)="phoneCall.call({ id: tractor.id, name: tractor.owner || tractor.name, mobile: tractor.mobile, serviceType: 'Commercial Vehicles', serviceName: tractor.name, locationAddress: (tractor.village || '') + ', ' + (tractor.district || '') })">{{ 'Call Owner' | T }}</button>
                     <button class="secondary-btn" type="button" (click)="toggleDetails(null, $event)">{{ 'Close Details' | T }}</button>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
 
 <div *ngIf="showPostServiceForm || isEditMode" class="post-service-container">
     <div class="form-header">
-      <h2>{{ 'Add Tractor Service' | T }}</h2>
+      <h2>{{ 'Add Commercial Vehicle' | T }}</h2>
 
       <button mat-stroked-button color="warn" (click)="closePostService()">{{ 'Cancel' | T }}</button>
     </div>
@@ -143,19 +143,27 @@
 
         <div class="grid" formGroupName="tractorDetails">
           <mat-form-field appearance="outline">
+            <mat-label>{{ 'Vehicle Type' | T }}</mat-label>
+            <mat-select formControlName="vehicleType">
+              <mat-option value="Tractor">{{ 'Tractor' | T }}</mat-option>
+              <mat-option value="Borewell">{{ 'Borewell' | T }}</mat-option>
+              <mat-option value="JCB">{{ 'JCB' | T }}</mat-option>
+              <mat-option value="Harvester">{{ 'Harvester' | T }}</mat-option>
+              <mat-option value="Excavator">{{ 'Excavator' | T }}</mat-option>
+              <mat-option value="Crane">{{ 'Crane' | T }}</mat-option>
+              <mat-option value="Other">{{ 'Other' | T }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
             <mat-label>{{ 'Title' | T }}</mat-label>
-            <input matInput formControlName="title" placeholder="Mahindra 575 DI Tractor" />
+            <input matInput formControlName="title" placeholder="Vehicle/service title" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>{{ 'Brand' | T }}</mat-label>
 
-            <mat-select formControlName="brand">
-              <mat-option value="Mahindra"> {{ 'Mahindra' | T }} </mat-option>
-              <mat-option value="Swaraj"> {{ 'Swaraj' | T }} </mat-option>
-              <mat-option value="John Deere"> {{ 'John Deere' | T }} </mat-option>
-              <mat-option value="Farmtrac"> {{ 'Farmtrac' | T }} </mat-option>
-            </mat-select>
+            <input matInput formControlName="brand" placeholder="Brand or manufacturer" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -328,7 +336,7 @@
         </button>
 
         <button mat-raised-button color="primary" type="button" (click)="saveTractor()">
-          {{ 'Publish Tractor' | T }}
+          {{ 'Publish Commercial Vehicle' | T }}
         </button>
       </div>
     </form>
