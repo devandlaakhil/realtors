@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bottom-nav-component',
@@ -13,6 +14,7 @@ import { DashboardServices } from '../../../shared-services/dashboard-services';
 export class BottomNavComponent {
   private router = inject(Router);
   private dashboardService = inject(DashboardServices);
+  private toastr = inject(ToastrService);
   showPostPicker = false;
   isNavigatingToPost = false;
   isLoggedIn = false;
@@ -38,7 +40,7 @@ export class BottomNavComponent {
     // { label: 'Real Estate', icon: 'home', route: '/home' },
     { label: 'Post', icon: 'add', route: '/ad-post', primary: true },
     { label: 'Reports', icon: 'bar_chart', route: '/dashboard/reports', requiresAuth: true },
-    { label: 'Profile', icon: 'person', route: '/profile', requiresAuth: true },
+    { label: 'Profile', icon: 'person', route: '/profile' },
   ];
 
   ngOnInit(): void {
@@ -55,6 +57,11 @@ export class BottomNavComponent {
   }
 
   openPostPicker(): void {
+    if (!this.isLoggedIn) {
+      this.toastr.clear();
+      this.toastr.warning('Please login first to post a service.', 'Login required');
+      return;
+    }
     this.showPostPicker = true;
   }
 
@@ -63,6 +70,12 @@ export class BottomNavComponent {
   }
 
   async selectPostOption(option: (typeof this.postOptions)[number]): Promise<void> {
+    if (!this.isLoggedIn) {
+      this.closePostPicker();
+      this.toastr.warning('Please login first to post a service.', 'Login required');
+      return;
+    }
+
     if (this.isNavigatingToPost) {
       return;
     }
