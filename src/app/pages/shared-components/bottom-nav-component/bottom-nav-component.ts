@@ -34,9 +34,10 @@ export class BottomNavComponent {
     requiresAuth?: boolean;
   }[] = [
     { label: 'Home', icon: 'home', route: '/services/home', exact: true },
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard/services', requiresAuth: true },
     // { label: 'Real Estate', icon: 'home', route: '/home' },
     { label: 'Post', icon: 'add', route: '/ad-post', primary: true },
-    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard/my-posts', requiresAuth: true },
+    { label: 'Reports', icon: 'bar_chart', route: '/dashboard/reports', requiresAuth: true },
     { label: 'Profile', icon: 'person', route: '/profile', requiresAuth: true },
   ];
 

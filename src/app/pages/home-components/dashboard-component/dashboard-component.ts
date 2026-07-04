@@ -16,7 +16,7 @@ export class DashboardComponent implements OnInit {
   username = signal<string>('');
   authService = inject(AuthService);
   route = inject(Router);
-  activeMenu = 'home';
+  activeMenu = 'services';
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
