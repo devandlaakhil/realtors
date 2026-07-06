@@ -19,7 +19,7 @@
 
     <nav class="daily-needs-grid" aria-label="Daily needs">
       @for (item of dailyNeeds; track item.name) {
-        <a class="daily-need-item" [routerLink]="['/services', item.navigation]"
+        <a class="daily-need-item" [routerLink]="item.route || ['/services', item.navigation]"
           [queryParams]="item.category ? { category: item.category } : null">
           <span class="daily-need-icon"><img [src]="item.icon" [alt]="item.name" /></span>
           <strong>{{ item.name | T }}</strong>
@@ -42,7 +42,7 @@
 
         <nav class="category-item-grid" [attr.aria-label]="section.title">
           @for (item of section.items.slice(0, previewLimit); track item.name) {
-            <a class="category-item" [routerLink]="['/services', item.navigation]"
+            <a class="category-item" [routerLink]="item.route || ['/services', item.navigation]"
               [queryParams]="item.category ? { category: item.category } : null">
               <span class="category-item-image"><img [src]="item.icon" [alt]="item.name" /></span>
               <span>{{ item.name | T }}</span>
@@ -69,7 +69,7 @@
 
       <nav class="sheet-item-grid" [attr.aria-label]="activeSection.title">
         @for (item of activeSection.items; track item.name) {
-          <a class="category-item" [routerLink]="['/services', item.navigation]"
+          <a class="category-item" [routerLink]="item.route || ['/services', item.navigation]"
             [queryParams]="item.category ? { category: item.category } : null" (click)="closeSection()">
             <span class="category-item-image"><img [src]="item.icon" [alt]="item.name" /></span>
             <span>{{ item.name | T }}</span>

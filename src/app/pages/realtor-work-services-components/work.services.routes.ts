@@ -68,6 +68,19 @@ export const WORK_SERVICE_ROUTES: Routes = [
           pathMatch:'full'
         },
         {
+          path:'category-builder',
+          canActivate:[authGuard],
+          loadComponent: () =>
+            import('./services-providing-components/dynamic-service-category-component/dynamic-service-category-component')
+              .then((component) => component.DynamicServiceCategoryComponent)
+        },
+        {
+          path:'dynamic/:slug',
+          loadComponent: () =>
+            import('./services-providing-components/dynamic-service-category-component/dynamic-service-category-component')
+              .then((component) => component.DynamicServiceCategoryComponent)
+        },
+        {
           path:'drivers',
           loadComponent: () =>
             import('./services-providing-components/drivers-service-component/drivers-service-component')

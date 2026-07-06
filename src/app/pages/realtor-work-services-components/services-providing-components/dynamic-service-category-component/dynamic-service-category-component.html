@@ -1,0 +1,132 @@
+@if (isBuilder) {
+  <main class="schema-builder">
+    <header>
+      <span>ADMIN CATEGORY BUILDER</span>
+      <h1>Create a dynamic service</h1>
+      <p>This page is intentionally hidden from application navigation.</p>
+    </header>
+
+    <form [formGroup]="categoryForm" (ngSubmit)="publishCategory()">
+      <section class="schema-card">
+        <h2>Category details</h2>
+        <div class="form-grid">
+          <label><span>Category name *</span><input formControlName="name" (blur)="generateSlug()" /></label>
+          <label><span>URL key *</span><input formControlName="slug" placeholder="event-services" /></label>
+          <label><span>Section name</span><input formControlName="sectionName" /></label>
+          <label><span>Icon image URL</span><input formControlName="iconUrl" placeholder="/images/service.png" /></label>
+          <label class="wide"><span>Description</span><textarea rows="2" formControlName="description"></textarea></label>
+        </div>
+      </section>
+
+      <section class="schema-card" formArrayName="fields">
+        <div class="section-title">
+          <div><h2>Form fields</h2><p>Choose exactly what users must enter.</p></div>
+          <button type="button" class="secondary" (click)="addField()">+ Add field</button>
+        </div>
+
+        @for (field of fieldsArray.controls; track field; let index = $index) {
+          <article class="field-builder" [formGroupName]="index">
+            <div class="field-number">{{ index + 1 }}</div>
+            <div class="form-grid">
+              <label><span>Field label *</span><input formControlName="label" /></label>
+              <label><span>Data key *</span><input formControlName="key" placeholder="contactNumber" /></label>
+              <label><span>Input type *</span>
+                <select formControlName="type">
+                  @for (type of fieldTypes; track type.value) {
+                    <option [value]="type.value">{{ type.label }}</option>
+                  }
+                </select>
+              </label>
+              <label><span>Placeholder</span><input formControlName="placeholder" /></label>
+              @if (field.value.type === 'select') {
+                <label class="wide"><span>Dropdown options (comma separated)</span><input formControlName="optionsText" /></label>
+              }
+              @if (field.value.type === 'image') {
+                <label><span>Accepted files</span><input formControlName="accept" /></label>
+              }
+            </div>
+            <div class="field-settings">
+              <label><input type="checkbox" formControlName="required" /> Required</label>
+              @if (field.value.type === 'select' || field.value.type === 'image') {
+                <label><input type="checkbox" formControlName="multiple" /> Allow multiple</label>
+              }
+              <button type="button" class="danger" (click)="removeField(index)">Remove</button>
+            </div>
+          </article>
+        }
+      </section>
+
+      <button class="publish-button" type="submit">Generate and publish category</button>
+    </form>
+
+    @if (publishedCategories.length) {
+      <section class="schema-card category-manager">
+        <div class="section-title">
+          <div><h2>Published categories</h2><p>Only administrators can remove these categories.</p></div>
+        </div>
+        @for (item of publishedCategories; track item.slug) {
+          <div class="category-manager-row">
+            <div><strong>{{ item.name }}</strong><small>/{{ item.slug }}</small></div>
+            <button type="button" class="danger" (click)="deleteCategory(item)">Delete</button>
+          </div>
+        }
+      </section>
+    }
+  </main>
+} @else if (category) {
+  @if (showPostForm) {
+    <main class="dynamic-page">
+      <header class="dynamic-head">
+        <div><span>DYNAMIC SERVICE</span><h1>Post {{ category.name }}</h1><p>{{ category.description }}</p></div>
+        <button type="button" (click)="router.navigate(['/services/dynamic', category.slug])">Cancel</button>
+      </header>
+
+      <form class="generated-form" [formGroup]="postForm" (ngSubmit)="submitPost()">
+        @for (field of category.fields; track field.key) {
+          <label class="generated-field" [class.checkbox-field]="field.type === 'checkbox'">
+            @if (field.type !== 'checkbox') { <span>{{ field.label }}{{ field.required ? ' *' : '' }}</span> }
+            @switch (field.type) {
+              @case ('textarea') { <textarea rows="3" [formControlName]="field.key" [placeholder]="field.placeholder || ''"></textarea> }
+              @case ('select') {
+                <select [formControlName]="field.key" [multiple]="field.multiple">
+                  @if (!field.multiple) { <option value="">Select {{ field.label }}</option> }
+                  @for (option of field.options || []; track option) { <option [value]="option">{{ option }}</option> }
+                </select>
+              }
+              @case ('checkbox') { <input type="checkbox" [formControlName]="field.key" /><span>{{ field.label }}</span> }
+              @case ('image') { <input type="file" [accept]="field.accept || 'image/*'" [multiple]="field.multiple" (change)="onFilesSelected(field, $event)" /> }
+              @case ('location') {
+                <label class="map-choice"><input type="checkbox" (change)="toggleMap(field.key, $any($event.target).checked)" /> Choose point on map</label>
+                @if (showMaps.has(field.key)) {
+                  <div class="dynamic-map"><app-map-component [data]="[]" [dragble]="true" (locationSelected)="onLocation(field.key, $event)"></app-map-component></div>
+                }
+              }
+              @default { <input [type]="field.type" [formControlName]="field.key" [placeholder]="field.placeholder || ''" /> }
+            }
+          </label>
+        }
+        <button class="publish-button" type="submit">Publish {{ category.name }}</button>
+      </form>
+    </main>
+  } @else {
+    <main class="dynamic-page">
+      <header class="dynamic-head">
+        <div><span>SERVICE</span><h1>{{ category.name }}</h1><p>{{ category.description }}</p></div>
+        <button type="button" class="post-details-button" (click)="startPosting()">Post your details</button>
+      </header>
+      <section class="dynamic-posts">
+        @for (post of posts; track post.id || post._id) {
+          <article class="dynamic-post-card">
+            @for (field of category.fields; track field.key) {
+              @if (field.type !== 'image' && field.type !== 'location') {
+                <div><small>{{ field.label }}</small><strong>{{ displayValue(post, field) }}</strong></div>
+              }
+            }
+          </article>
+        } @empty {
+          <div class="dynamic-empty"><mat-icon>inventory_2</mat-icon><strong>No posts available yet</strong></div>
+        }
+      </section>
+    </main>
+  }
+}

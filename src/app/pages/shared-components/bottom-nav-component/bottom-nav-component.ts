@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { DashboardServices } from '../../../shared-services/dashboard-services';
 import { ToastrService } from 'ngx-toastr';
+import { DynamicCategoryApiService } from '../../../api-services/dynamic-category-api-service';
 
 @Component({
   selector: 'app-bottom-nav-component',
@@ -15,6 +16,7 @@ export class BottomNavComponent {
   private router = inject(Router);
   private dashboardService = inject(DashboardServices);
   private toastr = inject(ToastrService);
+  private dynamicCategoriesApi = inject(DynamicCategoryApiService);
   showPostPicker = false;
   isNavigatingToPost = false;
   isLoggedIn = !!localStorage.getItem('token') || !!sessionStorage.getItem('token');
@@ -48,6 +50,18 @@ export class BottomNavComponent {
     this.dashboardService.loginStatus$.subscribe((status) => {
       this.isLoggedIn = status;
     });
+    this.dynamicCategoriesApi.categories$.subscribe((categories) => {
+      this.postOptions = [
+        ...this.postOptions.filter((option: any) => !option.dynamic),
+        ...categories.map((category) => ({
+          label: category.name,
+          image: category.iconUrl || '/images/hardware.png',
+          route: `/services/dynamic/${category.slug}`,
+          dynamic: true,
+        })),
+      ] as any;
+    });
+    this.dynamicCategoriesApi.loadPublished().subscribe({ error: () => undefined });
   }
 
   preventGuestNavigation(event: Event, requiresAuth?: boolean): void {

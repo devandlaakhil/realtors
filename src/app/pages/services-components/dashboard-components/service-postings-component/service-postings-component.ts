@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { LoaderServices } from '../../../../shared-services/loader-services';
@@ -11,6 +11,8 @@ import { WorkerApiServices } from '../../../../api-services/worker-api-services'
 import { mapHardware, mapTractor, mapWorker,mapVehicle } from '../../../../constants/service-mappers';
 import { TransportApiService } from '../../../../api-services/transport-api-service';
 import { HardwareShopApiService } from '../../../../api-services/hardware-shop-api-service';
+import { DynamicCategoryApiService, DynamicServiceCategory } from '../../../../api-services/dynamic-category-api-service';
+import { AuthService } from '../../../../auth-services/auth-services';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -22,6 +24,8 @@ export class ServicePostingsComponent implements OnInit {
   workerApiSrv = inject(WorkerApiServices);
   transportApiSrv = inject(TransportApiService);
   hardwareApiSrv = inject(HardwareShopApiService);
+  dynamicApi = inject(DynamicCategoryApiService);
+  authService = inject(AuthService);
 
   loaderSrv = inject(LoaderServices);
   toaster = inject(ToastrService);
@@ -110,6 +114,7 @@ export class ServicePostingsComponent implements OnInit {
           //   items: res.cultivators.data,
           // },
         ].filter((group) => group.items?.length);
+        this.loadMyDynamicServices();
         this.loaderSrv.hide();
       },
       error: () => {
@@ -118,7 +123,94 @@ export class ServicePostingsComponent implements OnInit {
     });
   }
 
+  private loadMyDynamicServices(): void {
+    const userId = String(this.authService.getUser()?.id || '');
+    if (!userId) return;
+
+    this.dynamicApi.loadPublished().pipe(
+      switchMap((response: any) => {
+        const categories: DynamicServiceCategory[] =
+          response?.data ?? response?.categories ?? response ?? [];
+        if (!Array.isArray(categories) || !categories.length) return [[]];
+        return forkJoin(categories.map((category) =>
+          this.dynamicApi.getPosts(category.slug, { userId, mine: true }).pipe(
+            map((postsResponse: any) => ({ category, postsResponse })),
+          ),
+        ));
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: (results: any[]) => {
+        const dynamicGroups = results.map(({ category, postsResponse }: any) => {
+          const data = postsResponse?.data ?? postsResponse?.posts ?? postsResponse ?? [];
+          const posts = Array.isArray(data) ? data.filter((post: any) => {
+            const ownerId = post.userId ?? post.clientid ?? post.createdBy?._id ??
+              post.createdBy?.id ?? post.ownerId;
+            return !ownerId || String(ownerId) === userId;
+          }) : [];
+          return {
+            category: category.name,
+            icon: category.iconUrl || '',
+            dynamic: true,
+            items: posts.map((post: any) => ({
+              id: post.id || post._id,
+              title: post.title || post.data?.title || post.data?.name || post.name || category.name,
+              price: post.price || post.data?.price || post.data?.amount || post.amount || '',
+              unit: post.unit || post.data?.unit || '',
+              location: post.location?.address || post.data?.address || post.address || post.village || '',
+              image: this.dynamicPostImage(post, category),
+              isActive: post.status !== 'INACTIVE',
+              category: 'Dynamic',
+              dynamicSlug: category.slug,
+              originalData: post,
+            })),
+          };
+        }).filter((group: any) => group.items.length);
+        this.serviceGroups = [
+          ...this.serviceGroups.filter((group) => !group.dynamic),
+          ...dynamicGroups,
+        ];
+        this.cdr.detectChanges();
+      },
+      error: () => undefined,
+    });
+  }
+
+  private dynamicPostImage(post: any, category: DynamicServiceCategory): string {
+    const imageField = category.fields?.find((field) => field.type === 'image');
+    const value = imageField
+      ? post?.data?.[imageField.key] ??
+        post?.values?.[imageField.key] ??
+        post?.payload?.[imageField.key] ??
+        post?.[imageField.key]
+      : null;
+    const fallbackImages = post?.images ?? post?.data?.images;
+    const image = Array.isArray(value)
+      ? value[0]
+      : value || (Array.isArray(fallbackImages) ? fallbackImages[0] : fallbackImages);
+    return image?.url || image || category.iconUrl || '/images/realtors.png';
+  }
+
   delete(elem: any) {
+    if (elem.category === 'Dynamic') {
+      if (!confirm('Are you sure you want to delete this post?')) return;
+      this.dynamicApi.deletePost(elem.dynamicSlug, elem.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.serviceGroups = this.serviceGroups
+              .map((group) => ({
+                ...group,
+                items: group.items.filter((item: any) => item.id !== elem.id),
+              }))
+              .filter((group) => group.items.length);
+            this.toaster.success('Post deleted successfully', 'Success');
+            this.cdr.detectChanges();
+          },
+          error: () => undefined,
+        });
+      return;
+    }
     const apiConfig = this.deleteApis[elem.category];
     if (!apiConfig) {
       this.toaster.error('Delete not supported for this service', 'Error');

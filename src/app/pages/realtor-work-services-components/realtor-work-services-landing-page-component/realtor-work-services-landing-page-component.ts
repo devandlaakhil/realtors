@@ -1,14 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { HomeRepairType } from '../../../constants/enums/home-repair-types';
+import { DynamicCategoryApiService } from '../../../api-services/dynamic-category-api-service';
 
 interface ServiceItem {
   icon: string;
   name: string;
   navigation: string;
   category?: string;
+  route?: string;
 }
 
 @Component({
@@ -18,6 +20,7 @@ interface ServiceItem {
   styleUrl: './realtor-work-services-landing-page-component.css',
 })
 export class RealtorWorkServicesLandingPageComponent {
+  private dynamicCategoriesApi = inject(DynamicCategoryApiService);
   activeSection: any = null;
   readonly previewLimit = 4;
   readonly categories: ServiceItem[] = [
@@ -61,7 +64,7 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/electrical-repair.png', name: HomeRepairType.OtherHomeApplianceRepair, navigation: 'repairs', category: HomeRepairType.OtherHomeApplianceRepair },
   ];
 
-  readonly serviceSections = [
+  serviceSections: any[] = [
     {
       title: 'Vehicles',
       subtitle: 'Hire vehicles and machinery nearby',
@@ -79,6 +82,31 @@ export class RealtorWorkServicesLandingPageComponent {
       items: this.repairServices,
     },
   ];
+
+  ngOnInit(): void {
+    this.dynamicCategoriesApi.categories$.subscribe((categories) => {
+      this.serviceSections = this.serviceSections.filter((section) => !section.dynamic);
+      const grouped = new Map<string, ServiceItem[]>();
+      categories.forEach((category) => {
+        const section = category.sectionName || 'More Services';
+        const items = grouped.get(section) || [];
+        items.push({
+          icon: category.iconUrl || '/images/hardware.png',
+          name: category.name,
+          navigation: '',
+          route: `/services/dynamic/${category.slug}`,
+        });
+        grouped.set(section, items);
+      });
+      grouped.forEach((items, title) => this.serviceSections.push({
+        title,
+        subtitle: 'New services available near you',
+        items,
+        dynamic: true,
+      }));
+    });
+    this.dynamicCategoriesApi.loadPublished().subscribe({ error: () => undefined });
+  }
 
   openSection(section: any): void {
     this.activeSection = section;
