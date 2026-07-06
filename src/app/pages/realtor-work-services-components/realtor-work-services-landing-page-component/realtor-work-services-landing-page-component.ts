@@ -65,6 +65,16 @@ export class RealtorWorkServicesLandingPageComponent {
   ];
 
   serviceSections: any[] = [
+    {
+      title: 'Beauty & Wellness',
+      subtitle: 'Personal care services near you',
+      items: [
+        { icon: '/images/hair-salon.png', name: 'Salon & Hair', navigation: 'beauty-wellness', category: 'Salon & Hair' },
+        { icon: '/images/spa-massage.png', name: 'Spa & Massage', navigation: 'beauty-wellness', category: 'Spa & Massage' },
+        { icon: '/images/beautician.png', name: 'Beautician', navigation: 'beauty-wellness', category: 'Beautician' },
+        { icon: '/images/pedicure-and-nail.png', name: 'Pedicure & Nail Care', navigation: 'beauty-wellness', category: 'Nail Care' },
+      ],
+    },
         {
       title: 'Home Services',
       subtitle: 'Home appliance and maintenance services',

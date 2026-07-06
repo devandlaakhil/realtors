@@ -87,6 +87,12 @@ export const WORK_SERVICE_ROUTES: Routes = [
               .then((component) => component.DriversServiceComponent)
         },
         {
+          path:'beauty-wellness',
+          loadComponent: () =>
+            import('./services-providing-components/beauty-wellness-service-component/beauty-wellness-service-component')
+              .then((component) => component.BeautyWellnessServiceComponent)
+        },
+        {
           path:'edit-driver/:id',
           canActivate:[authGuard],
           loadComponent: () =>

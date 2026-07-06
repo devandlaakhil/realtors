@@ -37,6 +37,7 @@ export class BottomNavComponent {
       route: '/services/commercial-vehicles',
     },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
+    { label: 'Beauty & Wellness', image: '/images/beauty-wellness.png', route: '/services/beauty-wellness' },
   ];
 
   navLinks: {

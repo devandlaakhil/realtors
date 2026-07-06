@@ -1,0 +1,84 @@
+<main class="beauty-page">
+  @if (showPostForm) {
+    <header class="page-head"><div><small>BEAUTY & WELLNESS</small><h1>Post your service</h1></div></header>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="post-form">
+      <div class="form-grid">
+        <label><span>Provider name *</span><input formControlName="name"></label>
+        <label><span>Salon / business name</span><input formControlName="businessName"></label>
+        <label><span>Mobile number *</span><input type="tel" formControlName="mobile"></label>
+        <label><span>Main category *</span>
+          <select formControlName="category">
+            <option value="">Select category</option>
+            @for (category of categories; track category) { <option [value]="category">{{ category }}</option> }
+          </select>
+        </label>
+        <label><span>Service for *</span>
+          <select formControlName="serviceFor">
+            <option>Everyone</option><option>Women</option><option>Men</option><option>Kids</option>
+          </select>
+        </label>
+        <label><span>Experience (years) *</span><input type="number" formControlName="experience"></label>
+        <label><span>Starting price *</span><input type="number" formControlName="startingPrice"></label>
+        <label><span>Village / locality *</span><input formControlName="village"></label>
+        <label><span>District *</span><input formControlName="district"></label>
+        <label class="check"><input type="checkbox" formControlName="homeService"><span>Home service available</span></label>
+      </div>
+
+      @if (availableSkills.length) {
+        <section class="skills">
+          <h2>Additional skills *</h2>
+          <div>
+            @for (skill of availableSkills; track skill) {
+              <label><input type="checkbox" [checked]="form.value.additionalSkills?.includes(skill)"
+                (change)="toggleSkill(skill, $any($event.target).checked)"><span>{{ skill }}</span></label>
+            }
+          </div>
+        </section>
+      }
+
+      <label class="description"><span>Description</span><textarea rows="3" formControlName="description"></textarea></label>
+      <section class="location-section">
+        <label class="check">
+          <input type="checkbox" [checked]="showLocationMap"
+            (change)="showLocationMap = $any($event.target).checked">
+          <span>Choose a different location on map</span>
+        </label>
+        @if (showLocationMap) {
+          <div class="map-wrapper">
+            <app-map-component
+              [data]="[]"
+              [dragble]="true"
+              (locationSelected)="onLocationSelected($event)">
+            </app-map-component>
+          </div>
+        }
+      </section>
+      <app-image-upload-component (fileSelected)="onImage($event)"></app-image-upload-component>
+      <button class="submit" type="submit">Publish service</button>
+    </form>
+  } @else {
+    <header class="page-head">
+      <div><small>NEAR YOU</small><h1>Beauty & Wellness</h1><p>Salon, spa and personal care professionals</p></div>
+      <!-- <button (click)="router.navigate(['/services/beauty-wellness'], {queryParams:{post:1}})">Post service</button> -->
+    </header>
+    <section class="cards">
+      @for (provider of filteredProviders; track provider.id || provider._id) {
+        <article>
+          <img [src]="imageOf(provider)" [alt]="provider.name">
+          <div class="body">
+            <small>{{ provider.category }}</small>
+            <h2>{{ provider.businessName || provider.name }}</h2>
+            <p>{{ provider.village }}, {{ provider.district }}</p>
+            <div class="skill-row">
+              @for (skill of provider.additionalSkills || []; track skill) { <span>{{ skill }}</span> }
+            </div>
+            <strong>From ₹{{ provider.startingPrice }}</strong>
+            <button (click)="phoneCall.call({id: provider.id || provider._id, name: provider.name, mobile: provider.mobile, serviceType: 'Beauty & Wellness', serviceName: provider.category, locationAddress: provider.village + ', ' + provider.district})">Contact provider</button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty"><mat-icon>spa</mat-icon><strong>No services available nearby</strong></div>
+      }
+    </section>
+  }
+</main>
