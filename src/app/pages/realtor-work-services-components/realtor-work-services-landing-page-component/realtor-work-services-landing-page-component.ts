@@ -29,7 +29,7 @@ export class RealtorWorkServicesLandingPageComponent {
     { icon: '/images/transport.png', name: 'Transport', navigation: 'transport' },
     { icon: '/images/hardware.png', name: 'Home Repairs', navigation: 'repairs' },
     { icon: '/images/dailywage-worker.png', name: 'Daily Wage', navigation: 'workers', category: 'Daily Wage' },
-    { icon: '/images/construction-worker.png', name: 'Construction', navigation: 'workers', category: 'Construction' },
+    { icon: '/images/construction-worker.png', name: 'worker(Mestri)', navigation: 'workers', category: 'Construction' },
     { icon: '/images/carpenters.png', name: 'Carpenters', navigation: 'workers', category: 'Carpenter' },
     { icon: '/images/house-painter.png', name: 'Painters', navigation: 'workers', category: 'Painter' },
     { icon: '/images/electrician.png', name: 'Electricians', navigation: 'workers', category: 'Electrician' },
@@ -65,10 +65,10 @@ export class RealtorWorkServicesLandingPageComponent {
   ];
 
   serviceSections: any[] = [
-    {
-      title: 'Vehicles',
-      subtitle: 'Hire vehicles and machinery nearby',
-      items: [this.categories[10],this.categories[0], this.categories[2]],
+        {
+      title: 'Home Services',
+      subtitle: 'Home appliance and maintenance services',
+      items: this.repairServices,
     },
     {
       title: 'Skilled Workers',
@@ -76,10 +76,10 @@ export class RealtorWorkServicesLandingPageComponent {
       featured: true,
       items: this.categories.slice(4).filter((item) => item.navigation !== 'drivers'),
     },
-    {
-      title: 'Home Services',
-      subtitle: 'Home appliance and maintenance services',
-      items: this.repairServices,
+        {
+      title: 'Vehicles',
+      subtitle: 'Hire vehicles and machinery nearby',
+      items: [this.categories[10],this.categories[0], this.categories[2]],
     },
   ];
 

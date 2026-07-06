@@ -22,12 +22,21 @@ export class BottomNavComponent {
   isLoggedIn = !!localStorage.getItem('token') || !!sessionStorage.getItem('token');
 
   postOptions = [
-    { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
+    // { label: 'Property', image: '/images/realtors.png', route: '/ad-post' },
+    {
+      label: 'Home Repairs',
+      image: '/images/building-with-wrench.png',
+      route: '/services/repairs',
+    },
+
     { label: 'Worker', image: '/images/worker.png', route: '/services/workers' },
     { label: 'Driver', image: '/images/driver.png', route: '/services/drivers' },
-    { label: 'Commercial Vehicles', image: '/images/tractor.png', route: '/services/commercial-vehicles' },
+    {
+      label: 'Commercial Vehicles',
+      image: '/images/tractor.png',
+      route: '/services/commercial-vehicles',
+    },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
-    { label: 'Home Repairs', image: '/images/hardware.png', route: '/services/repairs' },
   ];
 
   navLinks: {

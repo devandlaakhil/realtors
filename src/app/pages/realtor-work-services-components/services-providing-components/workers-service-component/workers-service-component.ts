@@ -71,6 +71,7 @@ export class WorkersServiceComponent implements OnInit {
   sheetHeight = '60vh';
   expandedWorkerId: string | null = null;
   workerType = Object.values(Worker_Type);
+  readonly cleaningCategories = WORKER_CATEGORIES['Cleaner'];
   showMap: boolean = false;
   selectedLocation: any = { lat: '', lng: '' };
   zoom: number = 0;
@@ -94,6 +95,7 @@ export class WorkersServiceComponent implements OnInit {
     { name: 'Centring', label: 'Centring', icon: 'construction', count: 5 },
     { name: 'Painter', label: 'Painter', icon: 'construction', count: 5 },
     { name: 'Construction', label: 'Construction', icon: 'engineering', count: 14 },
+    { name: 'Cleaner', label: 'Cleaners', icon: 'cleaning_services', count: 0 },
   ];
   availabilityOptions = ['All', 'Available today', 'Verified'];
 
@@ -121,6 +123,14 @@ export class WorkersServiceComponent implements OnInit {
     }
     this.workerForm.get('category')?.valueChanges.subscribe((category) => {
       this.availableSkills = WORKER_CATEGORIES[category] || [];
+      const cleaningCategory = this.workerForm.get('cleaningCategory');
+      if (category === Worker_Type.CLEANER) {
+        cleaningCategory?.setValidators(Validators.required);
+      } else {
+        cleaningCategory?.clearValidators();
+        cleaningCategory?.setValue('');
+      }
+      cleaningCategory?.updateValueAndValidity({ emitEvent: false });
 
       this.selectedSkills = [];
 
@@ -150,6 +160,7 @@ export class WorkersServiceComponent implements OnInit {
             isActive: res.data.isActive,
             teamSize: res.data.teamSize,
             skills: res.data.skills || [],
+            cleaningCategory: res.data.cleaningCategory || res.data.cleaningType || '',
             role: res.data.role,
 
             // Image
@@ -306,6 +317,7 @@ export class WorkersServiceComponent implements OnInit {
       isActive: [true],
       teamSize: [0],
       skills: [[]],
+      cleaningCategory: [''],
       role: [''],
 
       // image

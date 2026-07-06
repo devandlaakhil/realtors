@@ -52,5 +52,19 @@ export const WORKER_CATEGORIES:any = {
     'Granite',
     'Marble',
     'Tandoor'
+  ],
+  Cleaner: [
+    'Bathroom cleaning',
+    'Kitchen cleaning',
+    'Hall cleaning',
+    'Bedroom cleaning',
+    'Balcony cleaning',
+    'Whole house cleaning',
+    'Office cleaning',
+    'Shop cleaning',
+    'Post-construction cleaning',
+    'Water tank cleaning',
+    'Sofa and carpet cleaning',
+    'Other cleaning'
   ]
 }
