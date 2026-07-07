@@ -36,6 +36,7 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   providers: any[] = [];
   activeCategory = 'All';
   showPostForm = false;
+  expandedId: string | null = null;
   selectedImage: File | null = null;
   showLocationMap = false;
   selectedLocation: { lat: number | null; lng: number | null } = { lat: null, lng: null };
@@ -87,6 +88,10 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   onImage(file: File | null): void {
     this.selectedImage = file;
     this.form.controls.image.setValue(file);
+  }
+
+  toggleDetails(id: string): void {
+    this.expandedId = this.expandedId === id ? null : id;
   }
 
   private captureLocation(): void {

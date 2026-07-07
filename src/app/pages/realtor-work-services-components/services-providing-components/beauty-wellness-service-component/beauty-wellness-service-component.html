@@ -63,17 +63,44 @@
     </header>
     <section class="cards">
       @for (provider of filteredProviders; track provider.id || provider._id) {
-        <article>
-          <img [src]="imageOf(provider)" [alt]="provider.name">
-          <div class="body">
-            <small>{{ provider.category }}</small>
-            <h2>{{ provider.businessName || provider.name }}</h2>
-            <p>{{ provider.village }}, {{ provider.district }}</p>
-            <div class="skill-row">
-              @for (skill of provider.additionalSkills || []; track skill) { <span>{{ skill }}</span> }
+        <article class="provider-card">
+          <div class="provider-summary">
+            <img [src]="imageOf(provider)" [alt]="provider.name">
+            <div>
+              <small>{{ provider.category }}</small>
+              <h2>{{ provider.businessName || provider.name }}</h2>
+              <p>{{ provider.village }}, {{ provider.district }}</p>
+              <div class="skill-row">
+                @for (skill of provider.additionalSkills || []; track skill) { <span>{{ skill }}</span> }
+              </div>
             </div>
-            <strong>From ₹{{ provider.startingPrice }}</strong>
-            <button (click)="phoneCall.call({id: provider.id || provider._id, name: provider.name, mobile: provider.mobile, serviceType: 'Beauty & Wellness', serviceName: provider.category, locationAddress: provider.village + ', ' + provider.district})">Contact provider</button>
+            <strong class="price">Rs. {{ provider.startingPrice || 0 }}<small>starting</small></strong>
+          </div>
+
+          @if (expandedId === (provider.id || provider._id)) {
+            <div class="provider-details">
+              <p><mat-icon>person</mat-icon>{{ provider.name }}</p>
+              <p><mat-icon>groups</mat-icon>{{ provider.serviceFor || 'Everyone' }}</p>
+              <p><mat-icon>work_history</mat-icon>{{ provider.experience || 0 }} years experience</p>
+              <p><mat-icon>location_on</mat-icon>{{ provider.village }}, {{ provider.district }}</p>
+              <div class="feature-row">
+                @if (provider.homeService) { <span>Home service</span> }
+                @if (provider.mobile) { <span>Phone available</span> }
+              </div>
+              @if (provider.description) {
+                <p class="description-text">{{ provider.description }}</p>
+              }
+            </div>
+          }
+
+          <div class="card-actions">
+            <button type="button" class="secondary" (click)="toggleDetails(provider.id || provider._id)">
+              {{ expandedId === (provider.id || provider._id) ? 'Close details' : 'View details' }}
+            </button>
+            <button type="button" class="primary"
+              (click)="phoneCall.call({id: provider.id || provider._id, name: provider.name, mobile: provider.mobile, serviceType: 'Beauty & Wellness', serviceName: provider.category, locationAddress: provider.village + ', ' + provider.district})">
+              <mat-icon>call</mat-icon>Contact provider
+            </button>
           </div>
         </article>
       } @empty {
