@@ -5,6 +5,7 @@
   z-index: 900;
   overflow: hidden;
   padding: 24px 16px;
+  pointer-events: none;
 }
 
 .skeleton-page {

@@ -5,10 +5,10 @@ import { environment } from '../../environments/environment';
 import { API_CONSTANTS } from '../constants/realtors-services-api-constants';
 
 @Injectable({ providedIn: 'root' })
-export class BeautyWellnessApiService {
+export class EducationApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = `${environment.serverPort}/beauty-wellness-services`;
-  private readonly endpoints = API_CONSTANTS.beautyWellnessApiService;
+  private readonly baseUrl = `${environment.serverPort}/education-services`;
+  private readonly endpoints = API_CONSTANTS.educationApiService;
 
   getNearby(params?: any): Observable<any> {
     return this.http.get(`${this.baseUrl}/${this.endpoints.list}`, { params });

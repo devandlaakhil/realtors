@@ -7,6 +7,7 @@ import { provideToastr } from 'ngx-toastr';
 import {
   provideHttpClient,
   withInterceptors,
+  withInterceptorsFromDi,
   HttpClient,
   HTTP_INTERCEPTORS,
 } from '@angular/common/http';
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
       progressBar: true,
       timeOut: 3500,
     }),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor]), withInterceptorsFromDi()),
     provideTranslateService({
       loader: provideTranslateHttpLoader({
         prefix: './assets/i18n/',

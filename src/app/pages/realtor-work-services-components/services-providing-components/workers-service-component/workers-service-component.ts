@@ -276,6 +276,7 @@ export class WorkersServiceComponent implements OnInit {
       this.getAllWorkers();
       return;
     }
+    this.getAllWorkers();
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -289,10 +290,10 @@ export class WorkersServiceComponent implements OnInit {
         });
         this.getAllWorkers();
       },
-      () => this.getAllWorkers(),
+      () => undefined,
       {
-        enableHighAccuracy: true,
-        timeout: 10000,
+        enableHighAccuracy: false,
+        timeout: 3000,
         maximumAge: 60000,
       },
     );

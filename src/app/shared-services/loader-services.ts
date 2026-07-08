@@ -23,4 +23,9 @@ export class LoaderServices {
       this.loadingSubject.next(false);
     }
   }
+
+  reset(): void {
+    this.activeRequests = 0;
+    this.loadingSubject.next(false);
+  }
 }

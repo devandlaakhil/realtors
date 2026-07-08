@@ -88,13 +88,14 @@ export class DriversServiceComponent implements OnInit, OnDestroy {
       this.loadDrivers();
       return;
     }
+    this.loadDrivers();
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         this.selectedLocation = { lat: coords.latitude, lng: coords.longitude };
         this.loadDrivers();
       },
-      () => this.loadDrivers(),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      () => undefined,
+      { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 },
     );
   }
 

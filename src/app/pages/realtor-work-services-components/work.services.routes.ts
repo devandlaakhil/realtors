@@ -93,6 +93,12 @@ export const WORK_SERVICE_ROUTES: Routes = [
               .then((component) => component.BeautyWellnessServiceComponent)
         },
         {
+          path:'education',
+          loadComponent: () =>
+            import('./services-providing-components/education-service-component/education-service-component')
+              .then((component) => component.EducationServiceComponent)
+        },
+        {
           path:'edit-driver/:id',
           canActivate:[authGuard],
           loadComponent: () =>

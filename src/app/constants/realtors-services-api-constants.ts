@@ -39,5 +39,17 @@ export const API_CONSTANTS = {
     getSingleShop : 'get-single-shop',
     deleteShop : 'delete-shop',
     deactivate:'update-shop-status'
+  },
+  beautyWellnessApiService: {
+    list: 'get-beauty-wellness-services',
+    save: 'create-beauty-wellness-service',
+    mylist: 'get-my-beauty-wellness-services',
+    delete: 'delete-beauty-wellness-service',
+  },
+  educationApiService: {
+    list: 'get-education-services',
+    save: 'create-education-service',
+    mylist: 'get-my-education-services',
+    delete: 'delete-education-service',
   }
 };

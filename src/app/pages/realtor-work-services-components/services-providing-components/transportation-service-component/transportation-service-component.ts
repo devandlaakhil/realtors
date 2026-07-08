@@ -355,6 +355,10 @@ export class TransportationServiceComponent implements OnInit {
   }
 
   getCurrentLocation(): void {
+    this.getNearByVehicles();
+    if (!navigator.geolocation) {
+      return;
+    }
     navigator.geolocation.getCurrentPosition((position) => {
       this.selectedLocation = {
         lat: position.coords.latitude,
@@ -367,6 +371,10 @@ export class TransportationServiceComponent implements OnInit {
         },
       });
       this.getNearByVehicles();
+    }, () => undefined, {
+      enableHighAccuracy: false,
+      timeout: 3000,
+      maximumAge: 60000,
     });
   }
 

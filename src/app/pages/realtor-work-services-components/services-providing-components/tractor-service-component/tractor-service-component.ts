@@ -299,6 +299,7 @@ export class TractorServiceComponent implements OnInit {
       this.getAllNearByTractors();
       return;
     }
+    this.getAllNearByTractors();
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -325,11 +326,10 @@ export class TractorServiceComponent implements OnInit {
       },
       (error) => {
         console.error('Location Error:', error);
-        this.getAllNearByTractors();
       },
       {
-        enableHighAccuracy: true,
-        timeout: 10000,
+        enableHighAccuracy: false,
+        timeout: 3000,
         maximumAge: 60000,
       },
     );

@@ -2,28 +2,25 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 import { MatIconModule } from '@angular/material/icon';
-import { BeautyWellnessApiService } from '../../../../api-services/beauty-wellness-api-service';
-import {
-  BEAUTY_WELLNESS_CATEGORIES,
-  BEAUTY_WELLNESS_SKILLS,
-} from '../../../../constants/beauty-wellness-categories';
+import { ToastrService } from 'ngx-toastr';
+import { Subject, takeUntil } from 'rxjs';
+import { EducationApiService } from '../../../../api-services/education-api-service';
+import { EDUCATION_CATEGORIES, EDUCATION_SKILLS } from '../../../../constants/education-categories';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 
 @Component({
-  selector: 'app-beauty-wellness-service-component',
+  selector: 'app-education-service-component',
   imports: [CommonModule, ReactiveFormsModule, MatIconModule, ImageUploadComponent, MapComponent],
-  templateUrl: './beauty-wellness-service-component.html',
-  styleUrl: './beauty-wellness-service-component.css',
+  templateUrl: './education-service-component.html',
+  styleUrl: './education-service-component.css',
 })
-export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
+export class EducationServiceComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
-  private api = inject(BeautyWellnessApiService);
+  private api = inject(EducationApiService);
   private route = inject(ActivatedRoute);
   router = inject(Router);
   private loader = inject(LoaderServices);
@@ -31,8 +28,8 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   phoneCall = inject(MobileDialpadService);
 
-  readonly categories = BEAUTY_WELLNESS_CATEGORIES;
-  readonly skillsByCategory = BEAUTY_WELLNESS_SKILLS;
+  readonly categories = EDUCATION_CATEGORIES;
+  readonly skillsByCategory = EDUCATION_SKILLS;
   providers: any[] = [];
   activeCategory = 'All';
   showPostForm = false;
@@ -47,8 +44,8 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
     mobile: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
     category: ['', Validators.required],
     additionalSkills: [<string[]>[], Validators.required],
-    serviceFor: ['Everyone', Validators.required],
-    homeService: [false],
+    teachingMode: ['Home visit', Validators.required],
+    studentLevel: ['', Validators.required],
     experience: [0, [Validators.required, Validators.min(0)]],
     startingPrice: [null as number | null, [Validators.required, Validators.min(0)]],
     village: ['', Validators.required],
@@ -107,10 +104,7 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
 
   onLocationSelected(location: { lat: number; lng: number }): void {
     this.selectedLocation = location;
-    this.form.patchValue({
-      latitude: location.lat,
-      longitude: location.lng,
-    });
+    this.form.patchValue({ latitude: location.lat, longitude: location.lng });
   }
 
   private ensureLocation(): Promise<boolean> {
@@ -123,10 +117,7 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           this.selectedLocation = { lat: coords.latitude, lng: coords.longitude };
-          this.form.patchValue({
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-          });
+          this.form.patchValue({ latitude: coords.latitude, longitude: coords.longitude });
           resolve(true);
         },
         () => resolve(false),
@@ -172,25 +163,24 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
       this.showLocationMap = true;
       return;
     }
+
     const body = new FormData();
     const raw = this.form.getRawValue();
-    const latitude = Number(raw.latitude);
-    const longitude = Number(raw.longitude);
     const payload = {
       name: raw.name,
       businessName: raw.businessName,
       mobile: raw.mobile,
       category: raw.category,
       additionalSkills: raw.additionalSkills,
-      serviceFor: raw.serviceFor,
-      homeService: raw.homeService,
+      teachingMode: raw.teachingMode,
+      studentLevel: raw.studentLevel,
       experience: Number(raw.experience),
       startingPrice: Number(raw.startingPrice),
       village: raw.village,
       district: raw.district,
       description: raw.description,
-      latitude,
-      longitude,
+      latitude: Number(raw.latitude),
+      longitude: Number(raw.longitude),
     };
     body.append('payload', JSON.stringify(payload));
     if (this.selectedImage) body.append('images', this.selectedImage);
@@ -198,15 +188,15 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
     this.api.create(body).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.loader.hide();
-        this.toastr.success('Beauty & wellness service posted successfully', 'Success');
-        this.router.navigate(['/services/beauty-wellness']);
+        this.toastr.success('Education service posted successfully', 'Success');
+        this.router.navigate(['/services/education']);
       },
       error: () => this.loader.hide(),
     });
   }
 
   imageOf(item: any): string {
-    return item.images?.[0]?.url || item.image?.[0]?.url || item.image?.url || '/images/realtors.png';
+    return item.images?.[0]?.url || item.image?.[0]?.url || item.image?.url || '/images/computer-laptop.png';
   }
 
   ngOnDestroy(): void {

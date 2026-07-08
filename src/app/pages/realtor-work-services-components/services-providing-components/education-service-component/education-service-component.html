@@ -1,0 +1,107 @@
+<main class="education-page">
+  @if (showPostForm) {
+    <header class="page-head"><div><small>EDUCATION</small><h1>Post your teaching service</h1></div></header>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="post-form">
+      <div class="form-grid">
+        <label><span>Tutor name *</span><input formControlName="name"></label>
+        <label><span>Institute / academy name</span><input formControlName="businessName"></label>
+        <label><span>Mobile number *</span><input type="tel" formControlName="mobile"></label>
+        <label><span>Main category *</span>
+          <select formControlName="category">
+            <option value="">Select category</option>
+            @for (category of categories; track category) { <option [value]="category">{{ category }}</option> }
+          </select>
+        </label>
+        <label><span>Teaching mode *</span>
+          <select formControlName="teachingMode">
+            <option>Home visit</option><option>Online</option><option>At tutor place</option><option>Hybrid</option>
+          </select>
+        </label>
+        <label><span>Student level *</span><input formControlName="studentLevel" placeholder="Example: Class 10, Intermediate, Degree"></label>
+        <label><span>Experience (years) *</span><input type="number" formControlName="experience"></label>
+        <label><span>Starting fee *</span><input type="number" formControlName="startingPrice"></label>
+        <label><span>Village / locality *</span><input formControlName="village"></label>
+        <label><span>District *</span><input formControlName="district"></label>
+      </div>
+
+      @if (availableSkills.length) {
+        <section class="skills">
+          <h2>Subjects / skills *</h2>
+          <div>
+            @for (skill of availableSkills; track skill) {
+              <label><input type="checkbox" [checked]="form.value.additionalSkills?.includes(skill)"
+                (change)="toggleSkill(skill, $any($event.target).checked)"><span>{{ skill }}</span></label>
+            }
+          </div>
+        </section>
+      }
+
+      <label class="description"><span>Description</span><textarea rows="3" formControlName="description"></textarea></label>
+      <section class="location-section">
+        <label class="check">
+          <input type="checkbox" [checked]="showLocationMap"
+            (change)="showLocationMap = $any($event.target).checked">
+          <span>Choose a different location on map</span>
+        </label>
+        @if (showLocationMap) {
+          <div class="map-wrapper">
+            <app-map-component
+              [data]="[]"
+              [dragble]="true"
+              (locationSelected)="onLocationSelected($event)">
+            </app-map-component>
+          </div>
+        }
+      </section>
+      <app-image-upload-component (fileSelected)="onImage($event)"></app-image-upload-component>
+      <button class="submit" type="submit">Publish education service</button>
+    </form>
+  } @else {
+    <header class="page-head">
+      <div><small>NEAR YOU</small><h1>Education</h1><p>Home tuitions, online tuitions and learning support</p></div>
+    </header>
+    <section class="cards">
+      @for (provider of filteredProviders; track provider.id || provider._id) {
+        <article class="provider-card">
+          <div class="provider-summary">
+            <img [src]="imageOf(provider)" [alt]="provider.name">
+            <div>
+              <small>{{ provider.category }}</small>
+              <h2>{{ provider.businessName || provider.name }}</h2>
+              <p>{{ provider.village }}, {{ provider.district }}</p>
+              <div class="skill-row">
+                @for (skill of provider.additionalSkills || []; track skill) { <span>{{ skill }}</span> }
+              </div>
+            </div>
+            <strong class="price">Rs. {{ provider.startingPrice || 0 }}<small>starting</small></strong>
+          </div>
+
+          @if (expandedId === (provider.id || provider._id)) {
+            <div class="provider-details">
+              <p><mat-icon>person</mat-icon>{{ provider.name }}</p>
+              <p><mat-icon>school</mat-icon>{{ provider.studentLevel || 'All levels' }}</p>
+              <p><mat-icon>computer</mat-icon>{{ provider.teachingMode || 'Home visit' }}</p>
+              <p><mat-icon>work_history</mat-icon>{{ provider.experience || 0 }} years experience</p>
+              <p><mat-icon>location_on</mat-icon>{{ provider.village }}, {{ provider.district }}</p>
+              @if (provider.description) {
+                <p class="description-text">{{ provider.description }}</p>
+              }
+            </div>
+          }
+
+          <div class="card-actions">
+            <button type="button" class="secondary" (click)="toggleDetails(provider.id || provider._id)">
+              {{ expandedId === (provider.id || provider._id) ? 'Close details' : 'View details' }}
+            </button>
+            <button type="button" class="primary"
+              (click)="phoneCall.call({id: provider.id || provider._id, name: provider.name, mobile: provider.mobile, serviceType: 'Education', serviceName: provider.category, locationAddress: provider.village + ', ' + provider.district})">
+              <mat-icon>call</mat-icon>Contact tutor
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <div class="empty"><mat-icon>school</mat-icon><strong>No education services available nearby</strong></div>
+      }
+    </section>
+  }
+</main>

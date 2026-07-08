@@ -38,6 +38,7 @@ export class BottomNavComponent {
     },
     { label: 'Transport', image: '/images/transport.png', route: '/services/transport' },
     { label: 'Beauty & Wellness', image: '/images/beauty-wellness.png', route: '/services/beauty-wellness' },
+    { label: 'Education', image: '/images/computer-laptop.png', route: '/services/education' },
   ];
 
   navLinks: {
