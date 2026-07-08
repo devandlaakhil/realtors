@@ -1118,7 +1118,7 @@ app-hardware-shop-service-component .service-list-panel .sheet-content {
 }
 
 .card-content {
-  padding: 12px 16px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1478,6 +1478,10 @@ app-hardware-shop-service-component .service-list-panel .sheet-content {
 
   .property-card {
     grid-template-columns: 1fr;
+  }
+
+  .property-card .card-content {
+    padding: 10px;
   }
 
   .image-container {
