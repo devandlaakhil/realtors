@@ -36,8 +36,11 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   providers: any[] = [];
   activeCategory = 'All';
   showPostForm = false;
+  isEditMode = false;
+  serviceId = '';
   expandedId: string | null = null;
   selectedImage: File | null = null;
+  existingImageUrl: string | null = null;
   showLocationMap = false;
   selectedLocation: { lat: number | null; lng: number | null } = { lat: null, lng: null };
 
@@ -70,12 +73,51 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.showPostForm = this.route.snapshot.queryParamMap.get('post') === '1';
+    this.serviceId = this.route.snapshot.paramMap.get('id') || '';
+    this.isEditMode = !!this.serviceId;
+    this.showPostForm = this.isEditMode || this.route.snapshot.queryParamMap.get('post') === '1';
     this.activeCategory = this.route.snapshot.queryParamMap.get('category') || 'All';
     this.form.controls.category.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       this.form.controls.additionalSkills.setValue([]);
     });
-    this.showPostForm ? this.captureLocation() : this.loadProviders();
+    if (this.isEditMode) {
+      this.loadService();
+    } else {
+      this.showPostForm ? this.captureLocation() : this.loadProviders();
+    }
+  }
+
+  private loadService(): void {
+    this.loader.show();
+    this.api.getSingle(this.serviceId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        const item = Array.isArray(response?.data) ? response.data[0] : response?.data ?? response;
+        if (item) {
+          const lat = item.latitude ?? item.location?.coordinates?.[1] ?? null;
+          const lng = item.longitude ?? item.location?.coordinates?.[0] ?? null;
+          this.selectedLocation = { lat, lng };
+          this.existingImageUrl = this.imageOf(item);
+          this.form.patchValue({
+            name: item.name || '',
+            businessName: item.businessName || '',
+            mobile: item.mobile || '',
+            category: item.category || '',
+            additionalSkills: item.additionalSkills || [],
+            serviceFor: item.serviceFor || 'Everyone',
+            homeService: !!item.homeService,
+            experience: Number(item.experience || 0),
+            startingPrice: item.startingPrice ?? null,
+            village: item.village || '',
+            district: item.district || '',
+            description: item.description || '',
+            latitude: lat,
+            longitude: lng,
+          });
+        }
+        this.loader.hide();
+      },
+      error: () => this.loader.hide(),
+    });
   }
 
   toggleSkill(skill: string, checked: boolean): void {
@@ -87,6 +129,7 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
 
   onImage(file: File | null): void {
     this.selectedImage = file;
+    if (!file) this.existingImageUrl = null;
     this.form.controls.image.setValue(file);
   }
 
@@ -195,10 +238,14 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
     body.append('payload', JSON.stringify(payload));
     if (this.selectedImage) body.append('images', this.selectedImage);
     this.loader.show();
-    this.api.create(body).pipe(takeUntil(this.destroy$)).subscribe({
+    const request = this.isEditMode ? this.api.update(this.serviceId, body) : this.api.create(body);
+    request.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.loader.hide();
-        this.toastr.success('Beauty & wellness service posted successfully', 'Success');
+        this.toastr.success(
+          this.isEditMode ? 'Beauty & wellness service updated successfully' : 'Beauty & wellness service posted successfully',
+          'Success',
+        );
         this.router.navigate(['/services/beauty-wellness']);
       },
       error: () => this.loader.hide(),
@@ -206,7 +253,16 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   }
 
   imageOf(item: any): string {
-    return item.images?.[0]?.url || item.image?.[0]?.url || item.image?.url || '/images/realtors.png';
+    return (
+      item.imageUrl ||
+      item.images?.[0]?.url ||
+      (typeof item.images?.[0] === 'string' ? item.images[0] : null) ||
+      item.image?.[0]?.url ||
+      (typeof item.image?.[0] === 'string' ? item.image[0] : null) ||
+      item.image?.url ||
+      (typeof item.image === 'string' ? item.image : null) ||
+      '/images/realtors.png'
+    );
   }
 
   ngOnDestroy(): void {

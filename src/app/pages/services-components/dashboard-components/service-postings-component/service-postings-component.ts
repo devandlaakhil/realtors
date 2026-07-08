@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { forkJoin, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { catchError, forkJoin, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { LoaderServices } from '../../../../shared-services/loader-services';
@@ -8,11 +8,20 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { WorkerApiServices } from '../../../../api-services/worker-api-services';
-import { mapHardware, mapTractor, mapWorker,mapVehicle } from '../../../../constants/service-mappers';
+import {
+  mapBeautyWellness,
+  mapEducation,
+  mapHardware,
+  mapTractor,
+  mapVehicle,
+  mapWorker,
+} from '../../../../constants/service-mappers';
 import { TransportApiService } from '../../../../api-services/transport-api-service';
 import { HardwareShopApiService } from '../../../../api-services/hardware-shop-api-service';
 import { DynamicCategoryApiService, DynamicServiceCategory } from '../../../../api-services/dynamic-category-api-service';
 import { AuthService } from '../../../../auth-services/auth-services';
+import { BeautyWellnessApiService } from '../../../../api-services/beauty-wellness-api-service';
+import { EducationApiService } from '../../../../api-services/education-api-service';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -24,6 +33,8 @@ export class ServicePostingsComponent implements OnInit {
   workerApiSrv = inject(WorkerApiServices);
   transportApiSrv = inject(TransportApiService);
   hardwareApiSrv = inject(HardwareShopApiService);
+  beautyWellnessApiSrv = inject(BeautyWellnessApiService);
+  educationApiSrv = inject(EducationApiService);
   dynamicApi = inject(DynamicCategoryApiService);
   authService = inject(AuthService);
 
@@ -52,6 +63,12 @@ export class ServicePostingsComponent implements OnInit {
       service: this.hardwareApiSrv,
       action: (id: string) => this.hardwareApiSrv.updateStatus(id),
     },
+    BeautyWellness: {
+      action: (id: string) => this.beautyWellnessApiSrv.updateStatus(id),
+    },
+    Education: {
+      action: (id: string) => this.educationApiSrv.updateStatus(id),
+    },
   };
 
   private deleteApis: any = {
@@ -71,6 +88,12 @@ export class ServicePostingsComponent implements OnInit {
       service: this.hardwareApiSrv,
       action: (id: string) => this.hardwareApiSrv.deleteShop(id),
     },
+    BeautyWellness: {
+      action: (id: string) => this.beautyWellnessApiSrv.delete(id),
+    },
+    Education: {
+      action: (id: string) => this.educationApiSrv.delete(id),
+    },
   };
 
   ngOnInit(): void {
@@ -80,10 +103,12 @@ export class ServicePostingsComponent implements OnInit {
   loadMyServices() {
     this.loaderSrv.show();
     forkJoin({
-      commercialVehicles: this.realtorApiSrv.get(API_CONSTANTS.commercialVehicleServices.mylist),
-      workers: this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings),
-      vehicles : this.transportApiSrv.get(API_CONSTANTS.transportApiService.getMyVehiclePosts),
-      hardware: this.hardwareApiSrv.getMyShops(),
+      commercialVehicles: this.safeRequest(this.realtorApiSrv.get(API_CONSTANTS.commercialVehicleServices.mylist)),
+      workers: this.safeRequest(this.workerApiSrv.get(API_CONSTANTS.workerapiServices.getMyPostings)),
+      vehicles : this.safeRequest(this.transportApiSrv.get(API_CONSTANTS.transportApiService.getMyVehiclePosts)),
+      hardware: this.safeRequest(this.hardwareApiSrv.getMyShops()),
+      beautyWellness: this.safeRequest(this.beautyWellnessApiSrv.getMine()),
+      education: this.safeRequest(this.educationApiSrv.getMine()),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
       next: (res: any) => {
@@ -91,22 +116,32 @@ export class ServicePostingsComponent implements OnInit {
           {
             category: 'Commercial Vehicles',
             icon: '🚜',
-            items: (res.commercialVehicles?.data || []).map((x: any) => mapTractor(x)),
+            items: this.listFromResponse(res.commercialVehicles).map((x: any) => mapTractor(x)),
           },
           {
             category: 'workers',
             icon: '👷‍♂️',
-            items: (res.workers?.data || []).map((x: any) => mapWorker(x)),
+            items: this.listFromResponse(res.workers).map((x: any) => mapWorker(x)),
           },
           {
             category: 'Vehicles',
             icon: '🚛',
-            items: (res.vehicles?.data || []).map((x:any) => mapVehicle(x)),
+            items: this.listFromResponse(res.vehicles).map((x:any) => mapVehicle(x)),
           },
           {
             category: 'Home Repairs',
             icon: 'Home Repairs',
-            items: (res.hardware?.data || res.hardware?.shops || []).map((x: any) => mapHardware(x)),
+            items: this.listFromResponse(res.hardware).map((x: any) => mapHardware(x)),
+          },
+          {
+            category: 'Beauty & Wellness',
+            icon: 'Beauty & Wellness',
+            items: this.listFromResponse(res.beautyWellness).map((x: any) => mapBeautyWellness(x)),
+          },
+          {
+            category: 'Education',
+            icon: 'Education',
+            items: this.listFromResponse(res.education).map((x: any) => mapEducation(x)),
           },
           // {
           //   category: 'Cultivators',
@@ -121,6 +156,27 @@ export class ServicePostingsComponent implements OnInit {
         this.loaderSrv.hide();
       },
     });
+  }
+
+  private listFromResponse(response: any): any[] {
+    const value =
+      response?.data?.data ??
+      response?.data?.services ??
+      response?.data?.items ??
+      response?.data?.posts ??
+      response?.data?.shops ??
+      response?.services ??
+      response?.items ??
+      response?.posts ??
+      response?.shops ??
+      response?.data ??
+      response;
+
+    return Array.isArray(value) ? value : [];
+  }
+
+  private safeRequest(request$: any) {
+    return request$.pipe(catchError(() => of([])));
   }
 
   private loadMyDynamicServices(): void {
@@ -216,7 +272,7 @@ export class ServicePostingsComponent implements OnInit {
       this.toaster.error('Delete not supported for this service', 'Error');
       return;
     }
-    const confirmed = confirm('Are you sure you want to delete this commercial vehicle?');
+    const confirmed = confirm('Are you sure you want to delete this service?');
     if (!confirmed) {
       return;
     }
@@ -237,7 +293,7 @@ export class ServicePostingsComponent implements OnInit {
               }))
               .filter((group) => group.items.length > 0);
 
-            this.toaster.success('Your commercial vehicle was deleted successfully', 'Success');
+            this.toaster.success('Your service was deleted successfully', 'Success');
             this.cdr.detectChanges();
           }
         },
@@ -259,6 +315,12 @@ export class ServicePostingsComponent implements OnInit {
         break;
       case 'Hardware':
         this.router.navigate(['/services/edit-repair',elem.id]);
+        break;
+      case 'BeautyWellness':
+        this.router.navigate(['/services/edit-beauty-wellness', elem.id]);
+        break;
+      case 'Education':
+        this.router.navigate(['/services/edit-education', elem.id]);
         break;
     }
   }

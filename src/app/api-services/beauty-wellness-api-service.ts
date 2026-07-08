@@ -22,6 +22,18 @@ export class BeautyWellnessApiService {
     return this.http.get(`${this.baseUrl}/${this.endpoints.mylist}`);
   }
 
+  getSingle(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${this.endpoints.getSingleItem}`, { params: { id } });
+  }
+
+  update(id: string, body: FormData): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${this.endpoints.updateItem}`, body, { params: { id } });
+  }
+
+  updateStatus(id: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${this.endpoints.statusUpdate}`, { id });
+  }
+
   delete(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${this.endpoints.delete}`, { params: { id } });
   }

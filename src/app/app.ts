@@ -82,7 +82,7 @@ export class App implements OnInit, OnDestroy {
             : 'Your phone location service appears to be turned off. Turn on Location/GPS in Quick Settings or Settings, then tap Retry.',
         );
       },
-      { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 },
+      { enableHighAccuracy: false, timeout: 2500, maximumAge: 120000 },
     );
   }
 }

@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth-services/auth.guard';
-import { DashboardComponent } from '../app/pages/home-components/dashboard-component/dashboard-component';
 
 export const routes: Routes = [
   {
@@ -51,14 +50,6 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'dashboard',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('../app/pages/home-components/dashboard-component/dashboard-component').then(
-        (m) => m.DashboardComponent,
-      ),
-  },
-  {
     path: 'property/:id',
     loadComponent: () =>
       import('../app/pages/home-components/product-view-component/product-view-component').then(
@@ -102,7 +93,11 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: DashboardComponent,
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../app/pages/home-components/dashboard-component/dashboard-component').then(
+        (m) => m.DashboardComponent,
+      ),
     children: [
       {
         path: 'my-posts',

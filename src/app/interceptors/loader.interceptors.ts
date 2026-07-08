@@ -9,11 +9,18 @@ import { LoaderServices } from '../shared-services/loader-services';
 export class LoaderInterceptors implements HttpInterceptor {
   loaderService = inject(LoaderServices);
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.loaderService.show();
+    let shown = false;
+    const timer = setTimeout(() => {
+      shown = true;
+      this.loaderService.show();
+    }, 180);
 
     return next.handle(req).pipe(
       finalize(() => {
-        this.loaderService.hide();
+        clearTimeout(timer);
+        if (shown) {
+          this.loaderService.hide();
+        }
       }),
     );
   }

@@ -53,7 +53,10 @@
           </div>
         }
       </section>
-      <app-image-upload-component (fileSelected)="onImage($event)"></app-image-upload-component>
+      <app-image-upload-component
+        [imageUrl]="existingImageUrl"
+        (fileSelected)="onImage($event)"
+      ></app-image-upload-component>
       <button class="submit" type="submit">Publish education service</button>
     </form>
   } @else {

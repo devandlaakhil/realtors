@@ -44,12 +44,18 @@ export const API_CONSTANTS = {
     list: 'get-beauty-wellness-services',
     save: 'create-beauty-wellness-service',
     mylist: 'get-my-beauty-wellness-services',
+    getSingleItem: 'get-single-beauty-wellness-service',
+    updateItem: 'update-beauty-wellness-service',
+    statusUpdate: 'update-beauty-wellness-status',
     delete: 'delete-beauty-wellness-service',
   },
   educationApiService: {
     list: 'get-education-services',
     save: 'create-education-service',
     mylist: 'get-my-education-services',
+    getSingleItem: 'get-single-education-service',
+    updateItem: 'update-education-service',
+    statusUpdate: 'update-education-status',
     delete: 'delete-education-service',
   }
 };

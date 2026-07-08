@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export type DynamicFieldType =
@@ -43,15 +43,27 @@ export class DynamicCategoryApiService {
   private http = inject(HttpClient);
   private readonly baseUrl = `${environment.serverPort}/dynamic-service-categories`;
   private categoriesSubject = new BehaviorSubject<DynamicServiceCategory[]>([]);
+  private publishedRequest$: Observable<any> | null = null;
   readonly categories$ = this.categoriesSubject.asObservable();
 
-  loadPublished(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/published`).pipe(
+  loadPublished(forceRefresh = false): Observable<any> {
+    if (!forceRefresh && this.publishedRequest$) {
+      return this.publishedRequest$;
+    }
+
+    this.publishedRequest$ = this.http.get<any>(`${this.baseUrl}/published`).pipe(
       tap((response) => {
         const data = response?.data ?? response?.categories ?? response ?? [];
         this.categoriesSubject.next(Array.isArray(data) ? data : []);
       }),
+      catchError((error) => {
+        this.publishedRequest$ = null;
+        return throwError(() => error);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
+
+    return this.publishedRequest$;
   }
 
   getCategory(slug: string): Observable<any> {

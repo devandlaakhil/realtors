@@ -2,7 +2,7 @@ import { ServiceItem } from './services-items-normalization';
 
 export function mapTractor(item: any): ServiceItem {
   return {
-    id: item.id,
+    id: item.id ?? item._id,
     title: item.title || item.vehicleType || 'Commercial Vehicle',
     image: item.images?.[0]?.url || '/assets/images/tractor.png',
     location: `${item.location?.village || ''}, ${item.location?.district || ''}`,
@@ -17,7 +17,7 @@ export function mapTractor(item: any): ServiceItem {
 
 export function mapWorker(item: any): ServiceItem {
   return {
-    id: item.id,
+    id: item.id ?? item._id,
     title: item.name,
     image: item.image?.[0]?.url || '/assets/images/avatar.png',
     location: `${item.village || ''}, ${item.district || ''}`,
@@ -32,9 +32,9 @@ export function mapWorker(item: any): ServiceItem {
 
 export function mapVehicle(item:any): ServiceItem {
   return {
-    id: item.id,
+    id: item.id ?? item._id,
     title: item.name,
-    image: item.images[0]?.url || '/assets/images/avatar.png',
+    image: item.images?.[0]?.url || '/assets/images/avatar.png',
     location: `${item.village || ''}, ${item.district || ''}`,
     price: item.price,
     unit: item.pricingType || 'day',
@@ -69,6 +69,36 @@ export function mapHardware(item: any): ServiceItem {
     price: item.price ?? 0,
     unit: item.unit || '',
     category: 'Hardware',
+    mobile: item.mobile,
+    originalData: item,
+    isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,
+  };
+}
+
+export function mapBeautyWellness(item: any): ServiceItem {
+  return {
+    id: item.id ?? item._id,
+    title: item.businessName || item.name || 'Beauty & Wellness',
+    image: item.images?.[0]?.url || item.image?.[0]?.url || item.image?.url || '/images/beauty-wellness.png',
+    location: [item.village, item.district].filter(Boolean).join(', '),
+    price: item.startingPrice ?? 0,
+    unit: 'starting',
+    category: 'BeautyWellness',
+    mobile: item.mobile,
+    originalData: item,
+    isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,
+  };
+}
+
+export function mapEducation(item: any): ServiceItem {
+  return {
+    id: item.id ?? item._id,
+    title: item.businessName || item.name || 'Education',
+    image: item.images?.[0]?.url || item.image?.[0]?.url || item.image?.url || '/images/computer-laptop.png',
+    location: [item.village, item.district].filter(Boolean).join(', '),
+    price: item.startingPrice ?? 0,
+    unit: 'starting',
+    category: 'Education',
     mobile: item.mobile,
     originalData: item,
     isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,

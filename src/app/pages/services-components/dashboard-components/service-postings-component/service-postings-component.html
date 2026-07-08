@@ -1,8 +1,6 @@
 <div class="services-feed">
   <section class="page-hero">
     <span class="eyebrow">{{ 'Service postings' | T }}</span>
-    <!-- <h2>{{ 'Manage tractors, workers, and vehicles in one compact feed' | T }}</h2>
-    <p>{{ 'Grouped sections and stacked rows are easier to read and feel more native on Android screens.' | T }}</p> -->
   </section>
 
   @for (serviceGroup of serviceGroups; track serviceGroup.category) {
@@ -12,48 +10,45 @@
       [class.workers]="serviceGroup.category.toLowerCase() === 'workers'"
     >
       <div class="category-head">
-        <h2 class="category-title">{{ serviceGroup.icon }} {{ serviceGroup.category | T}}</h2>
+        <h2 class="category-title">{{ serviceGroup.icon }} {{ serviceGroup.category | T }}</h2>
         <span class="count-pill">{{ serviceGroup.items.length }} {{ 'items' | T }}</span>
       </div>
 
       <div class="cards-list">
         @for (item of serviceGroup.items; track item.id) {
-          <article class="service-card">
-            <div class="card-media">
+          <article class="provider-card">
+            <div class="provider-summary">
               <img [src]="item.image" alt="{{ item.title }}" />
-              <span class="status-badge" [class.active]="item.isActive">
-                {{ item.isActive ? ('Live' | T) : ('Paused' | T) }}
-              </span>
-            </div>
 
-            <div class="card-body">
-              <div class="card-title-row">
-                <h3>{{ item.title }}</h3>
-                <div class="price">
-                  ₹{{ item.price }}
-                  <span class="unit" *ngIf="item.unit">/ {{ item.unit | T }}</span>
+              <div class="provider-main">
+                <small>{{ serviceGroup.category | T }}</small>
+                <h2>{{ item.title }}</h2>
+                <p>{{ item.location }}</p>
+
+                <div class="skill-row">
+                  <span [class.active]="item.isActive">
+                    {{ item.isActive ? ('Live' | T) : ('Paused' | T) }}
+                  </span>
+                  @for (skill of (item.originalData?.additionalSkills || item.originalData?.skills || []); track skill) {
+                    <span>{{ skill | T }}</span>
+                  }
                 </div>
               </div>
 
-              <div class="location">
-                <span class="location-icon">📍</span>
-                {{ item.location }}
-              </div>
+              <strong class="price">
+                Rs. {{ item.price || 0 }}
+                <small *ngIf="item.unit">{{ item.unit | T }}</small>
+              </strong>
+            </div>
 
-              <div class="status-row">
-                <span class="meta-pill">{{ item.isActive ? ('Live' | T) : ('Paused' | T) }}</span>
-                <span class="meta-pill muted">{{ serviceGroup.category | T }}</span>
-              </div>
-
-              <div class="actions">
-                @if (!serviceGroup.dynamic) {
-                  <button class="edit-btn" (click)="edit(item)">{{ 'Edit' | T }}</button>
-                  <button class="inactive-btn" (click)="toggleStatus(item)">
-                    {{ item.isActive ? ('Deactivate' | T) : ('Activate' | T) }}
-                  </button>
-                }
-                <button class="delete-btn" (click)="delete(item)">{{ 'Delete' | T }}</button>
-              </div>
+            <div class="actions">
+              @if (!serviceGroup.dynamic) {
+                <button class="edit-btn" (click)="edit(item)">{{ 'Edit' | T }}</button>
+                <button class="inactive-btn" (click)="toggleStatus(item)">
+                  {{ item.isActive ? ('Deactivate' | T) : ('Activate' | T) }}
+                </button>
+              }
+              <button class="delete-btn" (click)="delete(item)">{{ 'Delete' | T }}</button>
             </div>
           </article>
         }
