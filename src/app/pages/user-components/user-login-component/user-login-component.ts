@@ -61,13 +61,16 @@ export class UserLoginComponent implements OnInit {
             email: res.data.user.email,
           });
           this.authService.logIn(res.data.token);
+          this.authService.setRefreshToken(res.data.refreshToken);
           this.showToast('Welcome back. Taking you to your home.', 'Signed in', 'success');
           this.dashboardService.logIn();
           this.router.navigate(['/']);
+        } else {
+          this.showToast('Login succeeded but no access token was returned. Please try again.', 'Token missing', 'error');
         }
       },
       error: (err) => {
-        this.showToast(err?.error?.message || 'We could not sign you in. Please check your details.', 'Sign in failed', 'error');
+        this.showToast(this.loginErrorMessage(err), 'Sign in failed', 'error');
         this.loginForm.reset();
       },
     });
@@ -79,5 +82,16 @@ export class UserLoginComponent implements OnInit {
   private showToast(message: string, title: string, type: 'success' | 'error' | 'warning') {
     this.tostrService.clear();
     this.tostrService[type](message, title);
+  }
+
+  private loginErrorMessage(err: any): string {
+    const message = err?.error?.msg || err?.error?.message || err?.message || '';
+    if (message.toLowerCase().includes('email not confirmed')) {
+      return 'Please verify your email in Supabase or turn off Confirm email in Supabase Auth settings.';
+    }
+    if (err?.error?.error_code === 'invalid_credentials' || message.toLowerCase().includes('invalid login credentials')) {
+      return 'Invalid login credentials. Confirm this user exists in Supabase Auth, the email is verified, and the password is correct.';
+    }
+    return message || 'We could not sign you in. Please check your details.';
   }
 }

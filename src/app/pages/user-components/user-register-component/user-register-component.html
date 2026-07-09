@@ -84,8 +84,8 @@
           </mat-error>
         </mat-form-field>
 
-        <button mat-flat-button class="submit-btn" type="submit">
-          {{ 'Create account' | T }}
+        <button mat-flat-button class="submit-btn" type="submit" [disabled]="isRegistering">
+          {{ (isRegistering ? 'Creating account...' : 'Create account') | T }}
         </button>
       </form>
 

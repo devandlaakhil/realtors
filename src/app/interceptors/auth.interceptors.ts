@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 export const SKIP_AUTH_REDIRECT = new HttpContextToken<boolean>(() => false);
+export const SKIP_AUTH_HEADER = new HttpContextToken<boolean>(() => false);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -16,7 +17,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   let clonedReq = req;
 
-  if (token) {
+  if (token && !req.context.get(SKIP_AUTH_HEADER)) {
     clonedReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

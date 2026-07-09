@@ -3,6 +3,7 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { SKIP_AUTH_REDIRECT } from '../interceptors/auth.interceptors';
+import { SupabaseAuthApiService } from './supabase-auth-api-service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,19 @@ export class UserApiServices {
 
   private _apiUrl = 'user';
   http = inject(HttpClient);
+  private supabaseAuth = inject(SupabaseAuthApiService);
 
   login(data:any):Observable<any>{
+    if (this.supabaseAuth.enabled) {
+      return this.supabaseAuth.login(data);
+    }
     return this.http.post<any>(`${environment.serverPort}/${this._apiUrl}/login`,data) 
   }
 
    register(user:any):Observable<any>{
+    if (this.supabaseAuth.enabled) {
+      return this.supabaseAuth.register(user);
+    }
     return this.http.post<any>(`${environment.serverPort}/${this._apiUrl}/register`, user)
   }
 
