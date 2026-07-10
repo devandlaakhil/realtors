@@ -56,15 +56,26 @@
                 {{ 'No commercial vehicles found near you' | T }}
               </div>
               <ng-container *ngFor="let tractor of tractors">
-                <div class="mini-card" *ngIf="expandedTractorId !== tractor.id" (click)="selectTractor(tractor)">
-                  <img [src]="tractor.image" />
+                <div class="mini-card" *ngIf="expandedTractorId !== tractor.id">
+                  <img [src]="tractor.image" [alt]="tractor.name || 'Commercial vehicle'" />
                   <div class="card-content">
-                    <h4>👤 {{ tractor.owner }}</h4>
-                    <h6>{{ tractor.name }}</h6>
-                    <p>₹{{ tractor.price }}/hour</p>
-                    <p>📍 {{ tractor.distance }}</p>
+                    <small class="vehicle-type">{{ tractor.vehicleType || 'Commercial Vehicle' }}</small>
+                    <h4>{{ tractor.name }}</h4>
+                    <h6>{{ tractor.owner }}</h6>
+                    <p>Rs. {{ tractor.price || 0 }}/hour</p>
+                    <p>{{ tractor.village || '-' }}, {{ tractor.district || '-' }}</p>
+                    <div class="worker-card-skills" *ngIf="tractor.addOns?.length">
+                      <span *ngFor="let addon of tractor.addOns | slice: 0 : 3">{{ addon.label | T }}</span>
+                      <span *ngIf="tractor.addOns!.length > 3">+{{ tractor.addOns!.length - 3 }}</span>
+                    </div>
                     <div class="card-actions">
-                      <button class="primary-btn" type="button" (click)="toggleDetails(tractor.id, $event)">{{ 'View Details' | T }}</button>
+                      <button class="secondary-btn" type="button" (click)="toggleDetails(tractor.id, $event)">
+                        {{ 'View Details' | T }}
+                      </button>
+                      <button class="primary-btn" type="button" (click)="phoneCall.call({ id: tractor.id, name: tractor.owner || tractor.name, mobile: tractor.mobile, serviceType: 'Commercial Vehicles', serviceName: tractor.name, locationAddress: (tractor.village || '') + ', ' + (tractor.district || '') })">
+                        <mat-icon>call</mat-icon>
+                        {{ 'Call Owner' | T }}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -73,10 +84,10 @@
                   <div class="worker-header">
                     <div>
                       <h3>👤 {{ tractor.owner }}</h3>
-                      <span>{{ tractor.name }}</span>
+                      <span>{{ tractor.vehicleType || 'Commercial Vehicle' }} · {{ tractor.name }}</span>
                     </div>
                     <div class="price-badge">
-                      ₹{{ tractor.price }}
+                      Rs. {{ tractor.price || 0 }}
                       <small>/{{ 'hour' | T }}</small>
                     </div>
                   </div>
@@ -88,10 +99,24 @@
 
                   <div class="info-grid">
                     <div class="info-item">
+                      <mat-icon>local_shipping</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Vehicle' | T }}</span>
+                        <span class="value">{{ tractor.vehicleType || '-' }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <mat-icon>precision_manufacturing</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Brand / Model' | T }}</span>
+                        <span class="value">{{ tractor.brand || '-' }} {{ tractor.model || '' }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
                       <mat-icon>badge</mat-icon>
                       <div>
                         <span class="label">{{ 'Registration' | T }}</span>
-                        <span class="value">{{ tractor.registrationNumber }}</span>
+                        <span class="value">{{ tractor.registrationNumber || '-' }}</span>
                       </div>
                     </div>
                     <div class="info-item">
@@ -102,10 +127,17 @@
                       </div>
                     </div>
                     <div class="info-item">
-                      <mat-icon>route</mat-icon>
+                      <mat-icon>payments</mat-icon>
                       <div>
-                        <span class="label">{{ 'Distance' | T }}</span>
-                        <span class="value">{{ tractor.distance }}</span>
+                        <span class="label">{{ 'Price Per Acre' | T }}</span>
+                        <span class="value">Rs. {{ tractor.pricePerAcre || 0 }}</span>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <mat-icon>schedule</mat-icon>
+                      <div>
+                        <span class="label">{{ 'Minimum Booking' | T }}</span>
+                        <span class="value">{{ tractor.minimumBookingHours || 1 }} {{ 'hours' | T }}</span>
                       </div>
                     </div>
                   </div>
@@ -117,8 +149,13 @@
                     </span>
                   </div>
 
+                  <p class="description-text" *ngIf="tractor.description">{{ tractor.description }}</p>
+
                   <div class="expanded-actions">
-                    <button class="primary-btn" type="button" (click)="phoneCall.call({ id: tractor.id, name: tractor.owner || tractor.name, mobile: tractor.mobile, serviceType: 'Commercial Vehicles', serviceName: tractor.name, locationAddress: (tractor.village || '') + ', ' + (tractor.district || '') })">{{ 'Call Owner' | T }}</button>
+                    <button class="primary-btn" type="button" (click)="phoneCall.call({ id: tractor.id, name: tractor.owner || tractor.name, mobile: tractor.mobile, serviceType: 'Commercial Vehicles', serviceName: tractor.name, locationAddress: (tractor.village || '') + ', ' + (tractor.district || '') })">
+                      <mat-icon>call</mat-icon>
+                      {{ 'Call Owner' | T }}
+                    </button>
                     <button class="secondary-btn" type="button" (click)="toggleDetails(null, $event)">{{ 'Close Details' | T }}</button>
                   </div>
                 </div>
@@ -281,6 +318,7 @@
               [zoom]="zoom"
               width="100%"
               height="450px"
+              (mapClick)="mapClicked($event)"
             >
               <map-marker
                 *ngIf="selectedLocation"

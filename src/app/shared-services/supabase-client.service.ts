@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { SKIP_AUTH_HEADER, SKIP_AUTH_REDIRECT } from '../interceptors/auth.interceptors';
+import { AuthService } from '../auth-services/auth-services';
 
 type SupabaseFilterValue = string | number | boolean | null | undefined;
 
@@ -17,6 +18,7 @@ export interface SupabaseSelectOptions {
 @Injectable({ providedIn: 'root' })
 export class SupabaseClientService {
   private readonly http = inject(HttpClient);
+  private readonly auth = inject(AuthService);
   private readonly supabaseUrl = this.normalizeUrl(environment.supabaseUrl);
   private readonly anonKey = environment.supabaseAnonKey;
   private readonly defaultBucket = environment.supabaseStorageBucket || 'service-images';
@@ -85,6 +87,14 @@ export class SupabaseClientService {
     });
   }
 
+  authPut<T>(path: string, body: unknown, accessToken: string): Observable<T> {
+    if (!this.enabled) return this.notConfigured<T>();
+    return this.http.put<T>(`${this.authUrl}/${path}`, body, {
+      headers: this.headers(undefined, accessToken),
+      context: this.context
+    });
+  }
+
   insert<T>(table: string, body: Partial<T> | Partial<T>[]): Observable<T[]> {
     if (!this.enabled) return this.notConfigured<T[]>();
     return this.http.post<T[]>(`${this.restUrl}/${table}`, body, {
@@ -144,8 +154,15 @@ export class SupabaseClientService {
   upload(file: File, path: string, bucket = this.defaultBucket): Observable<unknown> {
     if (!this.enabled) return this.notConfigured<unknown>();
     const encodedPath = this.encodeStoragePath(path);
-    return this.http.put(`${this.storageUrl}/object/${bucket}/${encodedPath}`, file, {
-      headers: this.headers()
+    const accessToken = this.auth.getToken() || this.anonKey;
+    const uploadUrl = `${this.storageUrl}/object/${bucket}/${encodedPath}`;
+
+    if (!bucket) {
+      return throwError(() => new Error('Supabase storage bucket is missing in environment.supabaseStorageBucket.'));
+    }
+
+    return this.http.post(uploadUrl, file, {
+      headers: this.headers(undefined, accessToken)
         .set('Content-Type', file.type || 'application/octet-stream')
         .set('Cache-Control', '3600')
         .set('x-upsert', 'true'),

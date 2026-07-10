@@ -158,6 +158,75 @@ create table if not exists public.transport_vehicles (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.drivers (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references auth.users(id) on delete cascade,
+  name text not null default '',
+  mobile text not null default '',
+  whatsapp_number text,
+  vehicle_types text[] not null default '{}',
+  licence_type text,
+  licence_number text,
+  experience integer not null default 0,
+  price_per_day numeric,
+  price_per_trip numeric,
+  available_for_outstation boolean not null default false,
+  available_at_night boolean not null default false,
+  has_own_vehicle boolean not null default false,
+  village text,
+  district text,
+  state text,
+  languages text,
+  description text,
+  image_url text,
+  latitude double precision,
+  longitude double precision,
+  status text not null default 'ACTIVE' check (status in ('ACTIVE', 'INACTIVE')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.advertisements (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references auth.users(id) on delete set null,
+  title text not null default '',
+  ad_type text not null default 'photo',
+  target_link text,
+  notes text,
+  media_url text,
+  paid_amount numeric not null default 0,
+  payment_payload jsonb not null default '{}',
+  latitude double precision,
+  longitude double precision,
+  status text not null default 'ACTIVE' check (status in ('ACTIVE', 'INACTIVE')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.subscription_payments (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references auth.users(id) on delete set null,
+  plan text not null default '',
+  amount numeric not null default 0,
+  currency text not null default 'INR',
+  razorpay_payment_id text,
+  razorpay_order_id text,
+  razorpay_signature text,
+  status text not null default 'CREATED',
+  payment_payload jsonb not null default '{}',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.user_locations (
+  id uuid primary key default gen_random_uuid(),
+  owner_id uuid references auth.users(id) on delete set null,
+  latitude double precision not null,
+  longitude double precision not null,
+  address text,
+  created_at timestamptz not null default now()
+);
+
 create index if not exists service_posts_type_status_idx on public.service_posts (service_type, status);
 create index if not exists service_posts_type_category_idx on public.service_posts (service_type, category);
 create index if not exists service_posts_owner_idx on public.service_posts (owner_id);
@@ -193,6 +262,17 @@ create index if not exists transport_vehicles_type_idx on public.transport_vehic
 create index if not exists transport_vehicles_materials_idx on public.transport_vehicles using gin (material_types);
 create index if not exists transport_vehicles_location_idx on public.transport_vehicles (latitude, longitude);
 create index if not exists transport_vehicles_created_idx on public.transport_vehicles (created_at desc);
+create index if not exists drivers_status_idx on public.drivers (status);
+create index if not exists drivers_owner_idx on public.drivers (owner_id);
+create index if not exists drivers_vehicle_types_idx on public.drivers using gin (vehicle_types);
+create index if not exists drivers_location_idx on public.drivers (latitude, longitude);
+create index if not exists drivers_created_idx on public.drivers (created_at desc);
+create index if not exists advertisements_status_idx on public.advertisements (status);
+create index if not exists advertisements_owner_idx on public.advertisements (owner_id);
+create index if not exists advertisements_created_idx on public.advertisements (created_at desc);
+create index if not exists subscription_payments_owner_idx on public.subscription_payments (owner_id);
+create index if not exists subscription_payments_status_idx on public.subscription_payments (status);
+create index if not exists user_locations_owner_idx on public.user_locations (owner_id);
 
 create or replace function public.set_updated_at()
 returns trigger as $$
@@ -237,6 +317,21 @@ create trigger transport_vehicles_set_updated_at
 before update on public.transport_vehicles
 for each row execute function public.set_updated_at();
 
+drop trigger if exists drivers_set_updated_at on public.drivers;
+create trigger drivers_set_updated_at
+before update on public.drivers
+for each row execute function public.set_updated_at();
+
+drop trigger if exists advertisements_set_updated_at on public.advertisements;
+create trigger advertisements_set_updated_at
+before update on public.advertisements
+for each row execute function public.set_updated_at();
+
+drop trigger if exists subscription_payments_set_updated_at on public.subscription_payments;
+create trigger subscription_payments_set_updated_at
+before update on public.subscription_payments
+for each row execute function public.set_updated_at();
+
 alter table public.service_posts enable row level security;
 alter table public.service_calls enable row level security;
 alter table public.profiles enable row level security;
@@ -245,6 +340,10 @@ alter table public.skilled_workers enable row level security;
 alter table public.beauty_wellness_services enable row level security;
 alter table public.education_services enable row level security;
 alter table public.transport_vehicles enable row level security;
+alter table public.drivers enable row level security;
+alter table public.advertisements enable row level security;
+alter table public.subscription_payments enable row level security;
+alter table public.user_locations enable row level security;
 
 drop policy if exists "Read own profile" on public.profiles;
 create policy "Read own profile"
@@ -388,21 +487,91 @@ create policy "Delete own transport vehicles"
 on public.transport_vehicles for delete
 using (auth.uid() = owner_id);
 
+drop policy if exists "Read active drivers" on public.drivers;
+create policy "Read active drivers"
+on public.drivers for select
+using (status = 'ACTIVE' or auth.uid() = owner_id);
+
+drop policy if exists "Create own drivers" on public.drivers;
+create policy "Create own drivers"
+on public.drivers for insert
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Update own drivers" on public.drivers;
+create policy "Update own drivers"
+on public.drivers for update
+using (auth.uid() = owner_id)
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Delete own drivers" on public.drivers;
+create policy "Delete own drivers"
+on public.drivers for delete
+using (auth.uid() = owner_id);
+
+drop policy if exists "Read active advertisements" on public.advertisements;
+create policy "Read active advertisements"
+on public.advertisements for select
+using (status = 'ACTIVE' or auth.uid() = owner_id);
+
+drop policy if exists "Create own advertisements" on public.advertisements;
+create policy "Create own advertisements"
+on public.advertisements for insert
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Update own advertisements" on public.advertisements;
+create policy "Update own advertisements"
+on public.advertisements for update
+using (auth.uid() = owner_id)
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Read own subscription payments" on public.subscription_payments;
+create policy "Read own subscription payments"
+on public.subscription_payments for select
+using (auth.uid() = owner_id);
+
+drop policy if exists "Create own subscription payments" on public.subscription_payments;
+create policy "Create own subscription payments"
+on public.subscription_payments for insert
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Update own subscription payments" on public.subscription_payments;
+create policy "Update own subscription payments"
+on public.subscription_payments for update
+using (auth.uid() = owner_id)
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Create own user locations" on public.user_locations;
+create policy "Create own user locations"
+on public.user_locations for insert
+with check (auth.uid() = owner_id);
+
+drop policy if exists "Read own user locations" on public.user_locations;
+create policy "Read own user locations"
+on public.user_locations for select
+using (auth.uid() = owner_id);
+
 insert into storage.buckets (id, name, public)
-values ('service-images', 'service-images', true)
-on conflict (id) do nothing;
+values ('nearwages-images', 'nearwages-images', true)
+on conflict (id) do update
+set public = true;
 
 drop policy if exists "Public read service images" on storage.objects;
-create policy "Public read service images"
+drop policy if exists "Public read nearwages images" on storage.objects;
+create policy "Public read nearwages images"
 on storage.objects for select
-using (bucket_id = 'service-images');
+using (bucket_id = 'nearwages-images');
 
 drop policy if exists "Authenticated upload service images" on storage.objects;
-create policy "Authenticated upload service images"
+drop policy if exists "Authenticated upload nearwages images" on storage.objects;
+create policy "Authenticated upload nearwages images"
 on storage.objects for insert
-with check (bucket_id = 'service-images' and auth.role() = 'authenticated');
+with check (bucket_id = 'nearwages-images' and auth.role() = 'authenticated');
 
 drop policy if exists "Authenticated update service images" on storage.objects;
-create policy "Authenticated update service images"
+drop policy if exists "Authenticated update nearwages images" on storage.objects;
+create policy "Authenticated update nearwages images"
 on storage.objects for update
-using (bucket_id = 'service-images' and auth.role() = 'authenticated');
+using (bucket_id = 'nearwages-images' and auth.role() = 'authenticated')
+with check (bucket_id = 'nearwages-images' and auth.role() = 'authenticated');
+
+select pg_notify('pgrst', 'reload schema');

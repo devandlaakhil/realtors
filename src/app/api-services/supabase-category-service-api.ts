@@ -115,17 +115,13 @@ export class SupabaseCategoryServiceApi {
       imageUrl = await this.uploadImage(kind, imageFile, ownerId || 'guest');
     }
 
-    return {
+    const payload: Partial<CategoryServiceRow> = {
       owner_id: ownerId,
       name: raw.name || '',
       business_name: raw.businessName || '',
       mobile: raw.mobile || '',
       category: raw.category || '',
       additional_skills: Array.isArray(raw.additionalSkills) ? raw.additionalSkills : [],
-      service_for: raw.serviceFor || null,
-      home_service: !!raw.homeService,
-      teaching_mode: raw.teachingMode || null,
-      student_level: raw.studentLevel || null,
       experience: raw.experience ?? 0,
       starting_price: raw.startingPrice === '' ? null : Number(raw.startingPrice),
       village: raw.village || '',
@@ -136,6 +132,18 @@ export class SupabaseCategoryServiceApi {
       longitude: raw.longitude ?? null,
       ...(forceActive ? { status: 'ACTIVE' as const } : {})
     };
+
+    if (kind === 'beauty') {
+      payload.service_for = raw.serviceFor || null;
+      payload.home_service = !!raw.homeService;
+    }
+
+    if (kind === 'education') {
+      payload.teaching_mode = raw.teachingMode || null;
+      payload.student_level = raw.studentLevel || null;
+    }
+
+    return payload;
   }
 
   private uploadImage(kind: ServiceKind, file: File, ownerId: string): Promise<string> {

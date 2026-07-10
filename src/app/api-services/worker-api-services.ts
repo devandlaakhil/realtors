@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { API_CONSTANTS } from '../constants/realtors-services-api-constants';
 import { SupabaseWorkerApiService } from './supabase-worker-api-service';
 
@@ -9,56 +7,59 @@ import { SupabaseWorkerApiService } from './supabase-worker-api-service';
   providedIn: 'root',
 })
 export class WorkerApiServices {
-  private http = inject(HttpClient);
   private supabaseWorker = inject(SupabaseWorkerApiService);
 
-  private _serverPort = environment.serverPort;
-  private _apiUrl = 'worker-api-services';
-
-  private getUrl(endpoint: string): string {
-    return `${this._serverPort}/${this._apiUrl}/${endpoint}`;
-  }
-
   get<T>(endpoint: string, params?: any): Observable<T> {
-    if (this.supabaseWorker.enabled) {
-      if (endpoint === API_CONSTANTS.workerapiServices.getAll) {
-        return this.supabaseWorker.getAll(params) as Observable<T>;
-      }
-      if (endpoint === API_CONSTANTS.workerapiServices.getMyPostings) {
-        return this.supabaseWorker.getMine() as Observable<T>;
-      }
-      if (endpoint === API_CONSTANTS.workerapiServices.getSingleItem) {
-        return this.supabaseWorker.getSingle(params?.id) as Observable<T>;
-      }
+    if (!this.supabaseWorker.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.workerapiServices.getAll) {
+      return this.supabaseWorker.getAll(params) as Observable<T>;
     }
-    return this.http.get<T>(this.getUrl(endpoint), { params });
+    if (endpoint === API_CONSTANTS.workerapiServices.getMyPostings) {
+      return this.supabaseWorker.getMine() as Observable<T>;
+    }
+    if (endpoint === API_CONSTANTS.workerapiServices.getSingleItem) {
+      return this.supabaseWorker.getSingle(params?.id) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
   }
 
   post<T>(endpoint: string, body: any): Observable<T> {
-    if (this.supabaseWorker.enabled && endpoint === API_CONSTANTS.workerapiServices.save) {
+    if (!this.supabaseWorker.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.workerapiServices.save) {
       return this.supabaseWorker.create(body) as Observable<T>;
     }
-    return this.http.post<T>(this.getUrl(endpoint), body);
+    return this.unsupportedEndpoint(endpoint);
   }
 
   put<T>(endpoint: string, body: any): Observable<T> {
-    if (this.supabaseWorker.enabled && endpoint === API_CONSTANTS.workerapiServices.update) {
+    if (!this.supabaseWorker.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.workerapiServices.update) {
       return this.supabaseWorker.update(body) as Observable<T>;
     }
-    return this.http.put<T>(this.getUrl(endpoint), body);
+    return this.unsupportedEndpoint(endpoint);
   }
 
   patch<T>(endpoint: string, body: any): Observable<T> {
-    if (this.supabaseWorker.enabled && endpoint === API_CONSTANTS.workerapiServices.statusUpdate) {
+    if (!this.supabaseWorker.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.workerapiServices.statusUpdate) {
       return this.supabaseWorker.updateStatus(body?.id) as Observable<T>;
     }
-    return this.http.patch<T>(this.getUrl(endpoint), body);
+    return this.unsupportedEndpoint(endpoint);
   }
 
   delete<T>(endpoint: string,params?: any): Observable<T> {
-    if (this.supabaseWorker.enabled && endpoint === API_CONSTANTS.workerapiServices.delete) {
+    if (!this.supabaseWorker.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.workerapiServices.delete) {
       return this.supabaseWorker.delete(params?.id) as Observable<T>;
     }
-    return this.http.delete<T>(this.getUrl(endpoint),{ params });
-  } 
+    return this.unsupportedEndpoint(endpoint);
+  }
+
+  private notConfigured<T>(): Observable<T> {
+    return throwError(() => new Error('Supabase skilled worker services are not configured.'));
+  }
+
+  private unsupportedEndpoint<T>(endpoint: string): Observable<T> {
+    return throwError(() => new Error(`Unsupported skilled worker endpoint: ${endpoint}`));
+  }
 }

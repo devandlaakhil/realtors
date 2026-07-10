@@ -19,8 +19,10 @@ Update both environment files:
 ```ts
 supabaseUrl: 'https://your-project.supabase.co',
 supabaseAnonKey: 'your-anon-key',
-supabaseStorageBucket: 'service-images'
+supabaseStorageBucket: 'nearwages-images'
 ```
+
+If uploads fail with `Bucket not found`, confirm the bucket id is exactly `nearwages-images` in the same project ref used by `supabaseUrl`. Then run the storage section in `supabase/schema.sql`; it creates/updates the bucket as public and applies the object policies.
 
 ## 3. Client Services Added
 
@@ -31,6 +33,10 @@ supabaseStorageBucket: 'service-images'
 - `SupabaseWorkerApiService` powers Skilled Workers listing, create, edit, activate/deactivate, delete, and image upload.
 - `SupabaseCategoryServiceApi` powers Beauty & Wellness and Education, including their category-specific fields.
 - `SupabaseTransportApiService` powers Vehicles/Transportation, including materials, facilities, pricing, and location.
+- `SupabaseDriverApiService` powers Drivers.
+- `SupabaseAdvertisementApiService` powers home advertisements and media upload.
+- `SupabaseSubscriptionApiService` records subscription/payment attempts. Razorpay signature verification should be moved to a Supabase Edge Function for production security.
+- `SupabaseUserProfileApiService` powers profile reads/updates, password changes, and location/address storage.
 - Supabase endpoints are centralized in `src/app/constants/supabase.constants.ts`.
 
 ## 4. Important Auth Note

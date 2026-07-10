@@ -7,6 +7,12 @@ export interface TractorCard {
   distance: string;
   image: string;
   mobile: string;
+  vehicleType?: string;
+  brand?: string;
+  model?: string;
+  pricePerAcre?: number;
+  minimumBookingHours?: number;
+  description?: string;
   village?: string;
   mandal?: string;
   district?: string;

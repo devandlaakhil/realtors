@@ -1,38 +1,65 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Observable, throwError } from 'rxjs';
+import { API_CONSTANTS } from '../constants/realtors-services-api-constants';
+import { SupabaseCommercialVehicleApiService } from './supabase-commercial-vehicle-api-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RealtorsServicesApiServices {
-  private http = inject(HttpClient);
-
-  private _serverPort = environment.serverPort;
-  private _apiUrl = 'commercial-vehicle-services';
-
-  private getUrl(endpoint: string): string {
-    return `${this._serverPort}/${this._apiUrl}/${endpoint}`;
-  }
+  private supabaseCommercialVehicles = inject(SupabaseCommercialVehicleApiService);
 
   get<T>(endpoint: string, params?: any): Observable<T> {
-    return this.http.get<T>(this.getUrl(endpoint), { params });
+    if (!this.supabaseCommercialVehicles.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.list) {
+      return this.supabaseCommercialVehicles.list(params) as Observable<T>;
+    }
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.mylist) {
+      return this.supabaseCommercialVehicles.mine() as Observable<T>;
+    }
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.getSingleItem) {
+      return this.supabaseCommercialVehicles.single(params?.id) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
   }
 
   post<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.post<T>(this.getUrl(endpoint), body);
+    if (!this.supabaseCommercialVehicles.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.save) {
+      return this.supabaseCommercialVehicles.create(body) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
   }
 
   put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.put<T>(this.getUrl(endpoint), body);
+    if (!this.supabaseCommercialVehicles.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.updateItem) {
+      return this.supabaseCommercialVehicles.update(body) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
   }
 
   patch<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.patch<T>(this.getUrl(endpoint), body);
+    if (!this.supabaseCommercialVehicles.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.statusUpdate) {
+      return this.supabaseCommercialVehicles.toggleStatus(body?.id) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
   }
 
   delete<T>(endpoint: string,params?: any): Observable<T> {
-    return this.http.delete<T>(this.getUrl(endpoint),{ params });
+    if (!this.supabaseCommercialVehicles.enabled) return this.notConfigured();
+    if (endpoint === API_CONSTANTS.commercialVehicleServices.delete) {
+      return this.supabaseCommercialVehicles.delete(params?.id) as Observable<T>;
+    }
+    return this.unsupportedEndpoint(endpoint);
+  }
+
+  private notConfigured<T>(): Observable<T> {
+    return throwError(() => new Error('Supabase commercial vehicle services are not configured.'));
+  }
+
+  private unsupportedEndpoint<T>(endpoint: string): Observable<T> {
+    return throwError(() => new Error(`Unsupported commercial vehicle endpoint: ${endpoint}`));
   }
 }

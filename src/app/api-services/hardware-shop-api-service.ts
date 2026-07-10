@@ -1,65 +1,53 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { SupabaseHomeRepairApiService } from './supabase-home-repair-api-service';
 
 @Injectable({ providedIn: 'root' })
 export class HardwareShopApiService {
-  private readonly http = inject(HttpClient);
   private readonly supabaseHomeRepair = inject(SupabaseHomeRepairApiService);
-  private readonly baseUrl = `${environment.serverPort}/shop-services`;
-
-  private getUrl(endpoint: string): string {
-    return `${this.baseUrl}/${endpoint}`;
-  }
+  private readonly useSupabaseHomeRepair = environment.supabaseFeatures?.homeRepairServices ?? true;
 
   getNearby(params?: { lat?: number; lng?: number; repairType?: string }): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.getNearby(params);
-    }
-    return this.http.get(`${this.baseUrl}/get-shops`, { params });
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.getNearby(params);
   }
 
   create(body: FormData): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.create(body);
-    }
-    return this.http.post(`${this.baseUrl}/create-shop`, body);
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.create(body);
   }
 
   getMyShops(): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.getMyShops();
-    }
-    return this.http.get(`${this.baseUrl}/get-my-shops`);
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.getMyShops();
   }
 
   SingleShop<T>(endpoint: string, params?: any): Observable<T> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.getSingle(params?.id) as Observable<T>;
-    }
-    return this.http.get<T>(this.getUrl(endpoint), { params });
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.getSingle(params?.id) as Observable<T>;
   }
 
   update(body: FormData): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.update(body);
-    }
-    return this.http.put(`${this.baseUrl}/update-shop`, body);
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.update(body);
   }
 
   updateStatus(id: string): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.updateStatus(id);
-    }
-    return this.http.patch(`${this.baseUrl}/update-shop-status`, { id });
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.updateStatus(id);
   }
 
   deleteShop(id: string): Observable<any> {
-    if (this.supabaseHomeRepair.enabled) {
-      return this.supabaseHomeRepair.deleteShop(id);
-    }
-    return this.http.delete(`${this.baseUrl}/delete-shop`, { params: { id } });
+    if (!this.isSupabaseEnabled()) return this.notConfigured();
+    return this.supabaseHomeRepair.deleteShop(id);
+  }
+
+  private isSupabaseEnabled(): boolean {
+    return this.useSupabaseHomeRepair && this.supabaseHomeRepair.enabled;
+  }
+
+  private notConfigured<T>(): Observable<T> {
+    return throwError(() => new Error('Supabase home repair services are not configured.'));
   }
 }

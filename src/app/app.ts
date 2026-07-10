@@ -26,9 +26,11 @@ export class App implements OnInit, OnDestroy {
   readonly locationPromptMessage = signal('');
   readonly checkingLocation = signal(false);
   private backButtonListener?: PluginListenerHandle;
+  private readonly locationOkStorageKey = 'nearwages.location.okAt';
+  private readonly locationFreshMs = 30 * 1000;
   private readonly visibilityHandler = () => {
-    if (document.visibilityState === 'visible' && this.showLocationPrompt()) {
-      this.checkLocation();
+    if (document.visibilityState === 'visible') {
+      this.checkLocation({ force: this.showLocationPrompt() });
     }
   };
 
@@ -61,8 +63,17 @@ export class App implements OnInit, OnDestroy {
     document.removeEventListener('visibilitychange', this.visibilityHandler);
   }
 
-  checkLocation(): void {
+  checkLocation(options: { force?: boolean } = {}): void {
     if (!navigator.geolocation || this.checkingLocation()) {
+      if (!navigator.geolocation) {
+        this.blockForLocation('Location is required for NearWages, but this device or browser does not support location.');
+      }
+      return;
+    }
+
+    if (!options.force && this.hasFreshLocationCheck()) {
+      this.showLocationPrompt.set(false);
+      this.locationPromptMessage.set('');
       return;
     }
 
@@ -72,17 +83,32 @@ export class App implements OnInit, OnDestroy {
         this.checkingLocation.set(false);
         this.showLocationPrompt.set(false);
         this.locationPromptMessage.set('');
+        this.rememberLocationOk();
       },
       (error) => {
         this.checkingLocation.set(false);
-        this.showLocationPrompt.set(true);
-        this.locationPromptMessage.set(
+        sessionStorage.removeItem(this.locationOkStorageKey);
+        this.blockForLocation(
           error.code === error.PERMISSION_DENIED
             ? 'Location permission is blocked. Allow location for NearWages in your browser or app settings, then tap Retry.'
-            : 'Your phone location service appears to be turned off. Turn on Location/GPS in Quick Settings or Settings, then tap Retry.',
+            : 'Your phone location service appears to be turned off. Turn on Location/GPS in Quick Settings or Settings, then tap Retry.'
         );
       },
-      { enableHighAccuracy: false, timeout: 2500, maximumAge: 120000 },
+      { enableHighAccuracy: false, timeout: 12000, maximumAge: this.locationFreshMs },
     );
+  }
+
+  private hasFreshLocationCheck(): boolean {
+    const lastOkAt = Number(sessionStorage.getItem(this.locationOkStorageKey) || 0);
+    return Number.isFinite(lastOkAt) && Date.now() - lastOkAt < this.locationFreshMs;
+  }
+
+  private rememberLocationOk(): void {
+    sessionStorage.setItem(this.locationOkStorageKey, String(Date.now()));
+  }
+
+  private blockForLocation(message: string): void {
+    this.showLocationPrompt.set(true);
+    this.locationPromptMessage.set(message);
   }
 }

@@ -52,9 +52,9 @@ export class TractorServiceComponent implements OnInit {
   phoneCall = inject(MobileDialpadService);
   route = inject(ActivatedRoute);
   showMap: boolean = false;
-  zoom: number = 0;
-  selectedLocation: any = { lat: '', lng: '' };
-  center: any;
+  zoom: number = 12;
+  selectedLocation: { lat: number; lng: number } | null = null;
+  center: { lat: number; lng: number } = { lat: 17.385, lng: 78.4867 };
   tractors: TractorCard[] = [];
   selectedTractor: TractorCard | null = null;
   totalAvailTractors: number = 0;
@@ -170,8 +170,8 @@ export class TractorServiceComponent implements OnInit {
     const locationParams =
       Number.isFinite(Number(this.selectedLocation?.lat)) &&
       Number.isFinite(Number(this.selectedLocation?.lng)) &&
-      this.selectedLocation.lat !== '' &&
-      this.selectedLocation.lng !== ''
+      this.selectedLocation?.lat !== undefined &&
+      this.selectedLocation?.lng !== undefined
         ? { lat: this.selectedLocation.lat, lng: this.selectedLocation.lng }
         : undefined;
 
@@ -186,11 +186,18 @@ export class TractorServiceComponent implements OnInit {
             name: tractor.title,
             owner: tractor.ownerName,
             price: tractor.pricePerHour,
+            pricePerAcre: tractor.pricePerAcre,
+            minimumBookingHours: tractor.minimumBookingHours,
+            vehicleType: tractor.vehicleType,
+            brand: tractor.brand,
+            model: tractor.model,
+            description: tractor.description,
             rating: tractor.averageRating,
             mobile: tractor.mobileNumber,
             distance: `${tractor.distanceKm} km`,
-            village: tractor.location.village,
-            district: tractor.location.district,
+            village: tractor.location?.village,
+            mandal: tractor.location?.mandal,
+            district: tractor.location?.district,
             registrationNumber: tractor.registrationNumber,
             addOns: [
               tractor.includesDriver && {
@@ -215,8 +222,8 @@ export class TractorServiceComponent implements OnInit {
               },
             ].filter(Boolean),
             image: tractor.images?.[0]?.url || 'assets/images/no-image.png',
-            lng: tractor.location.coordinates.coordinates[0],
-            lat: tractor.location.coordinates.coordinates[1],
+            lng: tractor.location?.coordinates?.coordinates?.[0] ?? 0,
+            lat: tractor.location?.coordinates?.coordinates?.[1] ?? 0,
           }));
           this.loaderService.hide();
         },
@@ -306,18 +313,8 @@ export class TractorServiceComponent implements OnInit {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         this.center = { lat, lng };
-        this.selectedLocation = { lat, lng };
+        this.setSelectedLocation(lat, lng);
         this.getAllNearByTractors();
-        this.tractorForm.patchValue({
-          location: {
-            latitude: lat,
-            longitude: lng,
-            geoLocation: {
-              type: 'Point',
-              coordinates: [lng, lat],
-            },
-          },
-        });
 
         if (showMap) {
           this.zoom = 15;
@@ -337,14 +334,13 @@ export class TractorServiceComponent implements OnInit {
 
   onMapsToggle(event: MatCheckboxChange): void {
     if (event.checked) {
-      // If location already exists
       if (this.selectedLocation) {
         this.zoom = 15;
         this.showMap = true;
-
         return;
       }
-      // First time location fetch
+      this.center = this.center || { lat: 17.385, lng: 78.4867 };
+      this.showMap = true;
       this.getCurrentLocation(true);
     } else {
       this.showMap = false;
@@ -353,20 +349,25 @@ export class TractorServiceComponent implements OnInit {
 
   markerDragged(event: google.maps.MapMouseEvent) {
     if (!event.latLng) return;
-    this.selectedLocation = {
-      lat: event.latLng.lat(),
-      lng: event.latLng.lng(),
-    };
+    this.setSelectedLocation(event.latLng.lat(), event.latLng.lng());
+  }
 
+  mapClicked(event: google.maps.MapMouseEvent): void {
+    if (!event.latLng) return;
+    this.setSelectedLocation(event.latLng.lat(), event.latLng.lng());
+  }
+
+  private setSelectedLocation(lat: number, lng: number): void {
+    this.selectedLocation = { lat, lng };
+    this.center = { lat, lng };
     this.tractorForm.patchValue(
       {
         location: {
-          latitude: event.latLng.lat(),
-          longitude: event.latLng.lng(),
-
+          latitude: lat,
+          longitude: lng,
           geoLocation: {
             type: 'Point',
-            coordinates: [this.selectedLocation.lng, this.selectedLocation.lat],
+            coordinates: [lng, lat],
           },
         },
       },
