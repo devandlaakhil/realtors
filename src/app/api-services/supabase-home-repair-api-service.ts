@@ -3,6 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { isWithinServiceRadius } from '../shared-services/distance-utils';
 
 export interface SupabaseHomeRepairService {
   id?: string;
@@ -42,6 +43,7 @@ export class SupabaseHomeRepairApiService {
       order: 'created_at.desc'
     }).pipe(
       map((rows) => rows
+        .filter((row) => isWithinServiceRadius(params, row.latitude, row.longitude))
         .filter((row) => !params?.repairType || (row.products || []).includes(params.repairType))
         .map((row) => this.toComponentShop(row))
       ),

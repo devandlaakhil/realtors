@@ -3,6 +3,7 @@ import { BehaviorSubject, catchError, from, map, Observable, shareReplay, switch
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { isWithinServiceRadius } from '../shared-services/distance-utils';
 
 export type DynamicFieldType =
   | 'text'
@@ -166,7 +167,11 @@ export class DynamicCategoryApiService {
         order: 'created_at.desc'
       });
 
-    return select$.pipe(map((rows) => ({ data: rows.map((row) => this.toPost(row)) })));
+    return select$.pipe(map((rows) => ({
+      data: rows
+        .filter((row) => params?.mine || isWithinServiceRadius(params, row.latitude, row.longitude))
+        .map((row) => this.toPost(row))
+    })));
   }
 
   createPost(slug: string, body: FormData): Observable<any> {

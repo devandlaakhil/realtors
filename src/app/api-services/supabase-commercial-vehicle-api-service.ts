@@ -3,6 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { distanceKm, isWithinServiceRadius } from '../shared-services/distance-utils';
 
 interface CommercialVehicleRow {
   id?: string;
@@ -58,7 +59,9 @@ export class SupabaseCommercialVehicleApiService {
       filters: { status: 'ACTIVE' },
       order: 'created_at.desc'
     }).pipe(map((rows) => {
-      const data = rows.map((row) => this.toComponent(row, params));
+      const data = rows
+        .filter((row) => isWithinServiceRadius(params, row.latitude, row.longitude))
+        .map((row) => this.toComponent(row, params));
       return { data, count: data.length };
     }));
   }
@@ -187,7 +190,7 @@ export class SupabaseCommercialVehicleApiService {
 
   private toComponent(row?: CommercialVehicleRow | null, params?: any): any {
     if (!row) return null;
-    const distanceKm = this.distanceKm(params?.lat, params?.lng, row.latitude, row.longitude);
+    const providerDistanceKm = distanceKm(params?.lat, params?.lng, row.latitude, row.longitude);
     return {
       id: row.id,
       _id: row.id,
@@ -228,20 +231,10 @@ export class SupabaseCommercialVehicleApiService {
       images: (row.images || []).map((url) => ({ url })),
       status: row.status,
       averageRating: 0,
-      distanceKm: distanceKm == null ? 0 : Number(distanceKm.toFixed(1)),
+      distanceKm: providerDistanceKm == null ? 0 : Number(providerDistanceKm.toFixed(1)),
       createdAt: row.created_at,
       updatedAt: row.updated_at
     };
-  }
-
-  private distanceKm(lat1?: number, lng1?: number, lat2?: number | null, lng2?: number | null): number | null {
-    if ([lat1, lng1, lat2, lng2].some((value) => value == null || !Number.isFinite(Number(value)))) return null;
-    const rad = Math.PI / 180;
-    const dLat = (Number(lat2) - Number(lat1)) * rad;
-    const dLng = (Number(lng2) - Number(lng1)) * rad;
-    const a = Math.sin(dLat / 2) ** 2 +
-      Math.cos(Number(lat1) * rad) * Math.cos(Number(lat2) * rad) * Math.sin(dLng / 2) ** 2;
-    return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
   private requireToken(): string {

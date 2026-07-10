@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { SUPABASE_TABLES, SupabaseServiceType } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { isWithinServiceRadius, SearchCoordinates } from '../shared-services/distance-utils';
 
 export type SupabasePostStatus = 'ACTIVE' | 'INACTIVE';
 
@@ -26,11 +27,12 @@ export interface SupabaseServicePost {
   updated_at?: string;
 }
 
-export interface SupabasePostListOptions {
+export interface SupabasePostListOptions extends SearchCoordinates {
   category?: string;
   ownerId?: string;
   activeOnly?: boolean;
   limit?: number;
+  radiusKm?: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -49,7 +51,10 @@ export class SupabaseServicePostsApiService {
       filters,
       order: 'created_at.desc',
       limit: options.limit
-    });
+    }).pipe(map((rows) => {
+      if (options.ownerId || options.activeOnly === false) return rows;
+      return rows.filter((row) => isWithinServiceRadius(options, row.latitude, row.longitude, options.radiusKm));
+    }));
   }
 
   mine(serviceType: SupabaseServiceType | string, ownerId: string): Observable<SupabaseServicePost[]> {

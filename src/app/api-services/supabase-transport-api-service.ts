@@ -3,6 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { isWithinServiceRadius } from '../shared-services/distance-utils';
 
 interface TransportVehicleRow {
   id?: string;
@@ -47,7 +48,11 @@ export class SupabaseTransportApiService {
     return this.supabase.select<TransportVehicleRow>(this.table, {
       filters: { status: 'ACTIVE' },
       order: 'created_at.desc'
-    }).pipe(map((rows) => ({ data: rows.map((row) => this.toComponentVehicle(row)) })));
+    }).pipe(map((rows) => ({
+      data: rows
+        .filter((row) => isWithinServiceRadius(params, row.latitude, row.longitude))
+        .map((row) => this.toComponentVehicle(row))
+    })));
   }
 
   mine(): Observable<{ data: any[] }> {
