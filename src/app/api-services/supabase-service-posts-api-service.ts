@@ -1,8 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { SUPABASE_TABLES, SupabaseServiceType } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
 import { isWithinServiceRadius, SearchCoordinates } from '../shared-services/distance-utils';
+import { AuthService } from '../auth-services/auth-services';
+import { PostingAccessService } from '../shared-services/posting-access.service';
 
 export type SupabasePostStatus = 'ACTIVE' | 'INACTIVE';
 
@@ -38,6 +41,8 @@ export interface SupabasePostListOptions extends SearchCoordinates {
 @Injectable({ providedIn: 'root' })
 export class SupabaseServicePostsApiService {
   private readonly client = inject(SupabaseClientService);
+  private readonly auth = inject(AuthService);
+  private readonly postingAccess = inject(PostingAccessService);
   private readonly table = SUPABASE_TABLES.servicePosts;
 
   list(serviceType: SupabaseServiceType | string, options: SupabasePostListOptions = {}): Observable<SupabaseServicePost[]> {
@@ -62,11 +67,15 @@ export class SupabaseServicePostsApiService {
   }
 
   create(post: SupabaseServicePost): Observable<SupabaseServicePost> {
-    return this.client.insert<SupabaseServicePost>(this.table, {
-      ...post,
-      status: post.status || 'ACTIVE',
-      payload: post.payload || {}
-    }).pipe(map(rows => rows[0]));
+    return this.postingAccess.assertCanCreatePost().pipe(
+      switchMap(() => this.client.insertWithAuth<SupabaseServicePost>(this.table, {
+        ...post,
+        owner_id: post.owner_id || this.auth.getUser()?.id || null,
+        status: post.status || 'ACTIVE',
+        payload: post.payload || {}
+      }, this.requireToken())),
+      map(rows => rows[0])
+    );
   }
 
   update(id: string, patch: Partial<SupabaseServicePost>): Observable<SupabaseServicePost> {
@@ -85,5 +94,11 @@ export class SupabaseServicePostsApiService {
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '-');
     const path = `${serviceType}/${ownerId}/${Date.now()}-${safeName}`;
     return this.client.upload(file, path).pipe(map(() => this.client.publicUrl(path)));
+  }
+
+  private requireToken(): string {
+    const token = this.auth.getToken();
+    if (!token) throw new Error('Please login before posting.');
+    return token;
   }
 }

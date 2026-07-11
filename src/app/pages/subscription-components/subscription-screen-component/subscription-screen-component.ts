@@ -73,14 +73,19 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          const options = {
+          const order = res?.order || {};
+          const localOrderId = res?.data?.id || order.id;
+          const options: any = {
             key: 'rzp_live_T4Ir9tXg8h5845',
 
-            amount: res.order.amount,
+            amount: order.amount,
 
-            currency: res.order.currency,
+            currency: order.currency || 'INR',
 
-            order_id: res.order.id,
+            notes: {
+              local_order_id: localOrderId,
+              plan: this.selectedPlan,
+            },
 
             name: 'Realtor App',
 
@@ -132,7 +137,9 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
 
             handler: (paymentResponse: any) => {
               const payload = {
-                razorpay_order_id: paymentResponse.razorpay_order_id,
+                order_id: localOrderId,
+
+                razorpay_order_id: paymentResponse.razorpay_order_id || localOrderId,
 
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,
 
@@ -157,6 +164,10 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
                 });
             },
           };
+
+          if (typeof order.id === 'string' && order.id.startsWith('order_')) {
+            options.order_id = order.id;
+          }
 
           const rzp = new Razorpay(options);
 

@@ -15,11 +15,11 @@ export class SupabaseUserProfileApiService {
 
   getProfile(): Observable<any> {
     const user = this.auth.getUser();
-    if (!user?.id) return of({ data: null });
+    if (!user?.id) return of(null);
     return this.supabase.selectWithAuth<any>(SUPABASE_TABLES.profiles, this.requireToken(), {
       filters: { id: user.id },
       limit: 1
-    }).pipe(map((rows) => ({ data: rows[0] || user })));
+    }).pipe(map((rows) => this.toUser(rows[0] || user)));
   }
 
   updateProfile(data: any): Observable<any> {
@@ -28,7 +28,8 @@ export class SupabaseUserProfileApiService {
       id: user?.id,
       name: data.name || data.userName || '',
       email: data.email || user?.email || '',
-      mobile: data.mobile || data.mobileNumber || ''
+      mobile: data.mobile || data.mobileNumber || '',
+      about: data.about || ''
     };
 
     return this.supabase.updateWithAuth<any>(SUPABASE_TABLES.profiles, user?.id, profile, this.requireToken()).pipe(
@@ -36,10 +37,11 @@ export class SupabaseUserProfileApiService {
         const nextUser = {
           id: user?.id,
           name: rows[0]?.name || profile.name,
-          email: rows[0]?.email || profile.email
+          email: rows[0]?.email || profile.email,
+          mobile: rows[0]?.mobile || profile.mobile
         };
         this.auth.setUser(nextUser as any);
-        return { data: rows[0] || profile };
+        return this.toUser(rows[0] || profile);
       })
     );
   }
@@ -70,5 +72,22 @@ export class SupabaseUserProfileApiService {
     const token = this.auth.getToken();
     if (!token) throw new Error('Please login first.');
     return token;
+  }
+
+  private toUser(row: any): any {
+    return {
+      id: row?.id || '',
+      name: row?.name || '',
+      email: row?.email || '',
+      mobile: row?.mobile || '',
+      about: row?.about || '',
+      subscription: {
+        plan: row?.subscription_plan || 'FREE',
+        startDate: row?.subscription_start_date || null,
+        endDate: row?.subscription_end_date || null
+      },
+      createdAt: row?.created_at || null,
+      updatedAt: row?.updated_at || null
+    };
   }
 }

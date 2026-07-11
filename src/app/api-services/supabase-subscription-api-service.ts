@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, of, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
@@ -14,13 +14,13 @@ export class SupabaseSubscriptionApiService {
   }
 
   createOrder(plan: string): Observable<any> {
-    const amount = plan === 'ADVERTISEMENT_POST' ? 200 : 0;
+    const amount = this.amountForPlan(plan);
     return this.supabase.insertWithAuth<any>(SUPABASE_TABLES.subscriptionPayments, {
-      owner_id: this.auth.getUser()?.id || null,
+      userid: this.auth.getUser()?.id || null,
       plan,
       amount,
       currency: 'INR',
-      status: 'CREATED'
+      status: 'PENDING'
     }, this.requireToken()).pipe(
       map((rows) => ({
         data: rows[0],
@@ -34,27 +34,56 @@ export class SupabaseSubscriptionApiService {
   }
 
   verifyPayment(payload: any): Observable<any> {
-    const id = payload?.razorpay_order_id || payload?.order_id;
+    const id = payload?.order_id || payload?.razorpay_order_id;
     const body = {
       razorpay_payment_id: payload?.razorpay_payment_id || '',
       razorpay_order_id: payload?.razorpay_order_id || id || '',
       razorpay_signature: payload?.razorpay_signature || '',
-      status: 'PAID',
+      status: 'SUCCESS',
       payment_payload: payload || {}
     };
 
     if (id) {
       return this.supabase.updateWithAuth<any>(SUPABASE_TABLES.subscriptionPayments, id, body, this.requireToken())
-        .pipe(map((rows) => ({ data: rows[0], verified: true })));
+        .pipe(switchMap((rows) => this.activateSubscription(rows[0])));
     }
 
     return this.supabase.insertWithAuth<any>(SUPABASE_TABLES.subscriptionPayments, {
-      owner_id: this.auth.getUser()?.id || null,
+      userid: this.auth.getUser()?.id || null,
       plan: 'UNKNOWN',
       amount: 0,
       currency: 'INR',
       ...body
-    }, this.requireToken()).pipe(map((rows) => ({ data: rows[0], verified: true })));
+    }, this.requireToken()).pipe(switchMap((rows) => this.activateSubscription(rows[0])));
+  }
+
+  private amountForPlan(plan: string): number {
+    const amounts: Record<string, number> = {
+      PROPERTY_PRO: 100,
+      SERVICE_PRO: 200,
+      BUSINESS_PRO: 500,
+      ADVERTISEMENT_POST: 200
+    };
+
+    return amounts[plan] ?? 0;
+  }
+
+  private activateSubscription(payment: any): Observable<any> {
+    if (!payment || payment.plan === 'ADVERTISEMENT_POST') {
+      return of({ data: payment, verified: true });
+    }
+
+    const start = new Date();
+    const end = new Date(start);
+    end.setFullYear(end.getFullYear() + 1);
+
+    return this.supabase.updateWithAuth<any>(SUPABASE_TABLES.profiles, this.auth.getUser()?.id || '', {
+      subscription_plan: payment.plan,
+      subscription_start_date: start.toISOString(),
+      subscription_end_date: end.toISOString()
+    }, this.requireToken()).pipe(
+      map((profiles) => ({ data: payment, profile: profiles[0], verified: true }))
+    );
   }
 
   private requireToken(): string {

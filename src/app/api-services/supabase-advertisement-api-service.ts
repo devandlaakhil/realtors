@@ -3,11 +3,13 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
+import { PostingAccessService } from '../shared-services/posting-access.service';
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseAdvertisementApiService {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private readonly postingAccess = inject(PostingAccessService);
   private readonly table = SUPABASE_TABLES.advertisements;
 
   get enabled(): boolean {
@@ -22,7 +24,8 @@ export class SupabaseAdvertisementApiService {
   }
 
   create(body: FormData): Observable<{ data: any }> {
-    return from(this.formDataToPayload(body)).pipe(
+    return this.postingAccess.assertCanCreatePost().pipe(
+      switchMap(() => from(this.formDataToPayload(body))),
       switchMap((payload) => this.supabase.insertWithAuth<any>(this.table, payload, this.requireToken())),
       map((rows) => ({ data: this.toComponent(rows[0]) }))
     );

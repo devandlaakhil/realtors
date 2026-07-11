@@ -4,6 +4,7 @@ import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
 import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { PostingAccessService } from '../shared-services/posting-access.service';
 
 export type DynamicFieldType =
   | 'text'
@@ -71,6 +72,7 @@ interface DynamicPostRow {
 export class DynamicCategoryApiService {
   private supabase = inject(SupabaseClientService);
   private auth = inject(AuthService);
+  private postingAccess = inject(PostingAccessService);
   private categoriesSubject = new BehaviorSubject<DynamicServiceCategory[]>([]);
   private publishedRequest$: Observable<any> | null = null;
   readonly categories$ = this.categoriesSubject.asObservable();
@@ -176,7 +178,8 @@ export class DynamicCategoryApiService {
 
   createPost(slug: string, body: FormData): Observable<any> {
     if (!this.supabase.enabled) return this.notConfigured();
-    return from(this.formDataToPostPayload(slug, body)).pipe(
+    return this.postingAccess.assertCanCreatePost().pipe(
+      switchMap(() => from(this.formDataToPostPayload(slug, body))),
       switchMap((payload) => this.supabase.insertWithAuth<DynamicPostRow>(
         SUPABASE_TABLES.dynamicServicePosts,
         payload,

@@ -4,6 +4,7 @@ import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
 import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { PostingAccessService } from '../shared-services/posting-access.service';
 
 type ServiceKind = 'beauty' | 'education';
 type Status = 'ACTIVE' | 'INACTIVE';
@@ -37,6 +38,7 @@ interface CategoryServiceRow {
 export class SupabaseCategoryServiceApi {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private readonly postingAccess = inject(PostingAccessService);
 
   get enabled(): boolean {
     return this.supabase.enabled;
@@ -71,7 +73,8 @@ export class SupabaseCategoryServiceApi {
   }
 
   create(kind: ServiceKind, body: FormData): Observable<{ data: any }> {
-    return from(this.formDataToPayload(kind, body)).pipe(
+    return this.postingAccess.assertCanCreatePost().pipe(
+      switchMap(() => from(this.formDataToPayload(kind, body))),
       switchMap((payload) => this.supabase.insertWithAuth<CategoryServiceRow>(
         this.table(kind),
         payload,

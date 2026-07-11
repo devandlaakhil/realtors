@@ -4,6 +4,7 @@ import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
 import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { PostingAccessService } from '../shared-services/posting-access.service';
 
 export interface SupabaseSkilledWorker {
   id?: string;
@@ -32,6 +33,7 @@ export interface SupabaseSkilledWorker {
 export class SupabaseWorkerApiService {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private readonly postingAccess = inject(PostingAccessService);
   private readonly table = SUPABASE_TABLES.skilledWorkers;
 
   get enabled(): boolean {
@@ -64,7 +66,8 @@ export class SupabaseWorkerApiService {
   }
 
   create(body: FormData): Observable<{ data: any }> {
-    return from(this.formDataToPayload(body)).pipe(
+    return this.postingAccess.assertCanCreatePost().pipe(
+      switchMap(() => from(this.formDataToPayload(body))),
       switchMap((payload) => this.supabase.insertWithAuth<SupabaseSkilledWorker>(
         this.table,
         payload,

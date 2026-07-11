@@ -10,7 +10,8 @@ export const SUPABASE_TABLES = {
   commercialVehicles: 'commercial_vehicles',
   drivers: 'drivers',
   advertisements: 'advertisements',
-  subscriptionPayments: 'subscription_payments',
+  payments: 'payments',
+  subscriptionPayments: 'payments',
   userLocations: 'user_locations',
   dynamicServiceCategories: 'dynamic_service_categories',
   dynamicServicePosts: 'dynamic_service_posts'
