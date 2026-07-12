@@ -77,20 +77,14 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
           const localOrderId = res?.data?.id || order.id;
           const options: any = {
             key: 'rzp_live_T4Ir9tXg8h5845',
-
             amount: order.amount,
-
             currency: order.currency || 'INR',
-
             notes: {
               local_order_id: localOrderId,
               plan: this.selectedPlan,
             },
-
             name: 'Realtor App',
-
             description: this.selectedPlan,
-
             method: {
               upi: true,
               card: true,
@@ -98,7 +92,6 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
               wallet: true,
               paylater: true,
             },
-
             config: {
               display: {
                 blocks: {
@@ -118,47 +111,37 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
                 },
               },
             },
-
             prefill: {
               name: this.user?.name || '',
               email: this.user?.email || '',
               contact: this.user?.mobile || '',
             },
-
             theme: {
               color: '#2563eb',
             },
-
             modal: {
               ondismiss: () => {
                 this.toastr.info('Payment cancelled');
               },
             },
-
             handler: (paymentResponse: any) => {
               const payload = {
                 order_id: localOrderId,
-
                 razorpay_order_id: paymentResponse.razorpay_order_id || localOrderId,
-
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,
-
                 razorpay_signature: paymentResponse.razorpay_signature,
               };
-
               this.subscriptionApiSrv
                 .verifyPayment(payload)
                 .pipe(takeUntil(this.destroy$))
                 .subscribe({
                   next: () => {
                     this.toastr.success('Subscription Activated Successfully');
-
                     // refresh subscription info if needed
                   },
 
                   error: (err) => {
                     console.error(err);
-
                     this.toastr.error('Payment Verification Failed');
                   },
                 });

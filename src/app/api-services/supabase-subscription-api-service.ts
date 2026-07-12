@@ -76,13 +76,20 @@ export class SupabaseSubscriptionApiService {
     const start = new Date();
     const end = new Date(start);
     end.setFullYear(end.getFullYear() + 1);
-
-    return this.supabase.updateWithAuth<any>(SUPABASE_TABLES.profiles, this.auth.getUser()?.id || '', {
-      subscription_plan: payment.plan,
+    const subscriptionPatch = {
       subscription_start_date: start.toISOString(),
-      subscription_end_date: end.toISOString()
-    }, this.requireToken()).pipe(
-      map((profiles) => ({ data: payment, profile: profiles[0], verified: true }))
+      subscription_end_date: end.toISOString(),
+      expires_at: end.toISOString()
+    };
+
+    return this.supabase.updateWithAuth<any>(SUPABASE_TABLES.subscriptionPayments, payment.id, subscriptionPatch, this.requireToken()).pipe(
+      switchMap((payments) => this.supabase.updateWithAuth<any>(SUPABASE_TABLES.profiles, this.auth.getUser()?.id || '', {
+        subscription_plan: payment.plan,
+        subscription_start_date: subscriptionPatch.subscription_start_date,
+        subscription_end_date: subscriptionPatch.subscription_end_date
+      }, this.requireToken()).pipe(
+        map((profiles) => ({ data: payments[0] || payment, profile: profiles[0], verified: true }))
+      ))
     );
   }
 
