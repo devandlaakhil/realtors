@@ -9,13 +9,13 @@
   width: 100%;
   max-width: 920px;
   margin: 0 auto;
-  padding: 4px 0 12px;
+  padding: 4px 10px 12px;
 }
 
 .services-welcome {
   display: flex;
-  min-height: 250px;
-  padding: 22px;
+  min-height: 150px;
+  padding: 18px;
   border-radius: 22px;
   background: linear-gradient(135deg, #4f46e5, #2563eb);
   color: #fff;
@@ -60,7 +60,7 @@
   border-radius: 20px;
   background: linear-gradient(145deg, #fffdf8, #f3faf6);
   box-shadow: var(--elevation-1);
-  margin: 10px;
+  margin: 0;
 }
 
 .daily-needs-card > header {
@@ -151,7 +151,7 @@
   border-radius: 20px;
   background: var(--md-surface-container);
   box-shadow: var(--elevation-1);
-  margin:10px;
+  margin: 0;
 }
 
 .category-section-head {
@@ -313,7 +313,7 @@
 }
 
 @media (max-width: 380px) {
-  .services-welcome { min-height: 122px; padding: 17px; border-radius: 18px; }
+  .services-welcome { min-height: 124px; padding: 15px; border-radius: 18px; }
   .welcome-location { width: 44px; height: 44px; flex-basis: 44px; font-size: 1.5rem; }
   .category-section { padding: 12px 8px; }
   .category-item-grid { gap-inline: 4px; }
