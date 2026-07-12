@@ -16,6 +16,10 @@ interface ProfileSubscription {
 export class PostingAccessService {
   private readonly auth = inject(AuthService);
   private readonly supabase = inject(SupabaseClientService);
+  private cachedOwnerId = '';
+  private cachedPostCount = 0;
+  private cachedPostCountAt = 0;
+  private readonly cacheMs = 15000;
 
   private readonly postTables = [
     SUPABASE_TABLES.servicePosts,
@@ -64,6 +68,10 @@ export class PostingAccessService {
   }
 
   private getTotalPostCount(token: string, ownerId: string): Observable<number> {
+    if (this.cachedOwnerId === ownerId && Date.now() - this.cachedPostCountAt < this.cacheMs) {
+      return of(this.cachedPostCount);
+    }
+
     const requests = this.postTables.map((table) =>
       this.supabase.selectWithAuth<{ id: string }>(table, token, {
         select: 'id',
@@ -74,7 +82,13 @@ export class PostingAccessService {
       )
     );
 
-    return forkJoin(requests).pipe(map((counts) => counts.reduce((sum, count) => sum + count, 0)));
+    return forkJoin(requests).pipe(map((counts) => {
+      const total = counts.reduce((sum, count) => sum + count, 0);
+      this.cachedOwnerId = ownerId;
+      this.cachedPostCount = total;
+      this.cachedPostCountAt = Date.now();
+      return total;
+    }));
   }
 
   private hasActivePaidPlan(profile: ProfileSubscription | null): boolean {

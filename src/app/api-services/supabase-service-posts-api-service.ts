@@ -3,7 +3,7 @@ import { Observable, map } from 'rxjs';
 import { switchMap } from 'rxjs';
 import { SUPABASE_TABLES, SupabaseServiceType } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
-import { isWithinServiceRadius, SearchCoordinates } from '../shared-services/distance-utils';
+import { isWithinServiceRadius, radiusBoundingBox, SearchCoordinates } from '../shared-services/distance-utils';
 import { AuthService } from '../auth-services/auth-services';
 import { PostingAccessService } from '../shared-services/posting-access.service';
 
@@ -54,6 +54,7 @@ export class SupabaseServicePostsApiService {
 
     return this.client.select<SupabaseServicePost>(this.table, {
       filters,
+      filterOps: options.ownerId || options.activeOnly === false ? {} : radiusBoundingBox(options, options.radiusKm),
       order: 'created_at.desc',
       limit: options.limit
     }).pipe(map((rows) => {

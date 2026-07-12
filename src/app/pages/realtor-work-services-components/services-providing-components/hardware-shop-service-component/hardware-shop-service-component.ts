@@ -7,8 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Capacitor } from '@capacitor/core';
-import { Geolocation } from '@capacitor/geolocation';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { HardwareShopApiService } from '../../../../api-services/hardware-shop-api-service';
@@ -194,9 +192,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
 
     this.locating = true;
     try {
-      const position = Capacitor.isNativePlatform()
-        ? await this.getNativePosition()
-        : await this.getBrowserPosition();
+      const position = await this.getBrowserPosition();
       const lat = position.coords.latitude;
       const lng = position.coords.longitude;
 
@@ -206,34 +202,11 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
       if (loadNearby) this.loadShops();
     } catch {
       this.locationReady = false;
-      if (loadNearby) {
-        this.loadShops();
-      } else {
-        this.toastr.error('Current location could not be detected. Please turn on GPS and try again');
-      }
+      this.loader.hide();
+      this.toastr.error('Current location could not be detected. Please turn on GPS and try again');
     } finally {
       this.locating = false;
     }
-  }
-
-  private async getNativePosition(): Promise<{ coords: { latitude: number; longitude: number } }> {
-    const permission = await Geolocation.checkPermissions();
-    let locationPermission = permission.location;
-
-    if (locationPermission !== 'granted') {
-      const requested = await Geolocation.requestPermissions();
-      locationPermission = requested.location;
-    }
-
-    if (locationPermission !== 'granted') {
-      throw new Error('Location permission denied');
-    }
-
-    return Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 10000,
-    });
   }
 
   private getBrowserPosition(): Promise<GeolocationPosition> {
@@ -252,8 +225,15 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   }
 
   loadShops(): void {
+    if (!this.locationReady) {
+      this.shops = [];
+      this.mapItems = [];
+      this.loader.hide();
+      return;
+    }
+
     const requestParams = {
-      ...(this.locationReady ? this.selectedLocation : {}),
+      ...this.selectedLocation,
       ...(this.activeRepairType ? { repairType: this.activeRepairType } : {}),
     };
     this.api

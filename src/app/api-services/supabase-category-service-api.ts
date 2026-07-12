@@ -3,7 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
-import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { isWithinServiceRadius, radiusBoundingBox } from '../shared-services/distance-utils';
 import { PostingAccessService } from '../shared-services/posting-access.service';
 
 type ServiceKind = 'beauty' | 'education';
@@ -50,6 +50,7 @@ export class SupabaseCategoryServiceApi {
         status: 'ACTIVE',
         ...(params?.category ? { category: params.category } : {})
       },
+      filterOps: radiusBoundingBox(params),
       order: 'created_at.desc'
     }).pipe(map((rows) => ({
       data: rows

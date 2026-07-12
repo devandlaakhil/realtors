@@ -3,7 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
-import { distanceKm, isWithinServiceRadius } from '../shared-services/distance-utils';
+import { distanceKm, isWithinServiceRadius, radiusBoundingBox } from '../shared-services/distance-utils';
 import { PostingAccessService } from '../shared-services/posting-access.service';
 
 interface CommercialVehicleRow {
@@ -59,6 +59,7 @@ export class SupabaseCommercialVehicleApiService {
   list(params?: any): Observable<{ data: any[]; count: number }> {
     return this.supabase.select<CommercialVehicleRow>(this.table, {
       filters: { status: 'ACTIVE' },
+      filterOps: radiusBoundingBox(params),
       order: 'created_at.desc'
     }).pipe(map((rows) => {
       const data = rows

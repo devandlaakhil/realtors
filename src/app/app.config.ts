@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -16,6 +16,8 @@ import { authInterceptor } from './interceptors/auth.interceptors';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { LoaderInterceptors } from './interceptors/loader.interceptors';
+import { AppGlobalErrorHandler } from './shared-services/error-log.service';
+import { ErrorLogInterceptor } from './interceptors/error-log.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -40,6 +42,15 @@ export const appConfig: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: LoaderInterceptors,
       multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorLogInterceptor,
+      multi: true,
+    },
+    {
+      provide: ErrorHandler,
+      useClass: AppGlobalErrorHandler,
     },
   ],
 };

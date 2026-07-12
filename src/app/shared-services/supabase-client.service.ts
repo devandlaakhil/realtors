@@ -10,6 +10,7 @@ type SupabaseFilterValue = string | number | boolean | null | undefined;
 export interface SupabaseSelectOptions {
   select?: string;
   filters?: Record<string, SupabaseFilterValue>;
+  filterOps?: Record<string, string | string[]>;
   order?: string;
   limit?: number;
   range?: [number, number];
@@ -39,6 +40,12 @@ export class SupabaseClientService {
         params = params.set(key, `eq.${value}`);
       }
     });
+    Object.entries(options.filterOps || {}).forEach(([key, value]) => {
+      const values = Array.isArray(value) ? value : [value];
+      values.forEach((item) => {
+        if (item) params = params.append(key, item);
+      });
+    });
 
     if (options.order) params = params.set('order', options.order);
     if (options.limit) params = params.set('limit', String(options.limit));
@@ -59,6 +66,12 @@ export class SupabaseClientService {
       if (value !== undefined && value !== null && value !== '') {
         params = params.set(key, `eq.${value}`);
       }
+    });
+    Object.entries(options.filterOps || {}).forEach(([key, value]) => {
+      const values = Array.isArray(value) ? value : [value];
+      values.forEach((item) => {
+        if (item) params = params.append(key, item);
+      });
     });
 
     if (options.order) params = params.set('order', options.order);

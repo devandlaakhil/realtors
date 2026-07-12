@@ -14,7 +14,8 @@ export const SUPABASE_TABLES = {
   subscriptionPayments: 'payments',
   userLocations: 'user_locations',
   dynamicServiceCategories: 'dynamic_service_categories',
-  dynamicServicePosts: 'dynamic_service_posts'
+  dynamicServicePosts: 'dynamic_service_posts',
+  errorLogs: 'error_logs'
 } as const;
 
 export const SUPABASE_SERVICE_TYPES = {

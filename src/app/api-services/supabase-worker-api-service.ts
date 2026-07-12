@@ -3,7 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
-import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { isWithinServiceRadius, radiusBoundingBox } from '../shared-services/distance-utils';
 import { PostingAccessService } from '../shared-services/posting-access.service';
 
 export interface SupabaseSkilledWorker {
@@ -43,6 +43,7 @@ export class SupabaseWorkerApiService {
   getAll(params?: { lat?: number; lng?: number }): Observable<{ data: any[] }> {
     return this.supabase.select<SupabaseSkilledWorker>(this.table, {
       filters: { status: 'ACTIVE' },
+      filterOps: radiusBoundingBox(params),
       order: 'created_at.desc'
     }).pipe(map((rows) => ({
       data: rows

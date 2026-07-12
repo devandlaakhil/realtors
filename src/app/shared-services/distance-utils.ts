@@ -55,3 +55,19 @@ export function isWithinServiceRadius(
   return km !== null && km <= radiusKm;
 }
 
+export function radiusBoundingBox(
+  params: SearchCoordinates | null | undefined,
+  radiusKm = DEFAULT_SERVICE_RADIUS_KM,
+): Record<string, string | string[]> {
+  const lat = searchLatitude(params);
+  const lng = searchLongitude(params);
+  if (lat === null || lng === null) return {};
+
+  const latDelta = radiusKm / 111.32;
+  const lngDelta = radiusKm / (111.32 * Math.max(Math.cos(lat * Math.PI / 180), 0.01));
+
+  return {
+    latitude: [`gte.${lat - latDelta}`, `lte.${lat + latDelta}`],
+    longitude: [`gte.${lng - lngDelta}`, `lte.${lng + lngDelta}`],
+  };
+}

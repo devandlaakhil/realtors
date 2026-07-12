@@ -3,7 +3,7 @@ import { Observable, from, map, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_SERVICE_TYPES, SUPABASE_TABLES } from '../constants/supabase.constants';
 import { SupabaseClientService } from '../shared-services/supabase-client.service';
-import { isWithinServiceRadius } from '../shared-services/distance-utils';
+import { isWithinServiceRadius, radiusBoundingBox } from '../shared-services/distance-utils';
 import { PostingAccessService } from '../shared-services/posting-access.service';
 
 export interface SupabaseHomeRepairService {
@@ -42,6 +42,7 @@ export class SupabaseHomeRepairApiService {
   getNearby(params?: { lat?: number; lng?: number; repairType?: string }): Observable<{ data: any[] }> {
     return this.supabase.select<SupabaseHomeRepairService>(this.table, {
       filters: { status: 'ACTIVE' },
+      filterOps: radiusBoundingBox(params),
       order: 'created_at.desc'
     }).pipe(
       map((rows) => rows

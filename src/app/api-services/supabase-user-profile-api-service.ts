@@ -8,6 +8,8 @@ import { SupabaseClientService } from '../shared-services/supabase-client.servic
 export class SupabaseUserProfileApiService {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private extrasCache = new Map<string, { at: number; value: { propertiesCount: number; servicesCount: number; latestPayment: any | null } }>();
+  private readonly extrasCacheMs = 30000;
   private readonly serviceTables = [
     SUPABASE_TABLES.homeRepairServices,
     SUPABASE_TABLES.skilledWorkers,
@@ -89,6 +91,11 @@ export class SupabaseUserProfileApiService {
   }
 
   private profileExtras(userId: string): Observable<{ propertiesCount: number; servicesCount: number; latestPayment: any | null }> {
+    const cached = this.extrasCache.get(userId);
+    if (cached && Date.now() - cached.at < this.extrasCacheMs) {
+      return of(cached.value);
+    }
+
     const serviceCounts = this.serviceTables.map((table) => this.countRows(table, userId));
     return forkJoin({
       propertiesCount: this.countRows(SUPABASE_TABLES.servicePosts, userId),
@@ -98,11 +105,15 @@ export class SupabaseUserProfileApiService {
         order: 'created_at.desc',
         limit: 1
       }).pipe(catchError(() => of([])))
-    }).pipe(map(({ propertiesCount, serviceCounts, payments }) => ({
-      propertiesCount,
-      servicesCount: serviceCounts.reduce((sum, count) => sum + count, 0),
-      latestPayment: payments[0] || null
-    })));
+    }).pipe(map(({ propertiesCount, serviceCounts, payments }) => {
+      const value = {
+        propertiesCount,
+        servicesCount: serviceCounts.reduce((sum, count) => sum + count, 0),
+        latestPayment: payments[0] || null
+      };
+      this.extrasCache.set(userId, { at: Date.now(), value });
+      return value;
+    }));
   }
 
   private countRows(table: string, userId: string): Observable<number> {
