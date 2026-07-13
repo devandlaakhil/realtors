@@ -44,6 +44,7 @@ export class ErrorLogService {
   }
 
   private scheduleFlush(): void {
+    if (!this.auth.getToken()) return;
     if (this.flushTimer) return;
     this.flushTimer = setTimeout(() => this.flush(), 500);
   }

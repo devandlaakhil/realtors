@@ -14,8 +14,6 @@ import {
 import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
-import { Capacitor } from '@capacitor/core';
-import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-map-component',
@@ -94,34 +92,12 @@ export class MapComponent implements OnInit, OnChanges {
 
   async getCurrentLocation(): Promise<void> {
     try {
-      const position = Capacitor.isNativePlatform()
-        ? await this.getNativePosition()
-        : await this.getBrowserPosition();
+      const position = await this.getBrowserPosition();
 
       this.applyCurrentLocation(position.coords.latitude, position.coords.longitude);
     } catch (error) {
       console.error('Location Error:', error);
     }
-  }
-
-  private async getNativePosition(): Promise<{ coords: { latitude: number; longitude: number } }> {
-    const currentPermission = await Geolocation.checkPermissions();
-    let locationPermission = currentPermission.location;
-
-    if (locationPermission !== 'granted') {
-      const requestedPermission = await Geolocation.requestPermissions();
-      locationPermission = requestedPermission.location;
-    }
-
-    if (locationPermission !== 'granted') {
-      throw new Error('Location permission denied');
-    }
-
-    return Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 15000,
-      maximumAge: 10000,
-    });
   }
 
   private getBrowserPosition(): Promise<GeolocationPosition> {

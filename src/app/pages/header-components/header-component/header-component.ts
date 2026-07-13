@@ -90,12 +90,13 @@ export class HeaderComponent {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           };
-          // Send these coordinates to your Node.js backend
           this.userApiSrc.sendCoordsToBackend(coords).subscribe((response: any) => {
-            this.Location = response.raw.neighbourhood;
-            this.fullAddress = response.address;
+            this.Location = this.pickShortLocation(response);
+            this.fullAddress = response?.address || this.Location || '';
             this.commonSrv.updateAddress(this.fullAddress);
             this.cdr.detectChanges();
+          }, (error) => {
+            console.warn('Error resolving address', error);
           });
         },
         (error) => {
@@ -106,6 +107,20 @@ export class HeaderComponent {
     } else {
       alert('Geolocation is not supported by this browser.');
     }
+  }
+
+  private pickShortLocation(response: any): string {
+    const raw = response?.raw || {};
+    return (
+      raw.neighbourhood ||
+      raw.suburb ||
+      raw.village ||
+      raw.town ||
+      raw.city ||
+      raw.county ||
+      response?.address ||
+      ''
+    );
   }
 
   logout() {
