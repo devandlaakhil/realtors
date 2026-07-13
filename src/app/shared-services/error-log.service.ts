@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, inject, Injectable } from '@angular/core';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_TABLES } from '../constants/supabase.constants';
+import { ErrorInteractionTrackerService } from './error-interaction-tracker.service';
 import { SupabaseClientService } from './supabase-client.service';
 
 export interface ErrorLogPayload {
@@ -15,6 +16,7 @@ export interface ErrorLogPayload {
 export class ErrorLogService {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private readonly interactions = inject(ErrorInteractionTrackerService);
   private queue: any[] = [];
   private flushTimer: ReturnType<typeof setTimeout> | null = null;
   private flushing = false;
@@ -24,6 +26,10 @@ export class ErrorLogService {
     if (!this.supabase.enabled) return;
 
     const error = this.normalize(payload.details);
+    const metadata = {
+      ...(error.metadata || {}),
+      lastInteraction: this.interactions.getLastInteraction(),
+    };
     this.queue.push({
       user_id: this.auth.getUser()?.id || null,
       source: payload.source,
@@ -36,7 +42,7 @@ export class ErrorLogService {
       route: location.hash || location.pathname,
       user_agent: navigator.userAgent,
       stack: error.stack,
-      metadata: error.metadata,
+      metadata,
     });
 
     if (this.queue.length > 25) this.queue = this.queue.slice(-25);
@@ -44,7 +50,6 @@ export class ErrorLogService {
   }
 
   private scheduleFlush(): void {
-    if (!this.auth.getToken()) return;
     if (this.flushTimer) return;
     this.flushTimer = setTimeout(() => this.flush(), 500);
   }

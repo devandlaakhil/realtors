@@ -7,6 +7,7 @@ import { HeaderComponent } from '../app/pages/header-components/header-component
 import { LoaderComponent } from './pages/shared-components/loader-component/loader-component';
 import { BottomNavComponent } from './pages/shared-components/bottom-nav-component/bottom-nav-component';
 import { AnalyticsService } from './shared-services/analytics-service';
+import { ErrorInteractionTrackerService } from './shared-services/error-interaction-tracker.service';
 import { GuestCallIdentityService } from './shared-services/guest-call-identity-service';
 import { LoaderServices } from './shared-services/loader-services';
 @Component({
@@ -20,6 +21,7 @@ export class App implements OnInit, OnDestroy {
   private router = inject(Router);
   private location = inject(Location);
   private analytics = inject(AnalyticsService);
+  private errorInteractionTracker = inject(ErrorInteractionTrackerService);
   private loader = inject(LoaderServices);
   readonly guestCallIdentity = inject(GuestCallIdentityService);
   readonly showLocationPrompt = signal(false);
@@ -36,6 +38,7 @@ export class App implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.analytics.initialize();
+    this.errorInteractionTracker.initialize();
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.loader.reset();
