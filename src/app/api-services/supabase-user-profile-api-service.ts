@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { AuthService } from '../auth-services/auth-services';
 import { SUPABASE_TABLES } from '../constants/supabase.constants';
@@ -8,6 +9,7 @@ import { SupabaseClientService } from '../shared-services/supabase-client.servic
 export class SupabaseUserProfileApiService {
   private readonly supabase = inject(SupabaseClientService);
   private readonly auth = inject(AuthService);
+  private readonly http = inject(HttpClient);
   private extrasCache = new Map<string, { at: number; value: { propertiesCount: number; servicesCount: number; latestPayment: any | null } }>();
   private readonly extrasCacheMs = 30000;
   private readonly serviceTables = [
@@ -68,19 +70,38 @@ export class SupabaseUserProfileApiService {
   }
 
   getAddress(coords: { latitude: number; longitude: number }): Observable<any> {
-    const payload = {
-      owner_id: this.auth.getUser()?.id || null,
-      latitude: coords.latitude,
-      longitude: coords.longitude,
-      address: `${coords.latitude}, ${coords.longitude}`
-    };
+    return this.reverseGeocode(coords).pipe(
+      switchMap((addressResponse) => {
+        const payload = {
+          owner_id: this.auth.getUser()?.id || null,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+          address: addressResponse.address
+        };
 
-    if (!this.auth.getToken()) {
-      return of({ data: payload, address: payload.address });
-    }
+        if (!this.auth.getToken()) {
+          return of({ data: payload, address: payload.address, raw: addressResponse.raw });
+        }
 
-    return this.supabase.insertWithAuth<any>(SUPABASE_TABLES.userLocations, payload, this.requireToken()).pipe(
-      map((rows) => ({ data: rows[0] || payload, address: payload.address }))
+        return this.supabase.insertWithAuth<any>(SUPABASE_TABLES.userLocations, payload, this.requireToken()).pipe(
+          map((rows) => ({ data: rows[0] || payload, address: payload.address, raw: addressResponse.raw })),
+          catchError(() => of({ data: payload, address: payload.address, raw: addressResponse.raw }))
+        );
+      })
+    );
+  }
+
+  private reverseGeocode(coords: { latitude: number; longitude: number }): Observable<{ address: string; raw: any }> {
+    const fallback = `${coords.latitude}, ${coords.longitude}`;
+    const url =
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${coords.latitude}&lon=${coords.longitude}`;
+
+    return this.http.get<any>(url).pipe(
+      map((res) => ({
+        address: res?.display_name || fallback,
+        raw: res?.address || {}
+      })),
+      catchError(() => of({ address: fallback, raw: {} }))
     );
   }
 

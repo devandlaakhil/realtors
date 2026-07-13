@@ -49,12 +49,44 @@ export class UserProfileComponent implements OnInit {
           this.user = res;
           this.commonSrv.address$.pipe(take(1)).subscribe((data) => {
             this.address = data;
+            if (!this.address) {
+              this.loadCurrentAddress();
+            }
           });
           this.cdr.detectChanges();
         },
         error: () => {
         },
       });
+  }
+
+  private loadCurrentAddress(): void {
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        this.userApiSrv
+          .sendCoordsToBackend({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          })
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            next: (response) => {
+              this.address = response?.address || '';
+              if (this.address) {
+                this.commonSrv.updateAddress(this.address);
+              }
+              this.cdr.detectChanges();
+            },
+            error: () => {},
+          });
+      },
+      () => {},
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
+    );
   }
 
   editUser = { ...this.user };
