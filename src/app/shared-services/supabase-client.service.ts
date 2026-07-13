@@ -108,6 +108,14 @@ export class SupabaseClientService {
     });
   }
 
+  invokeFunction<T>(name: string, body: unknown, accessToken = this.auth.getToken() || this.anonKey): Observable<T> {
+    if (!this.enabled) return this.notConfigured<T>();
+    return this.http.post<T>(`${this.functionsUrl}/${name}`, body, {
+      headers: this.headers(undefined, accessToken).set('Content-Type', 'application/json'),
+      context: this.context
+    });
+  }
+
   insert<T>(table: string, body: Partial<T> | Partial<T>[]): Observable<T[]> {
     if (!this.enabled) return this.notConfigured<T[]>();
     return this.http.post<T[]>(`${this.restUrl}/${table}`, body, {
@@ -214,6 +222,10 @@ export class SupabaseClientService {
 
   private get storageUrl(): string {
     return `${this.supabaseUrl}/storage/v1`;
+  }
+
+  private get functionsUrl(): string {
+    return `${this.supabaseUrl}/functions/v1`;
   }
 
   private encodeStoragePath(path: string): string {

@@ -53,7 +53,7 @@ export class SupabaseAdvertisementApiService {
       notes: raw.notes || '',
       media_url: mediaUrl,
       paid_amount: raw.paidAmount || 0,
-      payment_payload: raw.payment || {},
+      payment_payload: raw.paymentReference || {},
       latitude: raw.location?.lat ?? null,
       longitude: raw.location?.lng ?? null,
       status: 'ACTIVE'

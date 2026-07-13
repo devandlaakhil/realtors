@@ -74,13 +74,13 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           const order = res?.order || {};
-          const localOrderId = res?.data?.id || order.id;
           const options: any = {
-            key: 'rzp_live_T4Ir9tXg8h5845',
+            key: res?.razorpayKeyId || 'rzp_live_T4Ir9tXg8h5845',
             amount: order.amount,
             currency: order.currency || 'INR',
+            order_id: order.id,
             notes: {
-              local_order_id: localOrderId,
+              local_order_id: order.local_order_id || res?.data?.id || '',
               plan: this.selectedPlan,
             },
             name: 'Realtor App',
@@ -126,8 +126,7 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
             },
             handler: (paymentResponse: any) => {
               const payload = {
-                order_id: localOrderId,
-                razorpay_order_id: paymentResponse.razorpay_order_id || localOrderId,
+                razorpay_order_id: paymentResponse.razorpay_order_id,
                 razorpay_payment_id: paymentResponse.razorpay_payment_id,
                 razorpay_signature: paymentResponse.razorpay_signature,
               };
@@ -147,10 +146,6 @@ export class SubscriptionScreenComponent implements OnInit, OnDestroy {
                 });
             },
           };
-
-          if (typeof order.id === 'string' && order.id.startsWith('order_')) {
-            options.order_id = order.id;
-          }
 
           const rzp = new Razorpay(options);
 

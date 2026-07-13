@@ -9,6 +9,11 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 declare var Razorpay: any;
 
 type AdvertisementType = 'photo' | 'video' | 'social';
+type PaymentReference = {
+  orderId: string;
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+};
 
 @Component({
   selector: 'app-post-advertisement-component',
@@ -29,7 +34,7 @@ export class PostAdvertisementComponent {
   selectedFileName = '';
   paymentDone = false;
   isPosting = false;
-  private paymentDetails: any = null;
+  private paymentDetails: PaymentReference | null = null;
   private coordinates: { lat: number | null; lng: number | null } = {
     lat: null,
     lng: null,
@@ -68,11 +73,16 @@ export class PostAdvertisementComponent {
 
     this.subscriptionApiSrv.createOrder('ADVERTISEMENT_POST').subscribe({
       next: (res: any) => {
-        const options = {
-          key: 'rzp_live_T4Ir9tXg8h5845',
-          amount: res?.order?.amount || this.adPrice * 100,
-          currency: res?.order?.currency || 'INR',
-          order_id: res?.order?.id,
+        const order = res?.order || {};
+        const options: any = {
+          key: res?.razorpayKeyId || 'rzp_live_T4Ir9tXg8h5845',
+          amount: order.amount || this.adPrice * 100,
+          currency: order.currency || 'INR',
+          order_id: order.id,
+          notes: {
+            local_order_id: order.local_order_id || res?.data?.id || '',
+            plan: 'ADVERTISEMENT_POST',
+          },
           name: 'Realtor App',
           description: 'Post Advertisement',
           method: {
@@ -107,10 +117,20 @@ export class PostAdvertisementComponent {
           },
           handler: (paymentResponse: any) => {
             this.ngZone.run(() => {
-              this.subscriptionApiSrv.verifyPayment(paymentResponse).subscribe({
+              const verificationPayload = {
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+              };
+
+              this.subscriptionApiSrv.verifyPayment(verificationPayload).subscribe({
                 next: () => {
                   this.paymentDone = true;
-                  this.paymentDetails = paymentResponse;
+                  this.paymentDetails = {
+                    orderId: order.local_order_id || res?.data?.id || '',
+                    razorpayOrderId: verificationPayload.razorpay_order_id,
+                    razorpayPaymentId: verificationPayload.razorpay_payment_id,
+                  };
                   this.toastr.success('Payment completed. You can post the advertisement now.');
                   this.cdr.detectChanges();
                 },
@@ -168,7 +188,7 @@ export class PostAdvertisementComponent {
       targetLink: this.adForm.controls.targetLink.value,
       notes: this.adForm.controls.notes.value,
       paidAmount: this.adPrice,
-      payment: this.paymentDetails,
+      paymentReference: this.paymentDetails,
       location: {
         lat: this.coordinates.lat,
         lng: this.coordinates.lng,
