@@ -24,6 +24,7 @@ export class SupabaseClientService {
   private readonly anonKey = environment.supabaseAnonKey;
   private readonly defaultBucket = environment.supabaseStorageBucket || 'service-images';
   private readonly maxImageBytes = 2 * 1024 * 1024;
+  private readonly targetImageBytes = 1800 * 1024;
   private readonly context = new HttpContext()
     .set(SKIP_AUTH_HEADER, true)
     .set(SKIP_AUTH_REDIRECT, true);
@@ -242,7 +243,7 @@ export class SupabaseClientService {
   }
 
   private async prepareUploadFile(file: File): Promise<File | Blob> {
-    if (!file.type?.startsWith('image/') || file.size <= this.maxImageBytes) {
+    if (!file.type?.startsWith('image/') || file.size <= this.targetImageBytes) {
       return file;
     }
 
@@ -253,11 +254,12 @@ export class SupabaseClientService {
     const ctx = canvas.getContext('2d');
     if (!ctx) return file;
 
-    let quality = 0.82;
+    let maxSide = 1800;
+    let quality = 0.8;
     let blob: Blob | null = null;
 
-    for (let attempt = 0; attempt < 8; attempt++) {
-      const scale = Math.min(1, 2200 / Math.max(width, height));
+    for (let attempt = 0; attempt < 16; attempt++) {
+      const scale = Math.min(1, maxSide / Math.max(width, height));
       canvas.width = Math.max(1, Math.round(width * scale));
       canvas.height = Math.max(1, Math.round(height * scale));
       ctx.fillStyle = '#ffffff';
@@ -265,13 +267,13 @@ export class SupabaseClientService {
       ctx.drawImage(bitmap as CanvasImageSource, 0, 0, canvas.width, canvas.height);
 
       blob = await this.canvasToBlob(canvas, quality);
-      if (blob.size <= this.maxImageBytes) break;
+      if (blob.size <= this.targetImageBytes) break;
 
       if (quality > 0.45) {
-        quality -= 0.1;
+        quality -= 0.08;
       } else {
-        width = Math.round(width * 0.82);
-        height = Math.round(height * 0.82);
+        maxSide = Math.max(720, Math.round(maxSide * 0.78));
+        quality = 0.62;
       }
     }
 
@@ -281,6 +283,10 @@ export class SupabaseClientService {
 
     if (!blob) {
       return file;
+    }
+
+    if (blob.size > this.maxImageBytes) {
+      throw new Error('Unable to compress image below 2MB. Please choose a smaller image.');
     }
 
     const name = file.name.replace(/\.[^.]+$/, '') || 'image';

@@ -206,22 +206,6 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- @if (workerForm.get('category')?.value === 'Cleaner') {
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'Cleaning category' | T }}</mat-label>
-              <mat-select formControlName="cleaningCategory" required>
-                @for (cleaningCategory of cleaningCategories; track cleaningCategory) {
-                  <mat-option [value]="cleaningCategory">
-                    {{ cleaningCategory | T }}
-                  </mat-option>
-                }
-              </mat-select>
-              @if (workerForm.get('cleaningCategory')?.hasError('required')) {
-                <mat-error>{{ 'Select a cleaning category' | T }}</mat-error>
-              }
-            </mat-form-field>
-          } -->
-
           <mat-form-field appearance="outline">
             <mat-label>{{'Mobile Number' | T}}</mat-label>
             <input matInput formControlName="mobile" />

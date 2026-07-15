@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -50,7 +50,7 @@ import { getErrorMessage } from '../../../../shared-services/error-message';
   templateUrl: './workers-service-component.html',
   styleUrl: './workers-service-component.css',
 })
-export class WorkersServiceComponent implements OnInit {
+export class WorkersServiceComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private toastr = inject(ToastrService);
   phoneCall = inject(MobileDialpadService);
@@ -102,12 +102,6 @@ export class WorkersServiceComponent implements OnInit {
 
 
   ngOnInit(): void {
-    const requestedCategory = this.router.snapshot.queryParamMap.get('category');
-    const normalizedCategory = this.normalizeWorkerCategory(requestedCategory);
-    if (normalizedCategory && this.categories.some((category) => category.name === normalizedCategory)) {
-      this.activeCategory = normalizedCategory;
-    }
-
     this.router.paramMap.subscribe((params) => {
       const id = params.get('id');
 
@@ -119,6 +113,21 @@ export class WorkersServiceComponent implements OnInit {
     });
     this.initForm();
     this.showPostWorkerForm = this.router.snapshot.queryParamMap.get('post') === '1';
+    this.router.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      const normalizedCategory = this.normalizeWorkerCategory(params.get('category'));
+      if (normalizedCategory && this.categories.some((category) => category.name === normalizedCategory)) {
+        this.activeCategory = normalizedCategory;
+      } else {
+        this.activeCategory = 'All';
+      }
+      this.showPostWorkerForm = params.get('post') === '1';
+      this.selectedWorkerId = this.filteredWorkers?.[0]?.id ?? this.selectedWorkerId;
+      if (!this.showPostWorkerForm && !this.isEditMode && this.hasSearchLocation()) {
+        this.loaderService.show();
+        this.getAllWorkers();
+      }
+      this.cdr.detectChanges();
+    });
     if (!this.showPostWorkerForm && !this.isEditMode) {
       this.loaderService.show();
       this.getCurrentLocation();
@@ -126,12 +135,8 @@ export class WorkersServiceComponent implements OnInit {
     this.workerForm.get('category')?.valueChanges.subscribe((category) => {
       this.availableSkills = WORKER_CATEGORIES[category] || [];
       const cleaningCategory = this.workerForm.get('cleaningCategory');
-      if (category === Worker_Type.CLEANER) {
-        cleaningCategory?.setValidators(Validators.required);
-      } else {
-        cleaningCategory?.clearValidators();
-        cleaningCategory?.setValue('');
-      }
+      cleaningCategory?.clearValidators();
+      cleaningCategory?.setValue('');
       cleaningCategory?.updateValueAndValidity({ emitEvent: false });
 
       this.selectedSkills = [];
@@ -304,6 +309,9 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   onLocationSelected(location: { lat: number; lng: number }): void {
+    if (!this.isUsableLocation(Number(location.lat), Number(location.lng))) {
+      return;
+    }
     this.selectedLocation = location;
     this.workerForm.patchValue({
       latitude: location.lat,
@@ -340,9 +348,18 @@ export class WorkersServiceComponent implements OnInit {
     const activeCategory = this.normalizeWorkerCategory(this.activeCategory);
 
     return this.workers?.filter((worker: any) => {
+      const workerSkills = worker.skills || [];
+      const isCleanerBySkill =
+        activeCategory === 'Cleaner' &&
+        workerSkills.some((skill: any) =>
+          this.cleaningCategories
+            .map((item: string) => item.toLowerCase())
+            .includes(String(skill || '').toLowerCase()),
+        );
       const matchesCategory =
         activeCategory === 'All' ||
-        this.normalizeWorkerCategory(worker.category) === activeCategory;
+        this.normalizeWorkerCategory(worker.category) === activeCategory ||
+        isCleanerBySkill;
       const matchesAvailability =
         this.availabilityFilter === 'All' ||
         (this.availabilityFilter === 'Available today' && worker.availableToday) ||
@@ -369,7 +386,7 @@ export class WorkersServiceComponent implements OnInit {
   get mapCenter(): { lat: number; lng: number } | undefined {
     const lat = Number(this.workerForm.get('latitude')?.value);
     const lng = Number(this.workerForm.get('longitude')?.value);
-    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : undefined;
+    return this.isUsableLocation(lat, lng) ? { lat, lng } : undefined;
   }
 
   setCategory(category: string) {
@@ -404,6 +421,7 @@ export class WorkersServiceComponent implements OnInit {
   async saveWorker(): Promise<void> {
     if (this.workerForm.invalid) {
       this.workerForm.markAllAsTouched();
+      this.toastr.warning('Please complete all required worker details.', 'Check details');
       return;
     }
     if (!(await this.ensureLocation())) {
@@ -471,9 +489,13 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   getAllWorkers() {
+    const activeCategory = this.normalizeWorkerCategory(this.activeCategory);
     const locationParams =
       this.selectedLocation.lat !== '' && this.selectedLocation.lng !== ''
-        ? this.selectedLocation
+        ? {
+            ...this.selectedLocation,
+            ...(activeCategory !== 'All' ? { category: activeCategory } : {}),
+          }
         : undefined;
 
     this.workerApiSrv
@@ -495,7 +517,7 @@ export class WorkersServiceComponent implements OnInit {
   private ensureLocation(): Promise<boolean> {
     const lat = Number(this.workerForm.get('latitude')?.value);
     const lng = Number(this.workerForm.get('longitude')?.value);
-    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    if (this.isUsableLocation(lat, lng)) {
       this.onLocationSelected({ lat, lng });
       return Promise.resolve(true);
     }
@@ -519,7 +541,17 @@ export class WorkersServiceComponent implements OnInit {
   private hasValidLocation(): boolean {
     const lat = Number(this.workerForm.get('latitude')?.value);
     const lng = Number(this.workerForm.get('longitude')?.value);
-    return Number.isFinite(lat) && Number.isFinite(lng);
+    return this.isUsableLocation(lat, lng);
+  }
+
+  private hasSearchLocation(): boolean {
+    const lat = Number(this.selectedLocation?.lat);
+    const lng = Number(this.selectedLocation?.lng);
+    return this.isUsableLocation(lat, lng);
+  }
+
+  private isUsableLocation(lat: number, lng: number): boolean {
+    return Number.isFinite(lat) && Number.isFinite(lng) && lat !== 0 && lng !== 0;
   }
 
   private normalizeWorkerCategory(category: unknown): string {
@@ -550,5 +582,9 @@ export class WorkersServiceComponent implements OnInit {
     return aliases[value] || String(category || 'All').trim();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
 
 }

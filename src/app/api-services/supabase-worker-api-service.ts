@@ -40,9 +40,12 @@ export class SupabaseWorkerApiService {
     return this.supabase.enabled;
   }
 
-  getAll(params?: { lat?: number; lng?: number }): Observable<{ data: any[] }> {
+  getAll(params?: { lat?: number; lng?: number; category?: string }): Observable<{ data: any[] }> {
     return this.supabase.select<SupabaseSkilledWorker>(this.table, {
-      filters: { status: 'ACTIVE' },
+      filters: {
+        status: 'ACTIVE',
+        ...(params?.category ? { category: params.category } : {}),
+      },
       filterOps: radiusBoundingBox(params),
       order: 'created_at.desc'
     }).pipe(map((rows) => ({
@@ -122,6 +125,12 @@ export class SupabaseWorkerApiService {
     }
 
     const active = raw.isActive !== false;
+    const latitude = Number(raw.latitude);
+    const longitude = Number(raw.longitude);
+    if (!this.isUsableLocation(latitude, longitude)) {
+      throw new Error('Please select a valid service location before posting.');
+    }
+
     return {
       owner_id: ownerId,
       name: raw.name || '',
@@ -137,10 +146,14 @@ export class SupabaseWorkerApiService {
       cleaning_category: raw.cleaningCategory || '',
       role: raw.role || '',
       image_url: imageUrl,
-      latitude: raw.latitude ?? null,
-      longitude: raw.longitude ?? null,
+      latitude,
+      longitude,
       ...(forceActive ? { status: active ? 'ACTIVE' as const : 'INACTIVE' as const } : {})
     };
+  }
+
+  private isUsableLocation(latitude: number, longitude: number): boolean {
+    return Number.isFinite(latitude) && Number.isFinite(longitude) && latitude !== 0 && longitude !== 0;
   }
 
   private uploadImage(file: File, ownerId: string): Promise<string> {
