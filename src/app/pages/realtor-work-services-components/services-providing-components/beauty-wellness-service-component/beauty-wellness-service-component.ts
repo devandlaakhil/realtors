@@ -185,10 +185,17 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
   loadProviders(): void {
     this.loader.show();
     const params = this.activeCategory === 'All' ? {} : { category: this.activeCategory };
-    this.fetch(params);
-    navigator.geolocation?.getCurrentPosition(({ coords }) => {
+    if (!navigator.geolocation) {
+      this.loader.hide();
+      this.toastr.warning('Please enable location to see nearby beauty & wellness providers.', 'Location required');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
       this.fetch({ ...params, lat: coords.latitude, lng: coords.longitude });
-    }, () => undefined, {
+    }, () => {
+      this.loader.hide();
+      this.toastr.warning('Please enable location to see nearby beauty & wellness providers.', 'Location required');
+    }, {
       enableHighAccuracy: false,
       timeout: 3000,
       maximumAge: 60000,

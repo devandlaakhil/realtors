@@ -86,16 +86,19 @@ export class DriversServiceComponent implements OnInit, OnDestroy {
 
   private resolveLocationAndLoad(): void {
     if (!navigator.geolocation) {
-      this.loadDrivers();
+      this.loader.hide();
+      this.toastr.warning('Please enable location to see nearby drivers.', 'Location required');
       return;
     }
-    this.loadDrivers();
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         this.selectedLocation = { lat: coords.latitude, lng: coords.longitude };
         this.loadDrivers();
       },
-      () => undefined,
+      () => {
+        this.loader.hide();
+        this.toastr.warning('Please enable location to see nearby drivers.', 'Location required');
+      },
       { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 },
     );
   }
@@ -174,10 +177,15 @@ export class DriversServiceComponent implements OnInit, OnDestroy {
     });
   }
 
-  save(): void {
+  async save(): Promise<void> {
     if (this.driverForm.invalid) {
       this.driverForm.markAllAsTouched();
       this.toastr.warning('Please complete the required driver details.', 'Check details');
+      return;
+    }
+    if (!(await this.ensureLocation())) {
+      this.toastr.warning('Please select your service location on the map.', 'Location required');
+      this.showLocationMap = true;
       return;
     }
     const formData = new FormData();
@@ -218,5 +226,29 @@ export class DriversServiceComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private ensureLocation(): Promise<boolean> {
+    const lat = Number(this.driverForm.get('latitude')?.value);
+    const lng = Number(this.driverForm.get('longitude')?.value);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      this.onLocationSelected({ lat, lng });
+      return Promise.resolve(true);
+    }
+
+    if (!navigator.geolocation) {
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.onLocationSelected({ lat: coords.latitude, lng: coords.longitude });
+          resolve(true);
+        },
+        () => resolve(false),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      );
+    });
   }
 }

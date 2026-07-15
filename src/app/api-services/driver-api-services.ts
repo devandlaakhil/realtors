@@ -33,4 +33,18 @@ export class DriverApiServices {
     }
     return this.http.put<T>(`${this.baseUrl}/${endpoint}`, body);
   }
+
+  patch<T>(endpoint: string, body: any): Observable<T> {
+    if (this.supabaseDriver.enabled && endpoint === API_CONSTANTS.driverServices.statusUpdate) {
+      return this.supabaseDriver.toggleStatus(body?.id) as Observable<T>;
+    }
+    return this.http.patch<T>(`${this.baseUrl}/${endpoint}`, body);
+  }
+
+  delete<T>(endpoint: string, params?: any): Observable<T> {
+    if (this.supabaseDriver.enabled && endpoint === API_CONSTANTS.driverServices.delete) {
+      return this.supabaseDriver.delete(params?.id) as Observable<T>;
+    }
+    return this.http.delete<T>(`${this.baseUrl}/${endpoint}`, { params });
+  }
 }

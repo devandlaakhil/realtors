@@ -298,10 +298,10 @@ export class TractorServiceComponent implements OnInit {
 
   private getCurrentLocation(showMap = false): void {
     if (!navigator.geolocation) {
-      this.getAllNearByTractors();
+      this.loaderService.hide();
+      this.toastr.warning('Please enable location to see nearby commercial vehicles.', 'Location required');
       return;
     }
-    this.getAllNearByTractors();
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -318,6 +318,8 @@ export class TractorServiceComponent implements OnInit {
       },
       (error) => {
         console.error('Location Error:', error);
+        this.loaderService.hide();
+        this.toastr.warning('Please enable location to see nearby commercial vehicles.', 'Location required');
       },
       {
         enableHighAccuracy: false,
@@ -327,16 +329,14 @@ export class TractorServiceComponent implements OnInit {
     );
   }
 
-  onMapsToggle(event: MatCheckboxChange): void {
+  async onMapsToggle(event: MatCheckboxChange): Promise<void> {
     if (event.checked) {
-      if (this.selectedLocation) {
-        this.zoom = 15;
-        this.showMap = true;
-        return;
+      if (!this.hasValidLocation()) {
+        await this.ensureLocation();
       }
       this.center = this.center || { lat: 17.385, lng: 78.4867 };
+      this.zoom = 15;
       this.showMap = true;
-      this.getCurrentLocation(true);
     } else {
       this.showMap = false;
     }
@@ -382,9 +382,14 @@ export class TractorServiceComponent implements OnInit {
     this.selectedImages = Array.from(input.files);
   }
 
-  saveTractor(): void {
+  async saveTractor(): Promise<void> {
     if (this.tractorForm.invalid) {
       this.tractorForm.markAllAsTouched();
+      return;
+    }
+    if (!(await this.ensureLocation())) {
+      this.toastr.warning('Please select your service location on the map.', 'Location required');
+      this.showMap = true;
       return;
     }
     this.loaderService.show();
@@ -499,5 +504,37 @@ export class TractorServiceComponent implements OnInit {
       return event.touches[0].clientY;
     }
     return event.clientY ?? 0;
+  }
+
+  private ensureLocation(): Promise<boolean> {
+    const location = this.tractorForm.get('location')?.value || {};
+    const lat = Number(location.latitude);
+    const lng = Number(location.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      this.setSelectedLocation(lat, lng);
+      return Promise.resolve(true);
+    }
+
+    if (!navigator.geolocation) {
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.setSelectedLocation(coords.latitude, coords.longitude);
+          resolve(true);
+        },
+        () => resolve(false),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      );
+    });
+  }
+
+  private hasValidLocation(): boolean {
+    const location = this.tractorForm.get('location')?.value || {};
+    const lat = Number(location.latitude);
+    const lng = Number(location.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng);
   }
 }

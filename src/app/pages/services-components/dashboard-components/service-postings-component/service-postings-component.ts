@@ -11,6 +11,7 @@ import { WorkerApiServices } from '../../../../api-services/worker-api-services'
 import {
   mapBeautyWellness,
   mapEducation,
+  mapDriver,
   mapHardware,
   mapTractor,
   mapVehicle,
@@ -22,6 +23,7 @@ import { DynamicCategoryApiService, DynamicServiceCategory } from '../../../../a
 import { AuthService } from '../../../../auth-services/auth-services';
 import { BeautyWellnessApiService } from '../../../../api-services/beauty-wellness-api-service';
 import { EducationApiService } from '../../../../api-services/education-api-service';
+import { DriverApiServices } from '../../../../api-services/driver-api-services';
 @Component({
   selector: 'app-service-postings-component',
   imports: [CommonModule, TranslatePipe],
@@ -35,6 +37,7 @@ export class ServicePostingsComponent implements OnInit {
   hardwareApiSrv = inject(HardwareShopApiService);
   beautyWellnessApiSrv = inject(BeautyWellnessApiService);
   educationApiSrv = inject(EducationApiService);
+  driverApiSrv = inject(DriverApiServices);
   dynamicApi = inject(DynamicCategoryApiService);
   authService = inject(AuthService);
 
@@ -69,6 +72,10 @@ export class ServicePostingsComponent implements OnInit {
     Education: {
       action: (id: string) => this.educationApiSrv.updateStatus(id),
     },
+    Driver: {
+      service: this.driverApiSrv,
+      url: API_CONSTANTS.driverServices.statusUpdate,
+    },
   };
 
   private deleteApis: any = {
@@ -94,6 +101,10 @@ export class ServicePostingsComponent implements OnInit {
     Education: {
       action: (id: string) => this.educationApiSrv.delete(id),
     },
+    Driver: {
+      service: this.driverApiSrv,
+      url: API_CONSTANTS.driverServices.delete,
+    },
   };
 
   ngOnInit(): void {
@@ -109,6 +120,7 @@ export class ServicePostingsComponent implements OnInit {
       hardware: this.safeRequest(this.hardwareApiSrv.getMyShops()),
       beautyWellness: this.safeRequest(this.beautyWellnessApiSrv.getMine()),
       education: this.safeRequest(this.educationApiSrv.getMine()),
+      drivers: this.safeRequest(this.driverApiSrv.get(API_CONSTANTS.driverServices.mylist)),
       // cultivators: this.api.get('/cultivators'),
     }).subscribe({
       next: (res: any) => {
@@ -142,6 +154,11 @@ export class ServicePostingsComponent implements OnInit {
             category: 'Education',
             icon: 'Education',
             items: this.listFromResponse(res.education).map((x: any) => mapEducation(x)),
+          },
+          {
+            category: 'Drivers',
+            icon: 'Drivers',
+            items: this.listFromResponse(res.drivers).map((x: any) => mapDriver(x)),
           },
           // {
           //   category: 'Cultivators',
@@ -321,6 +338,9 @@ export class ServicePostingsComponent implements OnInit {
         break;
       case 'Education':
         this.router.navigate(['/services/edit-education', elem.id]);
+        break;
+      case 'Driver':
+        this.router.navigate(['/services/edit-driver', elem.id]);
         break;
     }
   }

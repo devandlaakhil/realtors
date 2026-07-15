@@ -222,20 +222,20 @@ export class TransportationServiceComponent implements OnInit {
     });
   }
 
-  onMapsToggle(event: MatCheckboxChange): void {
+  async onMapsToggle(event: MatCheckboxChange): Promise<void> {
     if (event.checked) {
-      if (this.selectedLocation) {
-        this.zoom = 15;
-        this.showMap = true;
-
-        return;
+      if (!this.hasValidLocation()) {
+        await this.ensureLocation();
       }
+      this.zoom = 15;
+      this.showMap = true;
     } else {
       this.showMap = false;
     }
   }
 
   onLocationSelected(location: { lat: number; lng: number }): void {
+    this.selectedLocation = location;
     this.transportForm.patchValue({
       location: {
         type: 'Point',
@@ -248,9 +248,14 @@ export class TransportationServiceComponent implements OnInit {
     this.showPostVechileForm = true;
   }
 
-  saveTransport() {
+  async saveTransport(): Promise<void> {
     if (this.transportForm.invalid) {
       this.transportForm.markAllAsTouched();
+      return;
+    }
+    if (!(await this.ensureLocation())) {
+      this.toastSrv.warning('Please select your service location on the map.', 'Location required');
+      this.showMap = true;
       return;
     }
     const formData = new FormData();
@@ -361,8 +366,9 @@ export class TransportationServiceComponent implements OnInit {
   }
 
   getCurrentLocation(): void {
-    this.getNearByVehicles();
     if (!navigator.geolocation) {
+      this.loaderSrv.hide();
+      this.toastSrv.warning('Please enable location to see nearby vehicles.', 'Location required');
       return;
     }
     navigator.geolocation.getCurrentPosition((position) => {
@@ -377,7 +383,10 @@ export class TransportationServiceComponent implements OnInit {
         },
       });
       this.getNearByVehicles();
-    }, () => undefined, {
+    }, () => {
+      this.loaderSrv.hide();
+      this.toastSrv.warning('Please enable location to see nearby vehicles.', 'Location required');
+    }, {
       enableHighAccuracy: false,
       timeout: 3000,
       maximumAge: 60000,
@@ -441,6 +450,38 @@ export class TransportationServiceComponent implements OnInit {
     return event.clientY ?? 0;
   }
 
+  private ensureLocation(): Promise<boolean> {
+    const coordinates = this.transportForm.get('location.coordinates')?.value || [];
+    const lng = Number(coordinates[0]);
+    const lat = Number(coordinates[1]);
+    if (Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0)) {
+      this.onLocationSelected({ lat, lng });
+      return Promise.resolve(true);
+    }
+
+    if (!navigator.geolocation) {
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.onLocationSelected({ lat: coords.latitude, lng: coords.longitude });
+          resolve(true);
+        },
+        () => resolve(false),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      );
+    });
+  }
+
+  private hasValidLocation(): boolean {
+    const coordinates = this.transportForm.get('location.coordinates')?.value || [];
+    const lng = Number(coordinates[0]);
+    const lat = Number(coordinates[1]);
+    return Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0);
+  }
+
   get filteredWorkers() {
     const query = this.searchText.trim().toLowerCase();
 
@@ -460,6 +501,15 @@ export class TransportationServiceComponent implements OnInit {
 
       return matchesCategory && matchesAvailability && matchesSearch;
     });
+  }
+
+  get mapCenter(): { lat: number; lng: number } | undefined {
+    const coordinates = this.transportForm.get('location.coordinates')?.value || [];
+    const lng = Number(coordinates[0]);
+    const lat = Number(coordinates[1]);
+    return Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0)
+      ? { lat, lng }
+      : undefined;
   }
 
   onVechileImageSelected(file: File | null): void {

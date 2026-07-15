@@ -293,7 +293,7 @@
 
           @if (showMap) {
             <div class="map-wrapper">
-              <app-map-component (locationSelected)="onLocationSelected($event)">
+              <app-map-component [center]="mapCenter" (locationSelected)="onLocationSelected($event)">
               </app-map-component>
             </div>
           }

@@ -104,3 +104,18 @@ export function mapEducation(item: any): ServiceItem {
     isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,
   };
 }
+
+export function mapDriver(item: any): ServiceItem {
+  return {
+    id: item.id ?? item._id,
+    title: item.name || 'Driver',
+    image: item.image?.[0]?.url || item.images?.[0]?.url || item.imageUrl || '/images/driver.png',
+    location: [item.village, item.district].filter(Boolean).join(', '),
+    price: item.pricePerDay ?? item.pricePerTrip ?? 0,
+    unit: item.pricePerDay ? 'day' : 'trip',
+    category: 'Driver',
+    mobile: item.mobile,
+    originalData: item,
+    isActive: item.status ? item.status === 'ACTIVE' : item.isActive !== false,
+  };
+}

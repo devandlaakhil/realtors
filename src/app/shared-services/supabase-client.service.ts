@@ -1,6 +1,6 @@
 import { HttpClient, HttpContext, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { from, Observable, switchMap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { SKIP_AUTH_HEADER, SKIP_AUTH_REDIRECT } from '../interceptors/auth.interceptors';
 import { AuthService } from '../auth-services/auth-services';
@@ -23,6 +23,7 @@ export class SupabaseClientService {
   private readonly supabaseUrl = this.normalizeUrl(environment.supabaseUrl);
   private readonly anonKey = environment.supabaseAnonKey;
   private readonly defaultBucket = environment.supabaseStorageBucket || 'service-images';
+  private readonly maxImageBytes = 2 * 1024 * 1024;
   private readonly context = new HttpContext()
     .set(SKIP_AUTH_HEADER, true)
     .set(SKIP_AUTH_REDIRECT, true);
@@ -182,13 +183,17 @@ export class SupabaseClientService {
       return throwError(() => new Error('Supabase storage bucket is missing in environment.supabaseStorageBucket.'));
     }
 
-    return this.http.post(uploadUrl, file, {
-      headers: this.headers(undefined, accessToken)
-        .set('Content-Type', file.type || 'application/octet-stream')
-        .set('Cache-Control', '3600')
-        .set('x-upsert', 'true'),
-      context: this.context
-    });
+    return from(this.prepareUploadFile(file)).pipe(
+      switchMap((uploadFile) =>
+        this.http.post(uploadUrl, uploadFile, {
+          headers: this.headers(undefined, accessToken)
+            .set('Content-Type', uploadFile.type || 'application/octet-stream')
+            .set('Cache-Control', '3600')
+            .set('x-upsert', 'true'),
+          context: this.context
+        }),
+      ),
+    );
   }
 
   publicUrl(path: string, bucket = this.defaultBucket): string {
@@ -234,6 +239,82 @@ export class SupabaseClientService {
 
   private notConfigured<T>(): Observable<T> {
     return throwError(() => new Error('Supabase is not configured. Add supabaseUrl and supabaseAnonKey to the environment file.'));
+  }
+
+  private async prepareUploadFile(file: File): Promise<File | Blob> {
+    if (!file.type?.startsWith('image/') || file.size <= this.maxImageBytes) {
+      return file;
+    }
+
+    const bitmap = await this.loadImage(file);
+    let width = bitmap.width;
+    let height = bitmap.height;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+
+    let quality = 0.82;
+    let blob: Blob | null = null;
+
+    for (let attempt = 0; attempt < 8; attempt++) {
+      const scale = Math.min(1, 2200 / Math.max(width, height));
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bitmap as CanvasImageSource, 0, 0, canvas.width, canvas.height);
+
+      blob = await this.canvasToBlob(canvas, quality);
+      if (blob.size <= this.maxImageBytes) break;
+
+      if (quality > 0.45) {
+        quality -= 0.1;
+      } else {
+        width = Math.round(width * 0.82);
+        height = Math.round(height * 0.82);
+      }
+    }
+
+    if ('close' in bitmap && typeof bitmap.close === 'function') {
+      bitmap.close();
+    }
+
+    if (!blob) {
+      return file;
+    }
+
+    const name = file.name.replace(/\.[^.]+$/, '') || 'image';
+    return new File([blob], `${name}.jpg`, { type: 'image/jpeg', lastModified: Date.now() });
+  }
+
+  private async loadImage(file: File): Promise<ImageBitmap | HTMLImageElement> {
+    if ('createImageBitmap' in window) {
+      return createImageBitmap(file);
+    }
+
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      const url = URL.createObjectURL(file);
+      image.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(image);
+      };
+      image.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Unable to load image for compression.'));
+      };
+      image.src = url;
+    });
+  }
+
+  private canvasToBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => blob ? resolve(blob) : reject(new Error('Unable to compress image.')),
+        'image/jpeg',
+        quality,
+      );
+    });
   }
 
   private normalizeUrl(url: string): string {

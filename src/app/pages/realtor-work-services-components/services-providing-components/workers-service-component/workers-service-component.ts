@@ -103,8 +103,9 @@ export class WorkersServiceComponent implements OnInit {
 
   ngOnInit(): void {
     const requestedCategory = this.router.snapshot.queryParamMap.get('category');
-    if (requestedCategory && this.categories.some((category) => category.name === requestedCategory)) {
-      this.activeCategory = requestedCategory;
+    const normalizedCategory = this.normalizeWorkerCategory(requestedCategory);
+    if (normalizedCategory && this.categories.some((category) => category.name === normalizedCategory)) {
+      this.activeCategory = normalizedCategory;
     }
 
     this.router.paramMap.subscribe((params) => {
@@ -259,14 +260,13 @@ export class WorkersServiceComponent implements OnInit {
     });
   }
 
-  onMapsToggle(event: MatCheckboxChange): void {
+  async onMapsToggle(event: MatCheckboxChange): Promise<void> {
     if (event.checked) {
-      if (this.selectedLocation) {
-        this.zoom = 15;
-        this.showMap = true;
-
-        return;
+      if (!this.hasValidLocation()) {
+        await this.ensureLocation();
       }
+      this.zoom = 15;
+      this.showMap = true;
     } else {
       this.showMap = false;
     }
@@ -274,10 +274,10 @@ export class WorkersServiceComponent implements OnInit {
 
   getCurrentLocation(): void {
     if (!navigator.geolocation) {
-      this.getAllWorkers();
+      this.loaderService.hide();
+      this.toastr.warning('Please enable location to see nearby workers.', 'Location required');
       return;
     }
-    this.getAllWorkers();
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -291,7 +291,10 @@ export class WorkersServiceComponent implements OnInit {
         });
         this.getAllWorkers();
       },
-      () => undefined,
+      () => {
+        this.loaderService.hide();
+        this.toastr.warning('Please enable location to see nearby workers.', 'Location required');
+      },
       {
         enableHighAccuracy: false,
         timeout: 3000,
@@ -301,6 +304,7 @@ export class WorkersServiceComponent implements OnInit {
   }
 
   onLocationSelected(location: { lat: number; lng: number }): void {
+    this.selectedLocation = location;
     this.workerForm.patchValue({
       latitude: location.lat,
       longitude: location.lng,
@@ -333,20 +337,22 @@ export class WorkersServiceComponent implements OnInit {
 
   get filteredWorkers() {
     const query = this.searchText.trim().toLowerCase();
+    const activeCategory = this.normalizeWorkerCategory(this.activeCategory);
 
     return this.workers?.filter((worker: any) => {
       const matchesCategory =
-        this.activeCategory === 'All' || worker.category === this.activeCategory;
+        activeCategory === 'All' ||
+        this.normalizeWorkerCategory(worker.category) === activeCategory;
       const matchesAvailability =
         this.availabilityFilter === 'All' ||
         (this.availabilityFilter === 'Available today' && worker.availableToday) ||
         (this.availabilityFilter === 'Verified' && worker.verified);
       const matchesSearch =
         !query ||
-        worker.name.toLowerCase().includes(query) ||
-        worker.category.toLowerCase().includes(query) ||
-        worker.role.toLowerCase().includes(query) ||
-        worker.skills.some((skill: any) => skill.toLowerCase().includes(query));
+        String(worker.name || '').toLowerCase().includes(query) ||
+        String(worker.category || '').toLowerCase().includes(query) ||
+        String(worker.role || '').toLowerCase().includes(query) ||
+        (worker.skills || []).some((skill: any) => String(skill || '').toLowerCase().includes(query));
 
       return matchesCategory && matchesAvailability && matchesSearch;
     });
@@ -360,8 +366,14 @@ export class WorkersServiceComponent implements OnInit {
     );
   }
 
+  get mapCenter(): { lat: number; lng: number } | undefined {
+    const lat = Number(this.workerForm.get('latitude')?.value);
+    const lng = Number(this.workerForm.get('longitude')?.value);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : undefined;
+  }
+
   setCategory(category: string) {
-    this.activeCategory = category;
+    this.activeCategory = this.normalizeWorkerCategory(category);
     this.selectedWorkerId = this.filteredWorkers[0]?.id ?? this.selectedWorkerId;
   }
 
@@ -389,9 +401,14 @@ export class WorkersServiceComponent implements OnInit {
     });
   }
 
-  saveWorker(): void {
+  async saveWorker(): Promise<void> {
     if (this.workerForm.invalid) {
       this.workerForm.markAllAsTouched();
+      return;
+    }
+    if (!(await this.ensureLocation())) {
+      this.toastr.warning('Please select your service location on the map.', 'Location required');
+      this.showMap = true;
       return;
     }
     const formData = new FormData();
@@ -473,6 +490,64 @@ export class WorkersServiceComponent implements OnInit {
           this.loaderService.hide();
         },
       });
+  }
+
+  private ensureLocation(): Promise<boolean> {
+    const lat = Number(this.workerForm.get('latitude')?.value);
+    const lng = Number(this.workerForm.get('longitude')?.value);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      this.onLocationSelected({ lat, lng });
+      return Promise.resolve(true);
+    }
+
+    if (!navigator.geolocation) {
+      return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.onLocationSelected({ lat: coords.latitude, lng: coords.longitude });
+          resolve(true);
+        },
+        () => resolve(false),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      );
+    });
+  }
+
+  private hasValidLocation(): boolean {
+    const lat = Number(this.workerForm.get('latitude')?.value);
+    const lng = Number(this.workerForm.get('longitude')?.value);
+    return Number.isFinite(lat) && Number.isFinite(lng);
+  }
+
+  private normalizeWorkerCategory(category: unknown): string {
+    const value = String(category || 'All').trim().toLowerCase();
+    const aliases: Record<string, string> = {
+      all: 'All',
+      worker: 'All',
+      workers: 'All',
+      'daily wage': 'Daily Wage',
+      dailywage: 'Daily Wage',
+      plumber: 'Plumber',
+      plumbers: 'Plumber',
+      electrician: 'Electrician',
+      electricians: 'Electrician',
+      carpenter: 'Carpenter',
+      carpenters: 'Carpenter',
+      centring: 'Centring',
+      painter: 'Painter',
+      painters: 'Painter',
+      construction: 'Construction',
+      mestri: 'Construction',
+      'worker(mestri)': 'Construction',
+      flooring: 'Flooring',
+      cleaner: 'Cleaner',
+      cleaners: 'Cleaner',
+    };
+
+    return aliases[value] || String(category || 'All').trim();
   }
 
 

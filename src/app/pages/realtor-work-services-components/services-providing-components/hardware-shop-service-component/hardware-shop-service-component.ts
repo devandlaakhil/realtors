@@ -315,7 +315,7 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
       await this.getCurrentLocation();
     }
 
-    this.showMapPicker = this.locationReady;
+    this.showMapPicker = true;
   }
 
   onImageSelected(file: File | null): void {
@@ -326,6 +326,11 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
   publishShop(): void {
     if (this.shopForm.invalid) {
       this.shopForm.markAllAsTouched();
+      if (this.shopForm.controls.latitude.invalid || this.shopForm.controls.longitude.invalid) {
+        this.showMapPicker = true;
+        this.toastr.warning('Please select your service location on the map.', 'Location required');
+        return;
+      }
       this.toastr.warning('Please complete all required shop details');
       return;
     }
