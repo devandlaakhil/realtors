@@ -199,6 +199,16 @@ export class DynamicCategoryApiService {
     ).pipe(map((rows) => ({ data: this.toPost(rows[0]) })));
   }
 
+  togglePostStatus(id: string, currentlyActive: boolean): Observable<any> {
+    if (!this.supabase.enabled) return this.notConfigured();
+    return this.supabase.updateWithAuth<DynamicPostRow>(
+      SUPABASE_TABLES.dynamicServicePosts,
+      id,
+      { status: currentlyActive ? 'INACTIVE' : 'ACTIVE' },
+      this.requireToken()
+    ).pipe(map((rows) => ({ data: this.toPost(rows[0]) })));
+  }
+
   private async formDataToPostPayload(slug: string, body: FormData): Promise<Partial<DynamicPostRow>> {
     const payload = JSON.parse(String(body.get('payload') || '{}')) as Record<string, any>;
     const ownerId = this.auth.getUser()?.id || null;

@@ -83,30 +83,40 @@ export class HeaderComponent {
   }
 
   getUserLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const coords = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          this.userApiSrc.sendCoordsToBackend(coords).subscribe((response: any) => {
-            this.Location = this.pickShortLocation(response);
-            this.fullAddress = response?.address || this.Location || '';
-            this.commonSrv.updateAddress(this.fullAddress);
-            this.cdr.detectChanges();
-          }, (error) => {
-            console.warn('Error resolving address', error);
-          });
-        },
-        (error) => {
-          console.error('Error getting location', error);
-        },
-        { enableHighAccuracy: true, timeout: 5000 },
-      );
-    } else {
-      alert('Geolocation is not supported by this browser.');
+    const cachedAddress = this.commonSrv.getAddress?.() || '';
+    if (cachedAddress) {
+      this.fullAddress = cachedAddress;
+      this.Location = cachedAddress.split(',')[0] || cachedAddress;
     }
+
+    if (!navigator.geolocation) {
+      this.cdr.detectChanges();
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        this.userApiSrc.sendCoordsToBackend(coords).subscribe({
+          next: (response: any) => {
+            this.Location = this.pickShortLocation(response);
+            this.fullAddress = response?.address || this.Location || this.fullAddress || '';
+            if (this.fullAddress) this.commonSrv.updateAddress(this.fullAddress);
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.cdr.detectChanges();
+          },
+        });
+      },
+      () => {
+        this.cdr.detectChanges();
+      },
+      { enableHighAccuracy: false, timeout: 3000, maximumAge: 60000 },
+    );
   }
 
   private pickShortLocation(response: any): string {

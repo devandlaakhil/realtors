@@ -326,6 +326,16 @@ export class ServicePostingsComponent implements OnInit {
   }
 
   toggleStatus(elem: any) {
+    if (elem.category === 'Dynamic') {
+      this.dynamicApi.togglePostStatus(elem.id, !!elem.isActive)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => this.applyStatusUpdate(elem, res),
+          error: () => undefined,
+        });
+      return;
+    }
+
     const apiConfig = this.statusApis[elem.category];
     if (!apiConfig) {
       this.toaster.error('Status update not supported for this service', 'Error');
@@ -338,40 +348,53 @@ export class ServicePostingsComponent implements OnInit {
     statusRequest
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          const isSuccess =
-            res?.success === true ||
-            res?.status === 'success' ||
-            res?.status === 'SUCCESS' ||
-            res?.message === 'success';
-
-          if (!isSuccess) {
-            return;
-          }
-
-          const updatedStatus = res?.data?.status ?? (elem.isActive ? 'INACTIVE' : 'ACTIVE');
-          const isActive = updatedStatus === 'ACTIVE';
-
-          this.serviceGroups = this.serviceGroups.map((group) => ({
-            ...group,
-            items: group.items.map((x: any) =>
-              x.id === elem.id
-                ? {
-                    ...x,
-                    isActive,
-                    originalData: {
-                      ...x.originalData,
-                      status: updatedStatus,
-                    },
-                  }
-                : x,
-            ),
-          }));
-
-          this.toaster.success('Status updated successfully', 'Success');
-        },
+        next: (res: any) => this.applyStatusUpdate(elem, res),
         error: () => {
         },
       });
+  }
+
+  private applyStatusUpdate(elem: any, res: any): void {
+    const isSuccess =
+      !!res?.data ||
+      res?.success === true ||
+      res?.status === 'success' ||
+      res?.status === 'SUCCESS' ||
+      res?.message === 'success';
+
+    if (!isSuccess) {
+      this.toaster.error('Status update failed', 'Error');
+      return;
+    }
+
+    const updatedData = res?.data || {};
+    const updatedStatus =
+      updatedData.status ??
+      (updatedData.isActive === true || updatedData.active === true || updatedData.isAvailable === true
+        ? 'ACTIVE'
+        : updatedData.isActive === false || updatedData.active === false || updatedData.isAvailable === false
+          ? 'INACTIVE'
+          : elem.isActive ? 'INACTIVE' : 'ACTIVE');
+    const isActive = updatedStatus === 'ACTIVE';
+
+    this.serviceGroups = this.serviceGroups.map((group) => ({
+      ...group,
+      items: group.items.map((x: any) =>
+        x.id === elem.id
+          ? {
+              ...x,
+              isActive,
+              originalData: {
+                ...x.originalData,
+                ...updatedData,
+                status: updatedStatus,
+              },
+            }
+          : x,
+      ),
+    }));
+
+    this.toaster.success(isActive ? 'Service activated successfully' : 'Service deactivated successfully', 'Success');
+    this.cdr.detectChanges();
   }
 }

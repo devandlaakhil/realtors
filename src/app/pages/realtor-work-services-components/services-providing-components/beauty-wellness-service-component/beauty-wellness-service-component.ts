@@ -14,6 +14,7 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-beauty-wellness-service-component',
@@ -116,7 +117,10 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
         }
         this.loader.hide();
       },
-      error: () => this.loader.hide(),
+      error: (error) => {
+        this.loader.hide();
+        this.toastr.error(getErrorMessage(error, this.isEditMode ? 'Unable to update beauty & wellness service' : 'Unable to post beauty & wellness service'));
+      },
     });
   }
 
@@ -246,7 +250,18 @@ export class BeautyWellnessServiceComponent implements OnInit, OnDestroy {
           this.isEditMode ? 'Beauty & wellness service updated successfully' : 'Beauty & wellness service posted successfully',
           'Success',
         );
-        this.router.navigate(['/services/beauty-wellness']);
+        this.form.reset({
+          additionalSkills: [],
+          serviceFor: 'Everyone',
+          homeService: false,
+          experience: 0,
+        });
+        this.selectedImage = null;
+        this.existingImageUrl = null;
+        this.selectedLocation = { lat: null, lng: null };
+        this.showLocationMap = false;
+        this.showPostForm = false;
+        this.router.navigate(['/services/home']);
       },
       error: () => this.loader.hide(),
     });

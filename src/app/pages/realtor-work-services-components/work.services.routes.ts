@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../auth-services/auth.guard';
+import { postModeGuard } from '../../auth-services/post-mode.guard';
 
 export const WORK_SERVICE_ROUTES: Routes = [
   { 
@@ -14,6 +15,7 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path:'commercial-vehicles',
+          canActivate: [postModeGuard],
           loadComponent:() => import('./services-providing-components/tractor-service-component/tractor-service-component').then(n => n.TractorServiceComponent)
         },
         {
@@ -28,6 +30,7 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path:'workers',
+          canActivate: [postModeGuard],
           loadComponent:() => import('./services-providing-components/workers-service-component/workers-service-component').then(n => n.WorkersServiceComponent)
         },
         {
@@ -41,6 +44,7 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path:'transport',
+          canActivate: [postModeGuard],
           loadComponent:() => import('./services-providing-components/transportation-service-component/transportation-service-component').then(n => n.TransportationServiceComponent)
         },
         {
@@ -50,6 +54,7 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path :'repairs',
+          canActivate: [postModeGuard],
           loadComponent:() => import('./services-providing-components/hardware-shop-service-component/hardware-shop-service-component').then(n => n.HardwareShopServiceComponent)
         },
         {
@@ -76,18 +81,21 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path:'dynamic/:slug',
+          canActivate: [postModeGuard],
           loadComponent: () =>
             import('./services-providing-components/dynamic-service-category-component/dynamic-service-category-component')
               .then((component) => component.DynamicServiceCategoryComponent)
         },
         {
           path:'drivers',
+          canActivate: [postModeGuard],
           loadComponent: () =>
             import('./services-providing-components/drivers-service-component/drivers-service-component')
               .then((component) => component.DriversServiceComponent)
         },
         {
           path:'beauty-wellness',
+          canActivate: [postModeGuard],
           loadComponent: () =>
             import('./services-providing-components/beauty-wellness-service-component/beauty-wellness-service-component')
               .then((component) => component.BeautyWellnessServiceComponent)
@@ -101,6 +109,7 @@ export const WORK_SERVICE_ROUTES: Routes = [
         },
         {
           path:'education',
+          canActivate: [postModeGuard],
           loadComponent: () =>
             import('./services-providing-components/education-service-component/education-service-component')
               .then((component) => component.EducationServiceComponent)

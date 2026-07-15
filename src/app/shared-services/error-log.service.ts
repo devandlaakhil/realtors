@@ -23,30 +23,34 @@ export class ErrorLogService {
   private readonly maxBatchSize = 5;
 
   log(payload: ErrorLogPayload): void {
-    if (!this.supabase.enabled) return;
+    try {
+      if (!this.supabase.enabled) return;
 
-    const error = this.normalize(payload.details);
-    const metadata = {
-      ...(error.metadata || {}),
-      lastInteraction: this.interactions.getLastInteraction(),
-    };
-    this.queue.push({
-      user_id: this.auth.getUser()?.id || null,
-      source: payload.source,
-      action: payload.action || '',
-      message: payload.message || error.message || 'Unknown error',
-      error_name: error.name,
-      error_code: error.code,
-      status_code: error.status,
-      url: error.url || location.href,
-      route: location.hash || location.pathname,
-      user_agent: navigator.userAgent,
-      stack: error.stack,
-      metadata,
-    });
+      const error = this.normalize(payload.details);
+      const metadata = {
+        ...(error.metadata || {}),
+        lastInteraction: this.safeLastInteraction(),
+      };
+      this.queue.push({
+        user_id: this.auth.getUser()?.id || null,
+        source: payload.source,
+        action: payload.action || '',
+        message: payload.message || error.message || 'Unknown error',
+        error_name: error.name,
+        error_code: error.code,
+        status_code: error.status,
+        url: error.url || this.safeLocationHref(),
+        route: this.safeRoute(),
+        user_agent: this.safeUserAgent(),
+        stack: error.stack,
+        metadata,
+      });
 
-    if (this.queue.length > 25) this.queue = this.queue.slice(-25);
-    this.scheduleFlush();
+      if (this.queue.length > 25) this.queue = this.queue.slice(-25);
+      this.scheduleFlush();
+    } catch (error) {
+      console.warn('Error logging failed', error);
+    }
   }
 
   private scheduleFlush(): void {
@@ -96,11 +100,11 @@ export class ErrorLogService {
       const value = details as any;
       return {
         name: value.name || '',
-        message: value.message || JSON.stringify(value),
+        message: value.message || this.safeStringify(value),
         code: value.code || value.error_code || '',
         status: value.status || value.statusCode || '',
         stack: value.stack || '',
-        metadata: value,
+        metadata: this.safeMetadata(value),
       };
     }
 
@@ -110,6 +114,55 @@ export class ErrorLogService {
       metadata: {},
     };
   }
+
+  private safeStringify(value: unknown): string {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  }
+
+  private safeMetadata(value: unknown): Record<string, unknown> {
+    try {
+      JSON.stringify(value);
+      return value && typeof value === 'object' ? value as Record<string, unknown> : {};
+    } catch {
+      return { value: String(value) };
+    }
+  }
+
+  private safeLastInteraction(): unknown {
+    try {
+      return this.interactions.getLastInteraction();
+    } catch {
+      return null;
+    }
+  }
+
+  private safeLocationHref(): string {
+    try {
+      return location.href;
+    } catch {
+      return '';
+    }
+  }
+
+  private safeRoute(): string {
+    try {
+      return location.hash || location.pathname;
+    } catch {
+      return '';
+    }
+  }
+
+  private safeUserAgent(): string {
+    try {
+      return navigator.userAgent;
+    } catch {
+      return '';
+    }
+  }
 }
 
 @Injectable()
@@ -117,7 +170,11 @@ export class AppGlobalErrorHandler implements ErrorHandler {
   private readonly logs = inject(ErrorLogService);
 
   handleError(error: unknown): void {
-    this.logs.log({ source: 'global', action: 'unhandled_error', details: error });
+    try {
+      this.logs.log({ source: 'global', action: 'unhandled_error', details: error });
+    } catch {
+      // Never allow logging to hide the original app error.
+    }
     console.error(error);
   }
 }

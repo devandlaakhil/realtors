@@ -14,25 +14,29 @@ export class AuthService {
   }
 
   logIn(token: string) {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    this.setLocal(this.TOKEN_KEY, token);
   }
 
   setRefreshToken(token?: string) {
     if (token) {
-      localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+      this.setLocal(this.REFRESH_TOKEN_KEY, token);
     }
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return this.getLocal(this.TOKEN_KEY);
+  }
+
+  getRefreshToken(): string | null {
+    return this.getLocal(this.REFRESH_TOKEN_KEY);
   }
 
   setUser(user: { id: string; name: string; email: string }) {
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.setLocal(this.USER_KEY, JSON.stringify(user));
   }
 
   getUser() {
-    const data = localStorage.getItem(this.USER_KEY);
+    const data = this.getLocal(this.USER_KEY);
 
     if (!data) {
       return null;
@@ -41,7 +45,7 @@ export class AuthService {
     try {
       return JSON.parse(data);
     } catch {
-      localStorage.removeItem(this.USER_KEY);
+      this.removeLocal(this.USER_KEY);
       return null;
     }
   }
@@ -51,27 +55,67 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem(this.TOKEN_KEY);
-    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-    localStorage.removeItem(this.USER_KEY);
-    sessionStorage.removeItem(this.TOKEN_KEY);
-    sessionStorage.removeItem(this.REFRESH_TOKEN_KEY);
-    sessionStorage.removeItem(this.USER_KEY);
+    this.removeLocal(this.TOKEN_KEY);
+    this.removeLocal(this.REFRESH_TOKEN_KEY);
+    this.removeLocal(this.USER_KEY);
+    this.removeSession(this.TOKEN_KEY);
+    this.removeSession(this.REFRESH_TOKEN_KEY);
+    this.removeSession(this.USER_KEY);
   }
 
   private migrateSession(): void {
-    const sessionToken = sessionStorage.getItem(this.TOKEN_KEY);
-    const sessionUser = sessionStorage.getItem(this.USER_KEY);
+    const sessionToken = this.getSession(this.TOKEN_KEY);
+    const sessionUser = this.getSession(this.USER_KEY);
 
-    if (!localStorage.getItem(this.TOKEN_KEY) && sessionToken) {
-      localStorage.setItem(this.TOKEN_KEY, sessionToken);
+    if (!this.getLocal(this.TOKEN_KEY) && sessionToken) {
+      this.setLocal(this.TOKEN_KEY, sessionToken);
     }
 
-    if (!localStorage.getItem(this.USER_KEY) && sessionUser) {
-      localStorage.setItem(this.USER_KEY, sessionUser);
+    if (!this.getLocal(this.USER_KEY) && sessionUser) {
+      this.setLocal(this.USER_KEY, sessionUser);
     }
 
-    sessionStorage.removeItem(this.TOKEN_KEY);
-    sessionStorage.removeItem(this.USER_KEY);
+    this.removeSession(this.TOKEN_KEY);
+    this.removeSession(this.USER_KEY);
+  }
+
+  private getLocal(key: string): string | null {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  private setLocal(key: string, value: string): void {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // Storage can be unavailable in restricted WebView contexts.
+    }
+  }
+
+  private removeLocal(key: string): void {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Storage can be unavailable in restricted WebView contexts.
+    }
+  }
+
+  private getSession(key: string): string | null {
+    try {
+      return sessionStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  }
+
+  private removeSession(key: string): void {
+    try {
+      sessionStorage.removeItem(key);
+    } catch {
+      // Storage can be unavailable in restricted WebView contexts.
+    }
   }
 }

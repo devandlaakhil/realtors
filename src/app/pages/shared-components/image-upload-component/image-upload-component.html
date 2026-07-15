@@ -20,7 +20,7 @@
   <input #fileInput hidden [multiple]="multiple" type="file" accept="image/*" (change)="onImageSelected($event)" />
 
   <div class="image-source-actions">
-    <button mat-raised-button color="primary" type="button" (click)="cameraInput.click()">Take Photo</button>
-    <button mat-raised-button type="button" (click)="fileInput.click()">Choose from Gallery</button>
+    <button mat-raised-button color="primary" type="button" (click)="openCamera(cameraInput)">Take Photo</button>
+    <button mat-raised-button type="button" (click)="openGallery(fileInput)">Choose from Gallery</button>
   </div>
 </div>

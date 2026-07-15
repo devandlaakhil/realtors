@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { PermissionsServices } from '../../../shared-services/permissions.services';
 
 @Component({
   selector: 'app-image-upload-component',
@@ -15,10 +14,7 @@ export class ImageUploadComponent {
   preview: string | ArrayBuffer | null = null;
 
   cdr = inject(ChangeDetectorRef);
-  private permissionSrv = inject(PermissionsServices);
-
   ngOnInit(): void {
-    this.permissionSrv.requestCameraPermission();
     if (this.imageUrl) {
       this.preview = this.imageUrl;
       this.cdr.detectChanges();
@@ -27,6 +23,14 @@ export class ImageUploadComponent {
 
   ngOnChanges() {
     this.preview = this.imageUrl;
+  }
+
+  async openCamera(input: HTMLInputElement): Promise<void> {
+    input.click();
+  }
+
+  async openGallery(input: HTMLInputElement): Promise<void> {
+    input.click();
   }
 
   onImageSelected(event: Event): void {

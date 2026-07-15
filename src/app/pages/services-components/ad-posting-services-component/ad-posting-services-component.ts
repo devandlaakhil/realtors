@@ -19,7 +19,7 @@ import { take } from 'rxjs/operators';
 import { TranslatePipe } from '../../../pipes/translatepipe-pipe';
 import { CITY_COORDINATES } from '../../../constants/location-coordinates';
 import { Property_Type, Location, status } from '../../../constants/enums/ad-posting-enums';
-import { GoogleMap, MapMarker } from '@angular/google-maps';
+import { MapComponent } from '../../shared-components/map-component/map-component';
 
 @Component({
   selector: 'app-ad-posting-services-component',
@@ -34,8 +34,7 @@ import { GoogleMap, MapMarker } from '@angular/google-maps';
     MatCheckboxModule,
     MatTooltipModule,
     TranslatePipe,
-    GoogleMap,
-    MapMarker,
+    MapComponent,
   ],
   templateUrl: './ad-posting-services-component.html',
   styleUrl: './ad-posting-services-component.css',
@@ -425,6 +424,23 @@ export class AdPostingServicesComponent implements OnInit {
           geoLocation: {
             type: 'Point',
             coordinates: [this.selectedLocation.lng, this.selectedLocation.lat],
+          },
+        },
+      },
+      { emitEvent: false },
+    );
+  }
+
+  onPropertyLocationSelected(location: { lat: number; lng: number }): void {
+    this.selectedLocation = location;
+    this.propertyForm.patchValue(
+      {
+        location: {
+          latitude: location.lat,
+          longitude: location.lng,
+          geoLocation: {
+            type: 'Point',
+            coordinates: [location.lng, location.lat],
           },
         },
       },

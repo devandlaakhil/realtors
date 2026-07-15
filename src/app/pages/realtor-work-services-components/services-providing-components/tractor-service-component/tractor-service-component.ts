@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,14 +11,14 @@ import { RealtorsServicesApiServices } from '../../../../api-services/realtors-s
 import { Subject, takeUntil } from 'rxjs';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { ToastrService } from 'ngx-toastr';
-import { GoogleMap, MapInfoWindow, MapMarker } from '@angular/google-maps';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { TractorCard } from '../../../../../app/constants/enums/common-interfaces';
-import { GoogleMapsModule } from '@angular/google-maps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { MatIcon } from '@angular/material/icon';
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
+import { MapComponent } from '../../../shared-components/map-component/map-component';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-tractor-service-component',
@@ -31,9 +31,7 @@ import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
     MatButtonModule,
     MatCardModule,
     ReactiveFormsModule,
-    GoogleMap,
-    MapMarker,
-    GoogleMapsModule,
+    MapComponent,
     MatIcon,
     TranslatePipe,
   ],
@@ -67,9 +65,6 @@ export class TractorServiceComponent implements OnInit {
   private isDragging = false;
   private dragStartY = 0;
   private dragStartHeight = 60;
-
-  @ViewChild(MapInfoWindow)
-  infoWindow!: MapInfoWindow;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -357,6 +352,10 @@ export class TractorServiceComponent implements OnInit {
     this.setSelectedLocation(event.latLng.lat(), event.latLng.lng());
   }
 
+  onLocationSelected(location: { lat: number; lng: number }): void {
+    this.setSelectedLocation(location.lat, location.lng);
+  }
+
   private setSelectedLocation(lat: number, lng: number): void {
     this.selectedLocation = { lat, lng };
     this.center = { lat, lng };
@@ -407,13 +406,15 @@ export class TractorServiceComponent implements OnInit {
           next: () => {
             this.tractorForm.reset();
             this.selectedImages = [];
+            this.selectedLocation = null;
+            this.showMap = false;
             this.loaderService.hide();
             this.router.navigate(['/services/home']);
             this.toastr.success('Successfully posted your service');
           },
-          error: () => {
+          error: (error) => {
             this.loaderService.hide();
-            //this.toastr.error('Failed to post your service');
+            this.toastr.error(getErrorMessage(error, 'Failed to post your service'));
           },
         });
     } else {
@@ -425,13 +426,15 @@ export class TractorServiceComponent implements OnInit {
           next: () => {
             this.tractorForm.reset();
             this.selectedImages = [];
+            this.selectedLocation = null;
+            this.showMap = false;
             this.loaderService.hide();
             this.router.navigate(['/services/home']);
             this.toastr.success('Successfully updated your service');
           },
-          error: () => {
+          error: (error) => {
             this.loaderService.hide();
-            this.toastr.error('Failed to update your service');
+            this.toastr.error(getErrorMessage(error, 'Failed to update your service'));
           },
         });
     }
@@ -439,11 +442,6 @@ export class TractorServiceComponent implements OnInit {
 
   selectTractor(tractor: TractorCard) {
     this.selectedTractor = tractor;
-  }
-
-  openInfo(marker: MapMarker, tractor: TractorCard) {
-    this.selectedTractor = tractor;
-    this.infoWindow.open(marker);
   }
 
   toggleDetails(tractorId: number | string | null, event?: Event) {

@@ -1,52 +1,55 @@
 <div class="map-wrapper">
-  <google-map
-    height="500px"
-    width="100%"
-    [center]="center || defaultCenter"
-    [zoom]="zoom"
-    (mapClick)="onMapClick($event)"
-  >
-    <!-- Selected Location -->
-    <map-marker
-      *ngIf="dragble && selectedLocation as location"
-      [position]="location"
-      [options]="{
-        draggable: true,
-      }"
-      (mapDragend)="markerDragged($event)"
+  @if (mapsReady) {
+    <google-map
+      height="500px"
+      width="100%"
+      [center]="center || defaultCenter"
+      [zoom]="zoom"
+      (mapClick)="onMapClick($event)"
     >
-    </map-marker>
+      <map-marker
+        *ngIf="dragble && selectedLocation as location"
+        [position]="location"
+        [options]="{ draggable: true }"
+        (mapDragend)="markerDragged($event)"
+      >
+      </map-marker>
 
-    <!-- Service Markers -->
-    <map-marker
-      *ngFor="let t of markers"
-      #marker="mapMarker"
-      [position]="{
-        lat: +(t.location?.coordinates?.[1] ?? t.lat),
-        lng: +(t.location?.coordinates?.[0] ?? t.lng),
-      }"
-      [options]="t.markerOptions"
-      (mapClick)="openInfo(marker, t)"
-    >
-    </map-marker>
+      <map-marker
+        *ngFor="let t of markers"
+        #marker="mapMarker"
+        [position]="{
+          lat: +(t.location?.coordinates?.[1] ?? t.lat),
+          lng: +(t.location?.coordinates?.[0] ?? t.lng)
+        }"
+        [options]="t.markerOptions"
+        (mapClick)="openInfo(marker, t)"
+      >
+      </map-marker>
 
-    <map-info-window>
-      <div *ngIf="selectedItem" class="info-window">
-        <img
-          [src]="
-            selectedItem?.images?.[0]?.url ||
-            selectedItem?.image?.[0]?.url ||
-            selectedItem?.image ||
-            '/images/avatar.png'
-          "
-          width="120"
-        />
+      <map-info-window>
+        <div *ngIf="selectedItem" class="info-window">
+          <img
+            [src]="
+              selectedItem?.images?.[0]?.url ||
+              selectedItem?.image?.[0]?.url ||
+              selectedItem?.image ||
+              '/images/avatar.png'
+            "
+            width="120"
+          />
 
-        <h4>{{ selectedItem?.name }}</h4>
-        <p>₹{{ selectedItem?.price }}/{{ selectedItem?.unit }}</p>
-        <p>{{ selectedItem?.category }}</p>
-        <p>{{ selectedItem?.mobile }}</p>
-      </div>
-    </map-info-window>
-  </google-map>
+          <h4>{{ selectedItem?.name }}</h4>
+          <p>Rs. {{ selectedItem?.price }}/{{ selectedItem?.unit }}</p>
+          <p>{{ selectedItem?.category }}</p>
+          <p>{{ selectedItem?.mobile }}</p>
+        </div>
+      </map-info-window>
+    </google-map>
+  } @else {
+    <div class="map-unavailable">
+      <strong>Map unavailable</strong>
+      <span>Current GPS location will be used when available.</span>
+    </div>
+  }
 </div>

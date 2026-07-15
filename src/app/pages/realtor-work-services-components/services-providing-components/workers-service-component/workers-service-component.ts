@@ -27,6 +27,7 @@ import { API_CONSTANTS } from '../../../../constants/realtors-services-api-const
 import { Subject, takeUntil } from 'rxjs';
 import { LoaderServices } from '../../../../shared-services/loader-services';
 import { mapToServiceCard,mapCardItems } from '../supporting-files/mapCardMapper';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 @Component({
   selector: 'app-workers-service-component',
   imports: [
@@ -406,12 +407,18 @@ export class WorkersServiceComponent implements OnInit {
         .subscribe({
           next: (res) => {
             this.workerForm.reset();
+            this.selectedImageFile = null;
+            this.selectedSkills = [];
+            this.availableSkills = [];
+            this.selectedLocation = { lat: '', lng: '' };
+            this.showMap = false;
             this.loaderService.hide();
             this.route.navigate(['/services/home']);
             this.toastr.success('Successfully posted your service', 'Success');
           },
-          error: () => {
+          error: (error) => {
             this.loaderService.hide();
+            this.toastr.error(getErrorMessage(error, 'Failed to post worker service'));
           },
         });
     }else{
@@ -427,12 +434,18 @@ export class WorkersServiceComponent implements OnInit {
         .subscribe({
           next: (res) => {
             this.workerForm.reset();
+            this.selectedImageFile = null;
+            this.selectedSkills = [];
+            this.availableSkills = [];
+            this.selectedLocation = { lat: '', lng: '' };
+            this.showMap = false;
             this.loaderService.hide();
             this.route.navigate(['/services/home']);
             this.toastr.success('Successfully updated your service', 'Success');
           },
-          error: () => {
+          error: (error) => {
             this.loaderService.hide();
+            this.toastr.error(getErrorMessage(error, 'Failed to update worker service'));
           },
         });
     }

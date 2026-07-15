@@ -305,7 +305,11 @@ export class DynamicServiceCategoryComponent implements OnInit, OnDestroy {
       next: () => {
         this.loader.hide();
         this.toastr.success('Your service was posted successfully.', 'Published');
-        this.router.navigate(['/services/dynamic', this.category!.slug]);
+        this.postForm.reset();
+        this.files.clear();
+        this.showMaps.clear();
+        this.showPostForm = false;
+        this.router.navigate(['/services/home']);
       },
       error: () => this.loader.hide(),
     });

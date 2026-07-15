@@ -312,24 +312,12 @@
 
         @if (showMap) {
           <div class="map-container">
-            <google-map
-              class="property-map"
-              [center]="center"
-              [zoom]="zoom"
-              width="100%"
-              height="450px"
-              (mapClick)="mapClicked($event)"
-            >
-              <map-marker
-                *ngIf="selectedLocation"
-                [position]="selectedLocation"
-                [options]="{
-                  draggable: true,
-                }"
-                (mapDragend)="markerDragged($event)"
-              >
-              </map-marker>
-            </google-map>
+            <app-map-component
+              [center]="selectedLocation || center"
+              [data]="[]"
+              [dragble]="true"
+              (locationSelected)="onLocationSelected($event)"
+            ></app-map-component>
           </div>
         }
       </mat-card>

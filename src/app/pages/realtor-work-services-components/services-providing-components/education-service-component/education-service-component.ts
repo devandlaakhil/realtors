@@ -11,6 +11,7 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
 import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad-service';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-education-service-component',
@@ -113,7 +114,10 @@ export class EducationServiceComponent implements OnInit, OnDestroy {
         }
         this.loader.hide();
       },
-      error: () => this.loader.hide(),
+      error: (error) => {
+        this.loader.hide();
+        this.toastr.error(getErrorMessage(error, this.isEditMode ? 'Unable to update education service' : 'Unable to post education service'));
+      },
     });
   }
 
@@ -236,7 +240,17 @@ export class EducationServiceComponent implements OnInit, OnDestroy {
           this.isEditMode ? 'Education service updated successfully' : 'Education service posted successfully',
           'Success',
         );
-        this.router.navigate(['/services/education']);
+        this.form.reset({
+          additionalSkills: [],
+          teachingMode: 'Home visit',
+          experience: 0,
+        });
+        this.selectedImage = null;
+        this.existingImageUrl = null;
+        this.selectedLocation = { lat: null, lng: null };
+        this.showLocationMap = false;
+        this.showPostForm = false;
+        this.router.navigate(['/services/home']);
       },
       error: () => this.loader.hide(),
     });

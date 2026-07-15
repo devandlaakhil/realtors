@@ -39,3 +39,19 @@ google-map {
   color: #475569;
   font-size: 0.85rem;
 }
+
+.map-unavailable {
+  display: flex;
+  min-height: 280px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 6px;
+  color: #475569;
+  text-align: center;
+}
+
+.map-unavailable strong {
+  color: #0f172a;
+}

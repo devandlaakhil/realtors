@@ -26,7 +26,7 @@
                 <p>{{ item.location }}</p>
 
                 <div class="skill-row">
-                  <span [class.active]="item.isActive">
+                  <span [class.active]="item.isActive" [class.paused]="!item.isActive">
                     {{ item.isActive ? ('Live' | T) : ('Paused' | T) }}
                   </span>
                   @for (skill of (item.originalData?.additionalSkills || item.originalData?.skills || []); track skill) {
@@ -44,10 +44,14 @@
             <div class="actions">
               @if (!serviceGroup.dynamic) {
                 <button class="edit-btn" (click)="edit(item)">{{ 'Edit' | T }}</button>
-                <button class="inactive-btn" (click)="toggleStatus(item)">
-                  {{ item.isActive ? ('Deactivate' | T) : ('Activate' | T) }}
-                </button>
               }
+              <button
+                class="inactive-btn"
+                [class.activate-btn]="!item.isActive"
+                (click)="toggleStatus(item)"
+              >
+                {{ item.isActive ? ('Deactivate' | T) : ('Activate' | T) }}
+              </button>
               <button class="delete-btn" (click)="delete(item)">{{ 'Delete' | T }}</button>
             </div>
           </article>

@@ -12,6 +12,11 @@ interface ProfileSubscription {
   created_at?: string | null;
 }
 
+interface RefreshTokenResponse {
+  access_token?: string;
+  refresh_token?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PostingAccessService {
   private readonly auth = inject(AuthService);
@@ -35,22 +40,22 @@ export class PostingAccessService {
   ];
 
   assertCanCreatePost(): Observable<void> {
-    const token = this.auth.getToken();
     const ownerId = this.auth.getUser()?.id;
 
-    if (!token || !ownerId) {
+    if (!ownerId) {
       return throwError(() => new Error('Please login before posting.'));
     }
 
-    return this.getProfile(token, ownerId).pipe(
+    return this.getFreshAccessToken().pipe(
+      switchMap((token) => this.getProfile(token, ownerId).pipe(map((profile) => ({ token, profile })))),
       switchMap((profile) => {
-        if (this.hasActivePaidPlan(profile)) return of(undefined);
+        if (this.hasActivePaidPlan(profile.profile)) return of(undefined);
 
-        if (!this.isInsideFreeMonth(profile)) {
+        if (!this.isInsideFreeMonth(profile.profile)) {
           return throwError(() => new Error('Your free posting period is over. Please subscribe to continue posting.'));
         }
 
-        return this.getTotalPostCount(token, ownerId).pipe(
+        return this.getTotalPostCount(profile.token, ownerId).pipe(
           switchMap((count) => count < 1
             ? of(undefined)
             : throwError(() => new Error('Free users can publish only one post. Please subscribe for unlimited posts.'))
@@ -60,11 +65,55 @@ export class PostingAccessService {
     );
   }
 
+  private getFreshAccessToken(): Observable<string> {
+    const token = this.auth.getToken();
+    if (!token) return throwError(() => new Error('Please login before posting.'));
+    if (!this.isJwtExpired(token)) return of(token);
+
+    const refreshToken = this.auth.getRefreshToken();
+    if (!refreshToken) {
+      this.auth.logout();
+      return throwError(() => new Error('Your login session expired. Please login again.'));
+    }
+
+    return this.supabase.authPost<RefreshTokenResponse>('token?grant_type=refresh_token', {
+      refresh_token: refreshToken
+    }).pipe(
+      map((response) => {
+        if (!response.access_token) {
+          throw new Error('Your login session expired. Please login again.');
+        }
+        this.auth.logIn(response.access_token);
+        this.auth.setRefreshToken(response.refresh_token || refreshToken);
+        return response.access_token;
+      }),
+      catchError((error) => {
+        this.auth.logout();
+        return throwError(() => error?.message
+          ? error
+          : new Error('Your login session expired. Please login again.'));
+      })
+    );
+  }
+
+  private isJwtExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1] || ''));
+      const expiresAt = Number(payload.exp || 0) * 1000;
+      return !expiresAt || expiresAt <= Date.now() + 30000;
+    } catch {
+      return true;
+    }
+  }
+
   private getProfile(token: string, ownerId: string): Observable<ProfileSubscription | null> {
     return this.supabase.selectWithAuth<ProfileSubscription>(SUPABASE_TABLES.profiles, token, {
       filters: { id: ownerId },
       limit: 1
-    }).pipe(map((rows) => rows[0] || null));
+    }).pipe(
+      map((rows) => rows[0] || null),
+      catchError(() => of(null))
+    );
   }
 
   private getTotalPostCount(token: string, ownerId: string): Observable<number> {

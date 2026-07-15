@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@ang
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { mapCardItems, mapToServiceCard } from '../supporting-files/mapCardMapper';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
@@ -19,6 +19,7 @@ import { LoaderServices } from '../../../../shared-services/loader-services';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { TransportApiService } from '../../../../api-services/transport-api-service';
 import { Subject, takeUntil } from 'rxjs';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-transportation-service-component',
@@ -77,6 +78,7 @@ export class TransportationServiceComponent implements OnInit {
   transportApiSrv = inject(TransportApiService);
   cdr = inject(ChangeDetectorRef);
   router = inject(ActivatedRoute);
+  navRouter = inject(Router);
 
   vehicleTypes = [
     'Mini Truck',
@@ -269,7 +271,7 @@ export class TransportationServiceComponent implements OnInit {
         },
         error: (err) => {
           this.loaderSrv.hide();
-          //this.toastSrv.error('Failed to post service');
+          this.toastSrv.error(getErrorMessage(err, 'Failed to post transport service'));
         },
       });
     } else {
@@ -283,7 +285,7 @@ export class TransportationServiceComponent implements OnInit {
           },
           error: (err) => {
           this.loaderSrv.hide();
-          this.toastSrv.error('Failed to update service');
+          this.toastSrv.error(getErrorMessage(err, 'Failed to update transport service'));
         },
         });
     }
@@ -303,7 +305,11 @@ export class TransportationServiceComponent implements OnInit {
       },
     });
     this.selectedImages = [];
+    this.selectedImageFile = null;
+    this.selectedLocation = { lng: '', lat: '' };
+    this.showMap = false;
     this.closeVechile();
+    this.navRouter.navigate(['/services/home']);
   }
 
   getNearByVehicles() {

@@ -20,28 +20,32 @@ export class AnalyticsService {
   private measurementId = '';
 
   initialize(): void {
-    const measurementId = environment.googleAnalyticsId?.trim();
-    if (this.initialized || !measurementId || typeof window === 'undefined') {
-      return;
+    try {
+      const measurementId = environment.googleAnalyticsId?.trim();
+      if (this.initialized || !measurementId || typeof window === 'undefined') {
+        return;
+      }
+
+      this.initialized = true;
+      this.measurementId = measurementId;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = (...args: unknown[]) => window.dataLayer.push(args);
+      window.gtag('js', new Date());
+      window.gtag('config', measurementId, { send_page_view: false });
+
+      const script = this.document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+      this.document.head.appendChild(script);
+
+      this.trackPageView(this.router.url);
+      this.router.events
+        .pipe(filter((event) => event instanceof NavigationEnd))
+        .subscribe((event) => this.trackPageView((event as NavigationEnd).urlAfterRedirects));
+      this.trackClicks();
+    } catch (error) {
+      console.warn('Analytics initialization failed', error);
     }
-
-    this.initialized = true;
-    this.measurementId = measurementId;
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = (...args: unknown[]) => window.dataLayer.push(args);
-    window.gtag('js', new Date());
-    window.gtag('config', measurementId, { send_page_view: false });
-
-    const script = this.document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
-    this.document.head.appendChild(script);
-
-    this.trackPageView(this.router.url);
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe((event) => this.trackPageView((event as NavigationEnd).urlAfterRedirects));
-    this.trackClicks();
   }
 
   trackCall(serviceType: string): void {
@@ -54,12 +58,16 @@ export class AnalyticsService {
   }
 
   trackPageView(url: string): void {
-    if (!this.measurementId) return;
-    window.gtag?.('event', 'page_view', {
-      page_title: this.document.title || 'NearWages',
-      page_location: location.href,
-      page_path: this.normalizePath(url),
-    });
+    try {
+      if (!this.measurementId) return;
+      window.gtag?.('event', 'page_view', {
+        page_title: this.document.title || 'NearWages',
+        page_location: location.href,
+        page_path: this.normalizePath(url),
+      });
+    } catch {
+      // Analytics must never block the app.
+    }
   }
 
   private sendEvent(name: string, params: Record<string, unknown>): void {

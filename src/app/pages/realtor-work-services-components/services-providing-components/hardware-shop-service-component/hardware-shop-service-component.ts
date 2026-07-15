@@ -20,6 +20,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RealtorsServicesApiServices } from '../../../../api-services/realtors-services-api-services';
 import { API_CONSTANTS } from '../../../../constants/realtors-services-api-constants';
 import { HOME_REPAIR_TYPES } from '../../../../constants/enums/home-repair-types';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-hardware-shop-service-component',
@@ -350,18 +351,14 @@ export class HardwareShopServiceComponent implements OnInit, OnDestroy {
           this.showPostForm = false;
           this.shopForm.reset({ products: [], openingTime: '08:00', closingTime: '20:00', homeDelivery: false });
           this.selectedImageFile = null;
-          if (this.isEditMode) {
-            this.router.navigate(['/dashboard/services']);
-          } else {
-            this.loader.show();
-            this.getCurrentLocation(true);
-          }
+          this.existingImageUrl = null;
+          this.locationReady = false;
+          this.selectedLocation = { lat: 0, lng: 0 };
+          this.router.navigate(['/services/home']);
         },
-        error: () => {
+        error: (error) => {
           this.loader.hide();
-          this.toastr.error(
-            this.isEditMode ? 'Unable to update the repair service' : 'Unable to publish the repair service',
-          );
+          this.toastr.error(getErrorMessage(error, this.isEditMode ? 'Unable to update the repair service' : 'Unable to publish the repair service'));
         },
       });
   }

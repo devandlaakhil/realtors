@@ -25,6 +25,7 @@ export class MapComponent implements OnInit, OnChanges {
   selectedLocation: google.maps.LatLngLiteral | null = null;
   defaultCenter: google.maps.LatLngLiteral = CITY_COORDINATES['Hyderabad'];
   zoom: number = 13;
+  mapsReady = false;
   onDataChange = Output();
   cdr = inject(ChangeDetectorRef);
   selectedItem: any = null;
@@ -45,6 +46,7 @@ export class MapComponent implements OnInit, OnChanges {
   map!: GoogleMap;
 
   async ngOnInit(): Promise<void> {
+    this.mapsReady = this.isGoogleMapsReady();
     if (this.center?.lat != null && this.center?.lng != null) {
       this.applyCurrentLocation(this.center.lat, this.center.lng);
       return;
@@ -54,6 +56,7 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.mapsReady = this.isGoogleMapsReady();
     const suppliedCenter = changes['center']?.currentValue as
       | google.maps.LatLngLiteral
       | undefined;
@@ -79,12 +82,7 @@ export class MapComponent implements OnInit, OnChanges {
           ...item,
           lat: Number(lat),
           lng: Number(lng),
-          markerOptions: {
-            icon: {
-              url: this.getMarkerIcon(item.category),
-              scaledSize: new google.maps.Size(40, 40),
-            },
-          },
+          markerOptions: this.markerOptions(item.category),
         };
       })
       .filter(Boolean);
@@ -158,8 +156,24 @@ export class MapComponent implements OnInit, OnChanges {
   }
 
   openInfo(marker: MapMarker, worker: any): void {
+    if (!this.infoWindow) return;
     this.selectedItem = worker;
     this.infoWindow.open(marker);
+  }
+
+  private markerOptions(category: string): google.maps.MarkerOptions | null {
+    if (!this.isGoogleMapsReady()) return null;
+
+    return {
+      icon: {
+        url: this.getMarkerIcon(category),
+        scaledSize: new google.maps.Size(40, 40),
+      },
+    };
+  }
+
+  private isGoogleMapsReady(): boolean {
+    return typeof google !== 'undefined' && !!google.maps;
   }
 
   getMarkerIcon(category: string): string {

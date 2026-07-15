@@ -37,33 +37,38 @@ export class App implements OnInit, OnDestroy {
   };
 
   async ngOnInit(): Promise<void> {
-    this.analytics.initialize();
-    this.errorInteractionTracker.initialize();
+    this.safeRun(() => this.analytics.initialize(), 'analytics_initialize');
+    this.safeRun(() => this.errorInteractionTracker.initialize(), 'error_interaction_tracker_initialize');
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.loader.reset();
       }
     });
-    this.checkLocation();
-    document.addEventListener('visibilitychange', this.visibilityHandler);
-    this.backButtonListener = await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
-      if (canGoBack && this.router.url !== '/') {
-        this.location.back();
-        return;
-      }
+    this.safeRun(() => this.checkLocation(), 'location_check');
+    this.safeRun(() => document.addEventListener('visibilitychange', this.visibilityHandler), 'visibility_listener');
 
-      if (this.router.url !== '/') {
-        this.router.navigate(['/']);
-        return;
-      }
+    try {
+      this.backButtonListener = await CapacitorApp.addListener('backButton', ({ canGoBack }) => {
+        if (canGoBack && this.router.url !== '/') {
+          this.location.back();
+          return;
+        }
 
-      CapacitorApp.exitApp();
-    });
+        if (this.router.url !== '/') {
+          this.router.navigate(['/']);
+          return;
+        }
+
+        CapacitorApp.exitApp();
+      });
+    } catch (error) {
+      console.warn('Back button listener unavailable', error);
+    }
   }
 
   ngOnDestroy(): void {
     this.backButtonListener?.remove();
-    document.removeEventListener('visibilitychange', this.visibilityHandler);
+    this.safeRun(() => document.removeEventListener('visibilitychange', this.visibilityHandler), 'visibility_listener_remove');
   }
 
   checkLocation(options: { force?: boolean } = {}): void {
@@ -90,7 +95,7 @@ export class App implements OnInit, OnDestroy {
       },
       (error) => {
         this.checkingLocation.set(false);
-        sessionStorage.removeItem(this.locationOkStorageKey);
+        this.safeRun(() => sessionStorage.removeItem(this.locationOkStorageKey), 'location_storage_remove');
         this.blockForLocation(
           error.code === error.PERMISSION_DENIED
             ? 'Location permission is blocked. Allow location for NearWages in your browser or app settings, then tap Retry.'
@@ -102,16 +107,27 @@ export class App implements OnInit, OnDestroy {
   }
 
   private hasFreshLocationCheck(): boolean {
-    const lastOkAt = Number(sessionStorage.getItem(this.locationOkStorageKey) || 0);
+    let lastOkAt = 0;
+    this.safeRun(() => {
+      lastOkAt = Number(sessionStorage.getItem(this.locationOkStorageKey) || 0);
+    }, 'location_storage_read');
     return Number.isFinite(lastOkAt) && Date.now() - lastOkAt < this.locationFreshMs;
   }
 
   private rememberLocationOk(): void {
-    sessionStorage.setItem(this.locationOkStorageKey, String(Date.now()));
+    this.safeRun(() => sessionStorage.setItem(this.locationOkStorageKey, String(Date.now())), 'location_storage_write');
   }
 
   private blockForLocation(message: string): void {
     this.showLocationPrompt.set(true);
     this.locationPromptMessage.set(message);
+  }
+
+  private safeRun(action: () => void, label: string): void {
+    try {
+      action();
+    } catch (error) {
+      console.warn(`Startup step failed: ${label}`, error);
+    }
   }
 }

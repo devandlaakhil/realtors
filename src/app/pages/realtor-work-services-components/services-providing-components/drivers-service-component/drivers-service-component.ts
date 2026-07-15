@@ -12,6 +12,7 @@ import { MobileDialpadService } from '../../../../shared-services/mobile-dialpad
 import { TranslatePipe } from '../../../../pipes/translatepipe-pipe';
 import { ImageUploadComponent } from '../../../shared-components/image-upload-component/image-upload-component';
 import { MapComponent } from '../../../shared-components/map-component/map-component';
+import { getErrorMessage } from '../../../../shared-services/error-message';
 
 @Component({
   selector: 'app-drivers-service-component',
@@ -190,9 +191,23 @@ export class DriversServiceComponent implements OnInit, OnDestroy {
       next: () => {
         this.loader.hide();
         this.toastr.success('Driver service saved successfully.', 'Success');
-        this.router.navigate(['/services/drivers']);
+        this.driverForm.reset({
+          vehicleTypes: [],
+          availableForOutstation: false,
+          availableAtNight: false,
+          hasOwnVehicle: false,
+          isActive: true,
+        });
+        this.selectedImage = null;
+        this.selectedLocation = {};
+        this.showLocationMap = false;
+        this.showPostForm = false;
+        this.router.navigate(['/services/home']);
       },
-      error: () => this.loader.hide(),
+      error: (error) => {
+        this.loader.hide();
+        this.toastr.error(getErrorMessage(error, 'Unable to save driver service'));
+      },
     });
   }
 

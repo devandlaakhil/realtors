@@ -1,24 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Geolocation } from '@capacitor/geolocation';
-import { Camera } from '@capacitor/camera';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionsServices {
   async requestLocationPermission() {
-    return await Geolocation.requestPermissions();
-  }
-
-  async requestCameraPermission() {
-    return await Camera.requestPermissions();
+    try {
+      return await Geolocation.requestPermissions();
+    } catch (error) {
+      console.warn('Location permission request failed', error);
+      return null;
+    }
   }
 
   async checkLocationPermission() {
-    return await Geolocation.checkPermissions();
+    try {
+      return await Geolocation.checkPermissions();
+    } catch (error) {
+      console.warn('Location permission check failed', error);
+      return null;
+    }
   }
 
-  async checkCameraPermission() {
-    return await Camera.checkPermissions();
-  }
 }
